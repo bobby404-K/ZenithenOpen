@@ -16,11 +16,19 @@ interface ConstellationOrg {
 }
 
 /**
- * Top GitHub Organizations from Reference 2 (PDF Pages)
- * Positioned to replicate the organic, left-side clustered constellation in Reference 1.
+ * Curated GitHub Organizations:
+ * - Left side: Top global foundations & tech titans (@microsoft, @google, @meta, @openai, @pytorch, @kubernetes, etc.)
+ * - Right side: Developer icons & OSS ecosystem leaders from reference index #101-#180 (@tailwindlabs, @vitejs, @torvalds, @tiangolo, @prisma, @git, @mistralai, @scikit-learn, etc.)
+ *
+ * Coordinates are carefully tuned to create an organic, balanced constellation on BOTH flanks
+ * while leaving the central hero typography completely clean and readable.
  */
 const CONSTELLATION_ORGS: ConstellationOrg[] = [
-  // --- Foreground & Primary Anchors (PyTorch, Kubernetes, Microsoft, OpenAI, Google, etc.) ---
+  // =========================================================================
+  // --- LEFT-SIDE CONSTELLATION ---
+  // =========================================================================
+
+  // --- Left Foreground & Primary Anchors ---
   {
     id: "pytorch",
     name: "PyTorch",
@@ -70,7 +78,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     name: "OpenAI",
     handle: "openai",
     top: 28,
-    left: 22,
+    left: 21,
     size: "lg",
     depth: "fore",
     animVariant: 2,
@@ -110,7 +118,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     delay: 0.4,
   },
 
-  // --- Mid-ground Cluster (Rust, Anthropic, HuggingFace, Supabase, Flutter, Go, Node, etc.) ---
+  // --- Left Mid-ground Cluster ---
   {
     id: "rust",
     name: "Rust",
@@ -127,7 +135,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     name: "Anthropic",
     handle: "anthropics",
     top: 42,
-    left: 1.5,
+    left: 2,
     size: "md",
     depth: "mid",
     animVariant: 2,
@@ -160,7 +168,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     name: "TensorFlow",
     handle: "tensorflow",
     top: 15,
-    left: 27,
+    left: 26,
     size: "md",
     depth: "mid",
     animVariant: 2,
@@ -170,8 +178,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "golang",
     name: "Go",
     handle: "golang",
-    top: 20,
-    left: 31,
+    top: 21,
+    left: 26,
     size: "md",
     depth: "mid",
     animVariant: 3,
@@ -203,8 +211,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "supabase",
     name: "Supabase",
     handle: "supabase",
-    top: 43,
-    left: 28,
+    top: 38,
+    left: 24,
     size: "md",
     depth: "mid",
     animVariant: 3,
@@ -248,7 +256,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     name: "JetBrains",
     handle: "JetBrains",
     top: 79,
-    left: 28.5,
+    left: 27,
     size: "md",
     depth: "mid",
     animVariant: 1,
@@ -277,13 +285,13 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     delay: 2.0,
   },
 
-  // --- Background Depth (Astro, Django, Homebrew, NestJS, Neovim, Bun, Redux, etc.) ---
+  // --- Left Background Depth ---
   {
     id: "neovim",
     name: "Neovim",
     handle: "neovim",
     top: 77,
-    left: 22.5,
+    left: 20,
     size: "sm",
     depth: "back",
     animVariant: 1,
@@ -293,8 +301,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "django",
     name: "Django",
     handle: "django",
-    top: 42,
-    left: 40.5,
+    top: 87,
+    left: 25,
     size: "sm",
     depth: "back",
     animVariant: 2,
@@ -304,8 +312,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "homebrew",
     name: "Homebrew",
     handle: "Homebrew",
-    top: 30.5,
-    left: 36.5,
+    top: 29,
+    left: 24,
     size: "sm",
     depth: "back",
     animVariant: 3,
@@ -315,8 +323,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "nestjs",
     name: "NestJS",
     handle: "nestjs",
-    top: 43,
-    left: 49.5,
+    top: 7,
+    left: 24,
     size: "sm",
     depth: "back",
     animVariant: 1,
@@ -337,8 +345,8 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     id: "reduxjs",
     name: "Redux",
     handle: "reduxjs",
-    top: 71,
-    left: 37.5,
+    top: 84,
+    left: 16,
     size: "sm",
     depth: "back",
     animVariant: 3,
@@ -360,7 +368,7 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     name: "Spring",
     handle: "spring-projects",
     top: 6,
-    left: 18.5,
+    left: 17,
     size: "sm",
     depth: "back",
     animVariant: 2,
@@ -376,6 +384,478 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "back",
     animVariant: 3,
     delay: 1.2,
+  },
+
+  // =========================================================================
+  // --- RIGHT-SIDE CONSTELLATION (From User's Reference Pages #101-#180) ---
+  // =========================================================================
+
+  // --- Right Foreground & Primary Anchors ---
+  {
+    id: "tailwindlabs",
+    name: "Tailwind CSS",
+    handle: "tailwindlabs",
+    top: 10,
+    left: 91,
+    size: "lg",
+    depth: "fore",
+    animVariant: 1,
+    delay: 0.3,
+  },
+  {
+    id: "vitejs",
+    name: "Vite",
+    handle: "vitejs",
+    top: 24,
+    left: 83,
+    size: "lg",
+    depth: "fore",
+    animVariant: 2,
+    delay: 1.2,
+  },
+  {
+    id: "torvalds",
+    name: "Linus Torvalds",
+    handle: "torvalds",
+    top: 36,
+    left: 93,
+    size: "lg",
+    depth: "fore",
+    animVariant: 3,
+    delay: 0.8,
+  },
+  {
+    id: "tiangolo",
+    name: "FastAPI / Tiangolo",
+    handle: "tiangolo",
+    top: 51,
+    left: 86,
+    size: "lg",
+    depth: "fore",
+    animVariant: 1,
+    delay: 2.1,
+  },
+  {
+    id: "prisma",
+    name: "Prisma",
+    handle: "prisma",
+    top: 66,
+    left: 93,
+    size: "lg",
+    depth: "fore",
+    animVariant: 2,
+    delay: 1.7,
+  },
+  {
+    id: "git",
+    name: "Git",
+    handle: "git",
+    top: 78,
+    left: 86,
+    size: "lg",
+    depth: "fore",
+    animVariant: 3,
+    delay: 0.5,
+  },
+  {
+    id: "mistralai",
+    name: "Mistral AI",
+    handle: "mistralai",
+    top: 42,
+    left: 77,
+    size: "lg",
+    depth: "fore",
+    animVariant: 1,
+    delay: 2.9,
+  },
+  {
+    id: "shadcn-ui",
+    name: "shadcn/ui",
+    handle: "shadcn-ui",
+    top: 20,
+    left: 95,
+    size: "lg",
+    depth: "fore",
+    animVariant: 2,
+    delay: 1.8,
+  },
+
+  // --- Right Mid-ground Cluster ---
+  {
+    id: "scikit-learn",
+    name: "scikit-learn",
+    handle: "scikit-learn",
+    top: 6,
+    left: 83,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 1.4,
+  },
+  {
+    id: "numpy",
+    name: "NumPy",
+    handle: "numpy",
+    top: 15,
+    left: 76,
+    size: "md",
+    depth: "mid",
+    animVariant: 3,
+    delay: 2.3,
+  },
+  {
+    id: "pydantic",
+    name: "Pydantic",
+    handle: "pydantic",
+    top: 28,
+    left: 76,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 0.9,
+  },
+  {
+    id: "electron",
+    name: "Electron",
+    handle: "electron",
+    top: 32,
+    left: 96,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 3.1,
+  },
+  {
+    id: "pandas-dev",
+    name: "pandas",
+    handle: "pandas-dev",
+    top: 48,
+    left: 95,
+    size: "md",
+    depth: "mid",
+    animVariant: 3,
+    delay: 1.6,
+  },
+  {
+    id: "psf",
+    name: "Python Software Foundation",
+    handle: "psf",
+    top: 60,
+    left: 79,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 2.5,
+  },
+  {
+    id: "clickhouse",
+    name: "ClickHouse",
+    handle: "ClickHouse",
+    top: 60,
+    left: 96,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 0.7,
+  },
+  {
+    id: "helm",
+    name: "Helm",
+    handle: "helm",
+    top: 72,
+    left: 78,
+    size: "md",
+    depth: "mid",
+    animVariant: 3,
+    delay: 3.3,
+  },
+  {
+    id: "duckdb",
+    name: "DuckDB",
+    handle: "duckdb",
+    top: 84,
+    left: 82,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 1.1,
+  },
+  {
+    id: "curl",
+    name: "curl",
+    handle: "curl",
+    top: 86,
+    left: 92,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 2.7,
+  },
+  {
+    id: "surrealdb",
+    name: "SurrealDB",
+    handle: "surrealdb",
+    top: 5,
+    left: 95,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 3.6,
+  },
+  {
+    id: "dbt-labs",
+    name: "dbt Labs",
+    handle: "dbt-labs",
+    top: 73,
+    left: 95,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 0.4,
+  },
+  {
+    id: "cilium",
+    name: "Cilium",
+    handle: "cilium",
+    top: 16,
+    left: 88,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 2.2,
+  },
+  {
+    id: "caddyserver",
+    name: "Caddy Server",
+    handle: "caddyserver",
+    top: 29,
+    left: 89,
+    size: "md",
+    depth: "mid",
+    animVariant: 3,
+    delay: 1.0,
+  },
+  {
+    id: "argoproj",
+    name: "Argo Project",
+    handle: "argoproj",
+    top: 58,
+    left: 88,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 3.4,
+  },
+  {
+    id: "solana-labs",
+    name: "Solana",
+    handle: "solana-labs",
+    top: 92,
+    left: 95,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 3.7,
+  },
+  {
+    id: "bitcoin",
+    name: "Bitcoin",
+    handle: "bitcoin",
+    top: 91,
+    left: 87,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 0.9,
+  },
+
+  // --- Right Background Depth Particles ---
+  {
+    id: "llvm",
+    name: "LLVM",
+    handle: "llvm",
+    top: 4,
+    left: 75,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 1.5,
+  },
+  {
+    id: "ansible",
+    name: "Ansible",
+    handle: "ansible",
+    top: 12,
+    left: 71,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.8,
+  },
+  {
+    id: "vllm-project",
+    name: "vLLM",
+    handle: "vllm-project",
+    top: 21,
+    left: 73,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 0.6,
+  },
+  {
+    id: "lightning-ai",
+    name: "PyTorch Lightning",
+    handle: "Lightning-AI",
+    top: 33,
+    left: 74,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 3.2,
+  },
+  {
+    id: "istio",
+    name: "Istio",
+    handle: "istio",
+    top: 45,
+    left: 73,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 1.9,
+  },
+  {
+    id: "posthog",
+    name: "PostHog",
+    handle: "PostHog",
+    top: 55,
+    left: 74,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 2.2,
+  },
+  {
+    id: "open-telemetry",
+    name: "OpenTelemetry",
+    handle: "open-telemetry",
+    top: 65,
+    left: 74,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 0.8,
+  },
+  {
+    id: "starship",
+    name: "Starship",
+    handle: "starship",
+    top: 77,
+    left: 72,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 3.5,
+  },
+  {
+    id: "alacritty",
+    name: "Alacritty",
+    handle: "alacritty",
+    top: 82,
+    left: 75,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 1.3,
+  },
+  {
+    id: "temporalio",
+    name: "Temporal",
+    handle: "temporalio",
+    top: 89,
+    left: 78,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 2.4,
+  },
+  {
+    id: "etcd-io",
+    name: "etcd",
+    handle: "etcd-io",
+    top: 53,
+    left: 72,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 1.7,
+  },
+  {
+    id: "qdrant",
+    name: "Qdrant",
+    handle: "qdrant",
+    top: 38,
+    left: 71,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.6,
+  },
+  {
+    id: "minio",
+    name: "MinIO",
+    handle: "minio",
+    top: 27,
+    left: 72,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 3.0,
+  },
+  {
+    id: "traefik",
+    name: "Traefik",
+    handle: "traefik",
+    top: 66,
+    left: 84,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.0,
+  },
+  {
+    id: "appwrite",
+    name: "Appwrite",
+    handle: "appwrite",
+    top: 79,
+    left: 96,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 1.6,
+  },
+  {
+    id: "weaviate",
+    name: "Weaviate",
+    handle: "weaviate",
+    top: 8,
+    left: 87,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 3.1,
+  },
+  {
+    id: "cohere-ai",
+    name: "Cohere",
+    handle: "cohere-ai",
+    top: 44,
+    left: 96,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.3,
   },
 ];
 
@@ -404,22 +884,22 @@ export function FloatingOrgBadges() {
       aria-label="Floating GitHub organization badges constellation"
     >
       {CONSTELLATION_ORGS.map((org) => {
-        // Size styling mapping
-        let containerSize = "w-13 h-13 sm:w-14 sm:h-14";
-        let logoSize = "w-7 h-7 sm:w-8 sm:h-8";
+        // Size styling mapping with robust CSS dimensions
+        let containerSize = "w-12 h-12 sm:w-14 sm:h-14";
+        let logoSize = "w-6 h-6 sm:w-7 sm:h-7";
         let depthOpacity = "opacity-95";
-        let zLayer = "z-3";
+        let zLayer = "z-30";
 
         if (org.size === "md") {
           containerSize = "w-10 h-10 sm:w-11 sm:h-11";
-          logoSize = "w-5.5 h-5.5 sm:w-6 sm:h-6";
+          logoSize = "w-5 h-5 sm:w-6 sm:h-6";
           depthOpacity = "opacity-85";
-          zLayer = "z-2";
+          zLayer = "z-20";
         } else if (org.size === "sm") {
-          containerSize = "w-8.5 h-8.5 sm:w-9 sm:h-9";
-          logoSize = "w-4.5 h-4.5 sm:w-5 sm:h-5";
+          containerSize = "w-8 h-8 sm:w-9 sm:h-9";
+          logoSize = "w-4 h-4 sm:w-5 sm:h-5";
           depthOpacity = "opacity-70";
-          zLayer = "z-1";
+          zLayer = "z-10";
         }
 
         // Animation variant mapping
@@ -451,14 +931,14 @@ export function FloatingOrgBadges() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={`@${org.handle} (${org.name}) on GitHub`}
-                className={`group relative flex items-center justify-center ${containerSize} rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md shadow-md shadow-slate-200/70 hover:scale-120 hover:border-blue-400 hover:bg-white hover:shadow-xl hover:shadow-blue-500/15 hover:z-20 transition-all duration-300 cursor-pointer`}
+                className={`group relative flex items-center justify-center ${containerSize} rounded-2xl border border-slate-200/90 bg-white/95 backdrop-blur-md shadow-md shadow-slate-200/70 hover:scale-120 hover:border-blue-500 hover:bg-white hover:shadow-xl hover:shadow-blue-500/20 hover:z-50 transition-all duration-300 cursor-pointer`}
               >
                 {/* Dynamic GitHub CDN avatar */}
                 <img
                   src={`https://github.com/${org.handle}.png?size=96`}
                   alt={org.name}
                   loading="eager"
-                  className={`${logoSize} rounded-xl object-contain filter group-hover:brightness-110 transition-all duration-200`}
+                  className={`${logoSize} rounded-xl object-contain filter group-hover:brightness-105 transition-all duration-200`}
                   onError={(e) => {
                     // Fallback to unavatar CDN if needed
                     const target = e.target as HTMLImageElement;
@@ -469,7 +949,7 @@ export function FloatingOrgBadges() {
                 />
 
                 {/* Subtle hover pill tooltip */}
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md text-[11px] font-mono tracking-tight text-white bg-[#0f172a]/95 border border-white/15 backdrop-blur-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-30">
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-md text-[11px] font-mono tracking-tight text-white bg-[#0f172a]/95 border border-white/15 backdrop-blur-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                   @{org.handle}
                 </span>
               </a>
