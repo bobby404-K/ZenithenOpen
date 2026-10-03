@@ -16,15 +16,19 @@ interface ConstellationOrg {
 }
 
 /**
- * Curated GitHub Organizations Constellation:
- * Specially calibrated for a left-aligned hero section:
- * - The left half (top: 10% to 82%, left: 0% to 66%) is completely clear for the headline, paragraph, and CTA.
- * - The right half (left: 67% to 96%) houses a lush, multi-depth 3D floating constellation with zero text obstruction.
- * - Subtle perimeter anchors sit along the top margin and bottom margin for balanced ambient atmosphere.
+ * Organic GitHub Organizations Constellation:
+ * Meticulously tuned to populate all ambient corridors while framing the hero typography:
+ * 1. Top Horizon (top: 4% to 8%): Continuous stream across the header margin.
+ * 2. Pocket beside "us stronger," (top: 38% to 42%, left: 39% to 54%).
+ * 3. Pocket beside "small." (top: 61% to 66%, left: 24% to 49%).
+ * 4. Crescent curve flanking headline ends (top: 28% to 64%, left: 59% to 65%).
+ * 5. Horizontal belt right of "Connect GitHub Org" (top: 78% to 82%, left: 27% to 60%).
+ * 6. Bottom horizon below terminal card (top: 92% to 95%, left: 6% to 80%).
+ * 7. Right flank main constellation (left: 68% to 96%).
  */
 const CONSTELLATION_ORGS: ConstellationOrg[] = [
   // =========================================================================
-  // --- TOP PERIMETER ANCHORS (Safely in top margin, top: 4% to 7%) ---
+  // --- 1. TOP HORIZON (Continuous stream above headline, top: 4% to 8%) ---
   // =========================================================================
   {
     id: "microsoft",
@@ -38,6 +42,17 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     delay: 2.3,
   },
   {
+    id: "keycloak",
+    name: "Keycloak",
+    handle: "keycloak",
+    top: 5,
+    left: 13,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 1.7,
+  },
+  {
     id: "apache",
     name: "Apache",
     handle: "apache",
@@ -47,6 +62,17 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "mid",
     animVariant: 1,
     delay: 3.5,
+  },
+  {
+    id: "certbot",
+    name: "Certbot",
+    handle: "certbot",
+    top: 6.5,
+    left: 28,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 0.8,
   },
   {
     id: "spring-projects",
@@ -60,6 +86,17 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     delay: 3.6,
   },
   {
+    id: "k3s-io",
+    name: "k3s",
+    handle: "k3s-io",
+    top: 5,
+    left: 44,
+    size: "sm",
+    depth: "mid",
+    animVariant: 3,
+    delay: 2.1,
+  },
+  {
     id: "withastro",
     name: "Astro",
     handle: "withastro",
@@ -70,9 +107,348 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     animVariant: 1,
     delay: 0.5,
   },
+  {
+    id: "envoyproxy",
+    name: "Envoy Proxy",
+    handle: "envoyproxy",
+    top: 6.5,
+    left: 59,
+    size: "sm",
+    depth: "mid",
+    animVariant: 2,
+    delay: 1.4,
+  },
+  {
+    id: "zenithen",
+    name: "ZenithenLab",
+    handle: "IST-ZenithenLab",
+    top: 6,
+    left: 66,
+    size: "lg",
+    depth: "fore",
+    animVariant: 2,
+    delay: 0.4,
+  },
 
   // =========================================================================
-  // --- MAIN RIGHT-SIDE CONSTELLATION (left: 67% to 96%) ---
+  // --- 2. POCKET BESIDE "us stronger," (top: 38% to 43%, left: 39% to 54%) ---
+  // =========================================================================
+  {
+    id: "encode",
+    name: "Encode",
+    handle: "encode",
+    top: 39,
+    left: 39,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.0,
+  },
+  {
+    id: "scipy",
+    name: "SciPy",
+    handle: "scipy",
+    top: 41,
+    left: 46,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 1.5,
+  },
+  {
+    id: "triton-lang",
+    name: "Triton",
+    handle: "triton-lang",
+    top: 38,
+    left: 53,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 3.1,
+  },
+
+  // =========================================================================
+  // --- 3. POCKET BESIDE "small." (top: 60% to 66%, left: 24% to 49%) ---
+  // =========================================================================
+  {
+    id: "fastapi",
+    name: "FastAPI",
+    handle: "fastapi",
+    top: 62,
+    left: 24,
+    size: "md",
+    depth: "mid",
+    animVariant: 1,
+    delay: 3.1,
+  },
+  {
+    id: "directus",
+    name: "Directus",
+    handle: "directus",
+    top: 64,
+    left: 32,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 2.7,
+  },
+  {
+    id: "strapi",
+    name: "Strapi",
+    handle: "strapi",
+    top: 61,
+    left: 40,
+    size: "md",
+    depth: "mid",
+    animVariant: 3,
+    delay: 1.8,
+  },
+  {
+    id: "pocketbase",
+    name: "PocketBase",
+    handle: "pocketbase",
+    top: 64,
+    left: 48,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 0.9,
+  },
+
+  // =========================================================================
+  // --- 4. CRESCENT CURVE FLANKING HEADLINE ENDS (left: 59% to 65%) ---
+  // =========================================================================
+  {
+    id: "deepchem",
+    name: "DeepChem",
+    handle: "deepchem",
+    top: 28,
+    left: 63,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.4,
+  },
+  {
+    id: "networkx",
+    name: "NetworkX",
+    handle: "networkx",
+    top: 36,
+    left: 60,
+    size: "sm",
+    depth: "mid",
+    animVariant: 2,
+    delay: 1.1,
+  },
+  {
+    id: "openai",
+    name: "OpenAI",
+    handle: "openai",
+    top: 46,
+    left: 62,
+    size: "lg",
+    depth: "fore",
+    animVariant: 2,
+    delay: 0.6,
+  },
+  {
+    id: "milvus-io",
+    name: "Milvus",
+    handle: "milvus-io",
+    top: 54,
+    left: 60,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 3.3,
+  },
+  {
+    id: "google",
+    name: "Google",
+    handle: "google",
+    top: 62,
+    left: 63,
+    size: "lg",
+    depth: "fore",
+    animVariant: 1,
+    delay: 1.7,
+  },
+
+  // =========================================================================
+  // --- 5. HORIZONTAL BELT RIGHT OF "Connect GitHub Org" (top: 77% to 82%) ---
+  // =========================================================================
+  {
+    id: "sqlfluff",
+    name: "SQLFluff",
+    handle: "sqlfluff",
+    top: 79,
+    left: 27,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 2.2,
+  },
+  {
+    id: "sqlalchemy",
+    name: "SQLAlchemy",
+    handle: "sqlalchemy",
+    top: 80,
+    left: 35,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 1.6,
+  },
+  {
+    id: "pytest-dev",
+    name: "pytest",
+    handle: "pytest-dev",
+    top: 78,
+    left: 43,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 0.7,
+  },
+  {
+    id: "crossplane",
+    name: "Crossplane",
+    handle: "crossplane",
+    top: 81,
+    left: 51,
+    size: "sm",
+    depth: "mid",
+    animVariant: 1,
+    delay: 2.9,
+  },
+  {
+    id: "kedacore",
+    name: "KEDA",
+    handle: "kedacore",
+    top: 78,
+    left: 59,
+    size: "md",
+    depth: "mid",
+    animVariant: 2,
+    delay: 3.4,
+  },
+
+  // =========================================================================
+  // --- 6. BOTTOM HORIZON BELOW TERMINAL CARD (top: 92% to 95%, left: 6% to 80%) ---
+  // =========================================================================
+  {
+    id: "oven-sh",
+    name: "Bun",
+    handle: "oven-sh",
+    top: 94,
+    left: 6,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 1.6,
+  },
+  {
+    id: "tmux",
+    name: "tmux",
+    handle: "tmux",
+    top: 93,
+    left: 14,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 2.5,
+  },
+  {
+    id: "ollama",
+    name: "Ollama",
+    handle: "ollama",
+    top: 94,
+    left: 22,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 1.2,
+  },
+  {
+    id: "fish-shell",
+    name: "Fish Shell",
+    handle: "fish-shell",
+    top: 93,
+    left: 30,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 3.0,
+  },
+  {
+    id: "django",
+    name: "Django",
+    handle: "django",
+    top: 93,
+    left: 38,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 2.2,
+  },
+  {
+    id: "zellij-org",
+    name: "Zellij",
+    handle: "zellij-org",
+    top: 94,
+    left: 46,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 1.9,
+  },
+  {
+    id: "neovide",
+    name: "Neovide",
+    handle: "neovide",
+    top: 93,
+    left: 54,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 0.8,
+  },
+  {
+    id: "goharbor",
+    name: "Harbor",
+    handle: "goharbor",
+    top: 94,
+    left: 62,
+    size: "sm",
+    depth: "back",
+    animVariant: 2,
+    delay: 2.8,
+  },
+  {
+    id: "rancher",
+    name: "Rancher",
+    handle: "rancher",
+    top: 93,
+    left: 70,
+    size: "sm",
+    depth: "back",
+    animVariant: 3,
+    delay: 1.4,
+  },
+  {
+    id: "opensearch-project",
+    name: "OpenSearch",
+    handle: "opensearch-project",
+    top: 94,
+    left: 78,
+    size: "sm",
+    depth: "back",
+    animVariant: 1,
+    delay: 3.3,
+  },
+
+  // =========================================================================
+  // --- 7. MAIN RIGHT-SIDE CONSTELLATION (left: 68% to 96%) ---
   // =========================================================================
 
   // --- Foreground & Primary Anchors ---
@@ -97,17 +473,6 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "fore",
     animVariant: 2,
     delay: 1.1,
-  },
-  {
-    id: "openai",
-    name: "OpenAI",
-    handle: "openai",
-    top: 50,
-    left: 68,
-    size: "lg",
-    depth: "fore",
-    animVariant: 2,
-    delay: 0.6,
   },
   {
     id: "tailwindlabs",
@@ -198,17 +563,6 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     delay: 1.8,
   },
   {
-    id: "google",
-    name: "Google",
-    handle: "google",
-    top: 64,
-    left: 69,
-    size: "lg",
-    depth: "fore",
-    animVariant: 1,
-    delay: 1.7,
-  },
-  {
     id: "meta",
     name: "Meta",
     handle: "meta",
@@ -229,17 +583,6 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "fore",
     animVariant: 1,
     delay: 1.4,
-  },
-  {
-    id: "zenithen",
-    name: "ZenithenLab",
-    handle: "IST-ZenithenLab",
-    top: 7,
-    left: 66,
-    size: "lg",
-    depth: "fore",
-    animVariant: 2,
-    delay: 0.4,
   },
 
   // --- Mid-ground Cluster ---
@@ -297,17 +640,6 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "mid",
     animVariant: 3,
     delay: 2.1,
-  },
-  {
-    id: "fastapi",
-    name: "FastAPI",
-    handle: "fastapi",
-    top: 42,
-    left: 68,
-    size: "md",
-    depth: "mid",
-    animVariant: 1,
-    delay: 3.1,
   },
   {
     id: "scikit-learn",
@@ -739,43 +1071,6 @@ const CONSTELLATION_ORGS: ConstellationOrg[] = [
     depth: "back",
     animVariant: 2,
     delay: 2.4,
-  },
-
-  // =========================================================================
-  // --- BOTTOM PERIMETER ANCHORS (Far bottom-left, safely below buttons) ---
-  // =========================================================================
-  {
-    id: "oven-sh",
-    name: "Bun",
-    handle: "oven-sh",
-    top: 94,
-    left: 6,
-    size: "sm",
-    depth: "back",
-    animVariant: 1,
-    delay: 1.6,
-  },
-  {
-    id: "ollama",
-    name: "Ollama",
-    handle: "ollama",
-    top: 94,
-    left: 20,
-    size: "sm",
-    depth: "back",
-    animVariant: 3,
-    delay: 1.2,
-  },
-  {
-    id: "django",
-    name: "Django",
-    handle: "django",
-    top: 93,
-    left: 36,
-    size: "sm",
-    depth: "back",
-    animVariant: 2,
-    delay: 2.2,
   },
 ];
 
