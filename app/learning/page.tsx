@@ -41,18 +41,18 @@ export default function LearningPathsPage() {
   };
 
   return (
-    <div className="py-12 bg-grid-pattern min-h-screen">
+    <div className="py-12 bg-white min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="border-b border-slate-800/80 pb-8">
-          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
+        <div className="border-b border-slate-200 pb-8">
+          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-purple-600 font-mono">
             <GraduationCap className="h-4 w-4" />
             <span>Structured Roadmaps & GSoC Playbook</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mt-2">
             Open-Source Learning Paths
           </h1>
-          <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
+          <p className="mt-2 text-sm text-slate-600 max-w-2xl leading-relaxed">
             Zero-to-contributor engineering curriculums. Complete weekly milestones, fork reference repositories, and prepare for Google Summer of Code (GSoC) and LFX Mentorships.
           </p>
         </div>
@@ -67,23 +67,23 @@ export default function LearningPathsPage() {
                 onClick={() => setSelectedPathId(path.id)}
                 className={`text-left p-5 rounded-xl border transition-all duration-200 ${
                   isSelected
-                    ? "bg-slate-900 border-blue-500 ring-2 ring-blue-500/20 shadow-lg"
-                    : "bg-slate-900/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/70"
+                    ? "bg-blue-50/80 border-blue-500 ring-2 ring-blue-500/20 shadow-md"
+                    : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <Badge variant={isSelected ? "default" : "outline"} className="text-[10px]">
                     {path.level}
                   </Badge>
-                  <span className="text-[11px] text-slate-400 flex items-center">
+                  <span className="text-[11px] text-slate-500 flex items-center">
                     <Users className="h-3 w-3 mr-1" />
                     {path.enrolledCount}
                   </span>
                 </div>
-                <h3 className="font-bold text-white text-sm mt-3 line-clamp-1">
+                <h3 className="font-bold text-slate-900 text-sm mt-3 line-clamp-1">
                   {path.title}
                 </h3>
-                <p className="text-[11px] text-slate-400 mt-1 flex items-center">
+                <p className="text-[11px] text-slate-500 mt-1 flex items-center">
                   <Clock className="h-3 w-3 mr-1" />
                   {path.estimatedWeeks} Weeks • Guided Project
                 </p>
@@ -98,14 +98,14 @@ export default function LearningPathsPage() {
           <div className="lg:col-span-8 space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-slate-900">
                   {activePath.title}
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-600 mt-1">
                   {activePath.description}
                 </p>
               </div>
-              <Button size="sm" variant="default" className="shrink-0">
+              <Button size="sm" variant="default" className="shrink-0 bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
                 Enroll in Track
               </Button>
             </div>
@@ -115,20 +115,20 @@ export default function LearningPathsPage() {
                 const isExpanded = expandedWeeks[week.weekNumber] ?? false;
 
                 return (
-                  <Card key={week.weekNumber} className="border-slate-800 bg-slate-900/60 overflow-hidden">
+                  <Card key={week.weekNumber} className="border-slate-200 bg-white overflow-hidden shadow-sm">
                     <div
                       onClick={() => toggleWeek(week.weekNumber)}
-                      className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/30 transition-colors"
+                      className="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex items-center space-x-3.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-950/80 border border-blue-800/60 font-mono text-xs font-bold text-blue-400">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 border border-blue-200 font-mono text-xs font-bold text-blue-600">
                           W{week.weekNumber}
                         </div>
                         <div>
-                          <h4 className="text-sm font-semibold text-white">
+                          <h4 className="text-sm font-semibold text-slate-900">
                             {week.title}
                           </h4>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-500">
                             {week.summary}
                           </p>
                         </div>
@@ -144,32 +144,32 @@ export default function LearningPathsPage() {
                     </div>
 
                     {isExpanded && (
-                      <div className="px-5 pb-5 pt-2 border-t border-slate-800/60 space-y-4 bg-slate-950/40 text-xs">
+                      <div className="px-5 pb-5 pt-2 border-t border-slate-200 space-y-4 bg-slate-50/60 text-xs">
                         {/* Milestone project */}
-                        <div className="flex items-start space-x-2 bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-slate-200">
-                          <Target className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div className="flex items-start space-x-2 bg-white p-3 rounded-lg border border-slate-200 text-slate-700">
+                          <Target className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                           <div>
-                            <span className="font-semibold text-white">Milestone Deliverable: </span>
+                            <span className="font-semibold text-slate-900">Milestone Deliverable: </span>
                             <span>{week.milestoneProject}</span>
                           </div>
                         </div>
 
                         {/* Topics */}
                         <div className="space-y-2.5">
-                          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                             Topics & Deep Dives
                           </p>
                           {week.topics.map((topic, i) => (
-                            <div key={i} className="rounded-lg border border-slate-800/80 bg-slate-900/40 p-3">
+                            <div key={i} className="rounded-lg border border-slate-200 bg-white p-3 shadow-xs">
                               <div className="flex items-center justify-between">
-                                <span className="font-medium text-slate-200">
+                                <span className="font-medium text-slate-800">
                                   {topic.title}
                                 </span>
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[10px] text-slate-500">
                                   {topic.duration}
                                 </span>
                               </div>
-                              <p className="text-[11px] text-slate-400 mt-1">
+                              <p className="text-[11px] text-slate-600 mt-1">
                                 {topic.description}
                               </p>
 
@@ -181,7 +181,7 @@ export default function LearningPathsPage() {
                                       href={res.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center space-x-1 text-[10px] text-blue-400 hover:text-blue-300 bg-blue-950/40 px-2 py-0.5 rounded border border-blue-900/40"
+                                      className="inline-flex items-center space-x-1 text-[10px] text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200"
                                     >
                                       <span>{res.title}</span>
                                       <ExternalLink className="h-2.5 w-2.5" />
@@ -202,28 +202,28 @@ export default function LearningPathsPage() {
 
           {/* Sidebar: GSoC Blueprint & Skills */}
           <div className="lg:col-span-4 space-y-6">
-            <Card className="p-6 glass-panel border-l-4 border-l-amber-500 space-y-4">
-              <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-amber-400">
+            <Card className="p-6 border-l-4 border-l-amber-500 space-y-4 border border-slate-200 bg-white shadow-sm">
+              <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-amber-600 font-mono">
                 <Award className="h-4 w-4" />
                 <span>GSoC Preparation</span>
               </div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-bold text-slate-900">
                 Open Source Fellowship Tracker
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 ZenithenOpen provides free 1-on-1 mentorship for S-VYASA students applying to Google Summer of Code, LFX, and Linux Foundation programs.
               </p>
-              <ul className="text-xs space-y-2 text-slate-300">
+              <ul className="text-xs space-y-2 text-slate-600">
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Proposal drafting template & peer reviews</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Direct introductions to Apache & CNCF mentors</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Mock technical reviews for qualification PRs</span>
                 </li>
               </ul>
@@ -232,8 +232,8 @@ export default function LearningPathsPage() {
               </Button>
             </Card>
 
-            <Card className="p-6 glass-panel space-y-3">
-              <h4 className="text-sm font-semibold text-white">Skills You Will Master</h4>
+            <Card className="p-6 border border-slate-200 bg-white shadow-sm space-y-3">
+              <h4 className="text-sm font-semibold text-slate-900">Skills You Will Master</h4>
               <div className="flex flex-wrap gap-1.5">
                 {activePath.targetSkills.map((skill) => (
                   <Badge key={skill} variant="outline" className="text-xs">

@@ -95,32 +95,32 @@ export function LiveMetricsDashboard() {
     <section className="relative w-full py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header & Sync status */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-white/[0.06] mb-8 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/80 mb-8 gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400 font-mono">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 font-mono">
                 Live GitHub Telemetry
               </span>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-white mt-1">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
               Community Metrics Engine
             </h2>
           </div>
 
-          <div className="flex items-center space-x-3 text-xs text-slate-400">
-            <span className="flex items-center space-x-1.5 bg-white/[0.03] px-3 py-1.5 rounded-lg border border-white/[0.08]">
-              <Clock className="h-3.5 w-3.5 text-blue-400" />
+          <div className="flex items-center space-x-3 text-xs text-slate-600">
+            <span className="flex items-center space-x-1.5 bg-slate-100/80 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700">
+              <Clock className="h-3.5 w-3.5 text-blue-600" />
               <span className="font-mono text-[11px]">Real-time Sync</span>
             </span>
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center space-x-1.5 bg-white/[0.04] hover:bg-white/[0.08] px-3 py-1.5 rounded-lg border border-white/[0.08] text-slate-300 hover:text-white transition-colors"
+              className="flex items-center space-x-1.5 bg-white hover:bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:text-slate-900 shadow-sm transition-colors"
               title="Refresh telemetry"
             >
               <RefreshCw
-                className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-blue-400" : ""}`}
+                className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin text-blue-600" : ""}`}
               />
               <span>{isRefreshing ? "Querying..." : "Sync Now"}</span>
             </button>
@@ -134,7 +134,7 @@ export function LiveMetricsDashboard() {
             return (
               <Card
                 key={item.label}
-                className="group relative overflow-hidden p-6 glass-panel glass-panel-hover"
+                className="group relative overflow-hidden p-6 hover:border-slate-300 hover:shadow-md transition-all"
               >
                 {/* Subtle ambient light */}
                 <div
@@ -143,18 +143,18 @@ export function LiveMetricsDashboard() {
 
                 <div className="relative z-10 flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                       {item.label}
                     </p>
-                    <p className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-mono">
+                    <p className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-mono">
                       {item.formatted}
                     </p>
-                    <p className="mt-1.5 text-xs text-slate-400">
+                    <p className="mt-1.5 text-xs text-slate-500">
                       {item.subtext}
                     </p>
                   </div>
                   <div
-                    className={`rounded-xl bg-white/[0.03] p-3 border border-white/[0.08] group-hover:border-blue-500/40 transition-colors ${item.iconColor}`}
+                    className={`rounded-xl bg-slate-50 p-3 border border-slate-200 group-hover:border-blue-300 transition-colors ${item.iconColor}`}
                   >
                     <Icon className="h-5 w-5" />
                   </div>

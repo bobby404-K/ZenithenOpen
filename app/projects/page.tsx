@@ -38,20 +38,20 @@ export default function ProjectsPage() {
   });
 
   return (
-    <div className="py-16 bg-grid-pattern min-h-screen">
+    <div className="py-16 bg-white min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="border-b border-white/[0.06] pb-8">
-          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-blue-400 font-mono">
+        <div className="border-b border-slate-200 pb-8">
+          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-blue-600 font-mono">
             <FolderGit2 className="h-4 w-4" />
             <span>Campus Repositories</span>
           </div>
           <div className="mt-2 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+              <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
                 Open-Source Project Catalog
               </h1>
-              <p className="mt-1 text-sm text-slate-400 max-w-2xl leading-relaxed">
+              <p className="mt-1 text-sm text-slate-600 max-w-2xl leading-relaxed">
                 Production codebases engineered by S-VYASA student developers and research labs.
               </p>
             </div>
@@ -60,7 +60,7 @@ export default function ProjectsPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="gap-2 bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 text-xs shrink-0">
+              <Button className="gap-2 bg-blue-600 hover:bg-blue-700 shadow-md text-xs shrink-0 text-white">
                 <GithubIcon className="h-4 w-4" />
                 <span>Visit GitHub Org</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -71,17 +71,17 @@ export default function ProjectsPage() {
           {/* Search & Filter Bar */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search projects by name, tag, or topic..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/[0.03] border-white/[0.08] text-xs focus:border-blue-500/50"
+                className="pl-10 bg-white border-slate-200 text-xs focus:border-blue-500"
               />
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
-              <span className="text-xs text-slate-400 mr-2 flex items-center">
+              <span className="text-xs text-slate-500 mr-2 flex items-center">
                 <Filter className="h-3 w-3 mr-1" /> Language:
               </span>
               {languages.map((lang) => (
@@ -91,7 +91,7 @@ export default function ProjectsPage() {
                   className={`px-3 py-1.5 text-xs rounded-lg transition-colors font-medium ${
                     selectedLanguage === lang
                       ? "bg-blue-600 text-white font-semibold shadow-sm"
-                      : "bg-white/[0.03] border border-white/[0.08] text-slate-400 hover:text-white"
+                      : "bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   {lang}
@@ -103,13 +103,13 @@ export default function ProjectsPage() {
 
         {/* Projects Grid or Zero-State */}
         {filteredProjects.length === 0 ? (
-          <div className="mt-12 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-16 text-center backdrop-blur-xl">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 mb-4">
+          <div className="mt-12 rounded-2xl border border-slate-200 bg-white p-16 text-center shadow-sm">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 mb-4">
               <FolderGit2 className="h-8 w-8" />
             </div>
-            <h3 className="text-xl font-bold text-white">No Repositories Synced Yet</h3>
-            <p className="mt-2 text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
-              Once you configure your <code className="text-blue-300 font-mono">GITHUB_TOKEN</code> or trigger the sync endpoint, repositories under <code className="text-blue-300 font-mono">IST-ZenithenLab</code> will appear here automatically.
+            <h3 className="text-xl font-bold text-slate-900">No Repositories Synced Yet</h3>
+            <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              Once you configure your <code className="text-blue-600 font-mono bg-blue-50 px-1 py-0.5 rounded border border-blue-200">GITHUB_TOKEN</code> or trigger the sync endpoint, repositories under <code className="text-blue-600 font-mono bg-blue-50 px-1 py-0.5 rounded border border-blue-200">IST-ZenithenLab</code> will appear here automatically.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <a
@@ -117,13 +117,13 @@ export default function ProjectsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="default" className="text-xs bg-blue-600 hover:bg-blue-500 gap-1.5">
+                <Button variant="default" className="text-xs bg-blue-600 hover:bg-blue-700 gap-1.5 text-white shadow-sm">
                   <Plus className="h-4 w-4" />
                   <span>Create Campus Repository</span>
                 </Button>
               </a>
               <Link href="/admin">
-                <Button variant="outline" className="text-xs border-white/[0.1] text-slate-300">
+                <Button variant="outline" className="text-xs">
                   Configure Sync in Admin
                 </Button>
               </Link>
@@ -134,10 +134,10 @@ export default function ProjectsPage() {
             {filteredProjects.map((project) => (
               <Card
                 key={project.id}
-                className="glass-panel glass-panel-hover flex flex-col justify-between"
+                className="flex flex-col justify-between hover:border-slate-300 hover:shadow-md transition-all"
               >
                 <CardHeader>
-                  <CardTitle className="text-base font-bold text-white">
+                  <CardTitle className="text-base font-bold text-slate-900">
                     {project.name}
                   </CardTitle>
                 </CardHeader>

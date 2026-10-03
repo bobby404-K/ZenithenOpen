@@ -14,13 +14,13 @@ const buttonVariants = cva(
         emerald:
           "bg-emerald-600 text-white shadow-md hover:bg-emerald-500 hover:shadow-emerald-500/25 border border-emerald-500/50",
         outline:
-          "border border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white hover:border-slate-600 backdrop-blur-sm",
+          "border border-slate-200 bg-white text-slate-800 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 shadow-sm",
         ghost:
-          "text-slate-300 hover:bg-slate-800/80 hover:text-white",
+          "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
         link:
-          "text-blue-400 underline-offset-4 hover:underline",
+          "text-blue-600 underline-offset-4 hover:underline",
         subtle:
-          "bg-slate-800/80 text-slate-200 hover:bg-slate-700/80 border border-slate-700/60",
+          "bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200",
       },
       size: {
         default: "h-10 px-4 py-2",
