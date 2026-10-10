@@ -5,6 +5,19 @@ export interface TopContributionInfo {
   mergedDate: string;
 }
 
+export interface TimeframeStats {
+  rank: number;
+  points: number;
+  prs: number;
+  mergedPrs: number;
+  qualityPrs: number;
+  openPrs: number;
+  closedPrs: number;
+  reviews: number;
+  commits: number;
+  topContribution: TopContributionInfo;
+}
+
 export interface StudentContributor {
   id: string;
   name: string;
@@ -14,34 +27,12 @@ export interface StudentContributor {
   year: string;
   badge: string;
   badgeColor: string;
+  githubUrl: string;
+  linkedinUrl: string;
   // Stats per timeframe
-  week: {
-    rank: number;
-    points: number;
-    prs: number;
-    qualityPrs: number;
-    reviews: number;
-    commits: number;
-    topContribution: TopContributionInfo;
-  };
-  month: {
-    rank: number;
-    points: number;
-    prs: number;
-    qualityPrs: number;
-    reviews: number;
-    commits: number;
-    topContribution: TopContributionInfo;
-  };
-  overall: {
-    rank: number;
-    points: number;
-    prs: number;
-    qualityPrs: number;
-    reviews: number;
-    commits: number;
-    topContribution: TopContributionInfo;
-  };
+  week: TimeframeStats;
+  month: TimeframeStats;
+  overall: TimeframeStats;
 }
 
 export type CompetitionTimeframe = "week" | "month" | "overall";
@@ -56,11 +47,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "3rd Year",
     badge: "Sprint Champion 🏆",
     badgeColor: "bg-amber-500/10 text-amber-600 border-amber-500/30",
+    githubUrl: "https://github.com/adityasharma-dev",
+    linkedinUrl: "https://www.linkedin.com/in/adityasharma-dev",
     week: {
       rank: 1,
       points: 340,
       prs: 4,
+      mergedPrs: 4,
       qualityPrs: 3,
+      openPrs: 1,
+      closedPrs: 5,
       reviews: 7,
       commits: 18,
       topContribution: {
@@ -74,7 +70,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 1,
       points: 1480,
       prs: 16,
+      mergedPrs: 16,
       qualityPrs: 14,
+      openPrs: 2,
+      closedPrs: 18,
       reviews: 28,
       commits: 64,
       topContribution: {
@@ -88,7 +87,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 1,
       points: 5120,
       prs: 54,
+      mergedPrs: 54,
       qualityPrs: 48,
+      openPrs: 3,
+      closedPrs: 58,
       reviews: 92,
       commits: 210,
       topContribution: {
@@ -108,11 +110,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "3rd Year",
     badge: "Algorithm Master ⚡",
     badgeColor: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+    githubUrl: "https://github.com/sneharao-ist",
+    linkedinUrl: "https://www.linkedin.com/in/sneharao-ist",
     week: {
       rank: 2,
       points: 290,
       prs: 3,
+      mergedPrs: 3,
       qualityPrs: 3,
+      openPrs: 1,
+      closedPrs: 4,
       reviews: 5,
       commits: 14,
       topContribution: {
@@ -126,7 +133,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 2,
       points: 1290,
       prs: 14,
+      mergedPrs: 14,
       qualityPrs: 12,
+      openPrs: 2,
+      closedPrs: 16,
       reviews: 22,
       commits: 58,
       topContribution: {
@@ -140,7 +150,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 2,
       points: 4450,
       prs: 48,
+      mergedPrs: 48,
       qualityPrs: 42,
+      openPrs: 3,
+      closedPrs: 52,
       reviews: 76,
       commits: 185,
       topContribution: {
@@ -160,11 +173,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "2nd Year",
     badge: "Fastest PR Merger 🚀",
     badgeColor: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+    githubUrl: "https://github.com/rohank-coder",
+    linkedinUrl: "https://www.linkedin.com/in/rohan-kulkarni-coder",
     week: {
       rank: 3,
       points: 250,
       prs: 3,
+      mergedPrs: 3,
       qualityPrs: 2,
+      openPrs: 1,
+      closedPrs: 4,
       reviews: 4,
       commits: 12,
       topContribution: {
@@ -178,7 +196,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 3,
       points: 1120,
       prs: 12,
+      mergedPrs: 12,
       qualityPrs: 10,
+      openPrs: 2,
+      closedPrs: 14,
       reviews: 17,
       commits: 45,
       topContribution: {
@@ -192,7 +213,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 4,
       points: 3820,
       prs: 39,
+      mergedPrs: 39,
       qualityPrs: 34,
+      openPrs: 4,
+      closedPrs: 44,
       reviews: 52,
       commits: 140,
       topContribution: {
@@ -212,11 +236,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "3rd Year",
     badge: "Top Code Reviewer 🔍",
     badgeColor: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+    githubUrl: "https://github.com/priyanair-oss",
+    linkedinUrl: "https://www.linkedin.com/in/priya-nair-oss",
     week: {
       rank: 4,
       points: 210,
       prs: 2,
+      mergedPrs: 2,
       qualityPrs: 2,
+      openPrs: 1,
+      closedPrs: 3,
       reviews: 8,
       commits: 9,
       topContribution: {
@@ -230,7 +259,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 4,
       points: 980,
       prs: 9,
+      mergedPrs: 9,
       qualityPrs: 8,
+      openPrs: 1,
+      closedPrs: 10,
       reviews: 31,
       commits: 34,
       topContribution: {
@@ -244,7 +276,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 3,
       points: 3950,
       prs: 36,
+      mergedPrs: 36,
       qualityPrs: 32,
+      openPrs: 3,
+      closedPrs: 40,
       reviews: 98,
       commits: 115,
       topContribution: {
@@ -264,11 +299,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "2nd Year",
     badge: "Rising Star ⭐",
     badgeColor: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+    githubUrl: "https://github.com/karthikbhat-dev",
+    linkedinUrl: "https://www.linkedin.com/in/karthik-bhat-dev",
     week: {
       rank: 5,
       points: 170,
       prs: 2,
+      mergedPrs: 2,
       qualityPrs: 2,
+      openPrs: 1,
+      closedPrs: 3,
       reviews: 3,
       commits: 8,
       topContribution: {
@@ -282,7 +322,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 5,
       points: 840,
       prs: 8,
+      mergedPrs: 8,
       qualityPrs: 7,
+      openPrs: 2,
+      closedPrs: 10,
       reviews: 14,
       commits: 29,
       topContribution: {
@@ -296,7 +339,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 5,
       points: 2890,
       prs: 28,
+      mergedPrs: 28,
       qualityPrs: 24,
+      openPrs: 3,
+      closedPrs: 32,
       reviews: 41,
       commits: 95,
       topContribution: {
@@ -316,11 +362,16 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     year: "1st Year",
     badge: "First PR Prodigy 🌟",
     badgeColor: "bg-rose-500/10 text-rose-600 border-rose-500/30",
+    githubUrl: "https://github.com/ananyag-ist",
+    linkedinUrl: "https://www.linkedin.com/in/ananya-gupta-ist",
     week: {
       rank: 6,
       points: 140,
       prs: 2,
+      mergedPrs: 2,
       qualityPrs: 1,
+      openPrs: 1,
+      closedPrs: 3,
       reviews: 2,
       commits: 6,
       topContribution: {
@@ -334,7 +385,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 6,
       points: 680,
       prs: 7,
+      mergedPrs: 7,
       qualityPrs: 5,
+      openPrs: 1,
+      closedPrs: 8,
       reviews: 9,
       commits: 22,
       topContribution: {
@@ -348,7 +402,10 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       rank: 6,
       points: 2120,
       prs: 21,
+      mergedPrs: 21,
       qualityPrs: 17,
+      openPrs: 2,
+      closedPrs: 24,
       reviews: 27,
       commits: 72,
       topContribution: {

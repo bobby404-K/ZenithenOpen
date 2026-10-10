@@ -38,7 +38,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Project } from "@/types";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { MOCK_PROJECTS } from "@/lib/data/mock-data";
 import {
   STUDENT_COMPETITORS,
@@ -779,6 +779,9 @@ function StudentLeaderboardSection({
                   >
                     {isFirst ? "🥇 1st Place Champion" : isSecond ? "🥈 2nd Place" : "🥉 3rd Place"}
                   </Badge>
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-muted/80 border border-border/60 text-muted-foreground">
+                    {stats.points} PTS
+                  </span>
                 </div>
 
                 {/* Student Profile Info */}
@@ -810,22 +813,14 @@ function StudentLeaderboardSection({
                   </span>
                 </div>
 
-                {/* Competition Stats Metrics */}
+                {/* Competition Stats Metrics (Merged, Quality Pt, Open PR, Closed PR) */}
                 <div className="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-muted/50 border border-border/60 text-center">
                   <div>
                     <div className="text-base font-extrabold text-foreground">
-                      {stats.points}
+                      {stats.mergedPrs ?? stats.prs}
                     </div>
                     <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      Points
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-base font-extrabold text-primary">
-                      {stats.prs}
-                    </div>
-                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      PRs
+                      Merged
                     </div>
                   </div>
                   <div>
@@ -833,15 +828,23 @@ function StudentLeaderboardSection({
                       {stats.qualityPrs}
                     </div>
                     <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      Quality PR
+                      Quality Pt
                     </div>
                   </div>
                   <div>
-                    <div className="text-base font-extrabold text-foreground">
-                      {stats.reviews}
+                    <div className="text-base font-extrabold text-amber-500">
+                      {stats.openPrs ?? 1}
                     </div>
                     <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      Reviews
+                      Open PR
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-base font-extrabold text-purple-500">
+                      {stats.closedPrs ?? (stats.prs + 1)}
+                    </div>
+                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
+                      Closed PR
                     </div>
                   </div>
                 </div>
@@ -866,17 +869,37 @@ function StudentLeaderboardSection({
                 </div>
               </CardContent>
 
-              <CardFooter className="pt-3 border-t border-border/60 mt-auto">
+              <CardFooter className="pt-3 border-t border-border/60 mt-auto grid grid-cols-2 gap-2">
                 <a
-                  href={`https://github.com/${student.username}`}
+                  href={student.githubUrl || `https://github.com/${student.username}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full"
                 >
-                  <Button size="sm" variant="outline" className="w-full text-xs gap-1.5 cursor-pointer shadow-xs">
-                    <GithubIcon className="h-3.5 w-3.5" />
-                    <span>View GitHub Profile</span>
-                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs gap-1.5 cursor-pointer shadow-xs hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  >
+                    <GithubIcon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">GitHub</span>
+                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground shrink-0" />
+                  </Button>
+                </a>
+                <a
+                  href={student.linkedinUrl || `https://www.linkedin.com/in/${student.username}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs gap-1.5 cursor-pointer shadow-xs hover:border-blue-500/50 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-all"
+                  >
+                    <LinkedinIcon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">LinkedIn</span>
+                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground shrink-0" />
                   </Button>
                 </a>
               </CardFooter>
@@ -909,9 +932,14 @@ function StudentLeaderboardSection({
               >
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                      #{stats.rank}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                        #{stats.rank}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+                        {stats.points} PTS
+                      </span>
+                    </div>
                     <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-md border", student.badgeColor)}>
                       {student.badge}
                     </span>
@@ -935,20 +963,20 @@ function StudentLeaderboardSection({
 
                   <div className="grid grid-cols-4 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
                     <div>
-                      <div className="font-bold text-foreground">{stats.points}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono">PTS</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-primary">{stats.prs}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono">PRS</div>
+                      <div className="font-bold text-foreground">{stats.mergedPrs ?? stats.prs}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Merged</div>
                     </div>
                     <div>
                       <div className="font-bold text-emerald-600">{stats.qualityPrs}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono">Q-PR</div>
+                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Quality Pt</div>
                     </div>
                     <div>
-                      <div className="font-bold text-foreground">{stats.reviews}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono">REVIEWS</div>
+                      <div className="font-bold text-amber-500">{stats.openPrs ?? 1}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Open PR</div>
+                    </div>
+                    <div>
+                      <div className="font-bold text-purple-500">{stats.closedPrs ?? (stats.prs + 1)}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Closed PR</div>
                     </div>
                   </div>
 
@@ -957,17 +985,37 @@ function StudentLeaderboardSection({
                   </p>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-border/50">
+                <div className="pt-3 mt-3 border-t border-border/50 grid grid-cols-2 gap-2">
                   <a
-                    href={`https://github.com/${student.username}`}
+                    href={student.githubUrl || `https://github.com/${student.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full"
                   >
-                    <Button size="sm" variant="ghost" className="w-full text-xs h-7 gap-1 text-muted-foreground hover:text-foreground">
-                      <GithubIcon className="h-3 w-3" />
-                      <span>GitHub</span>
-                      <ExternalLink className="h-2.5 w-2.5 ml-auto" />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs h-7 gap-1 text-muted-foreground hover:text-foreground border border-border/40 hover:border-border cursor-pointer shadow-xs"
+                    >
+                      <GithubIcon className="h-3 w-3 shrink-0" />
+                      <span className="truncate">GitHub</span>
+                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
+                    </Button>
+                  </a>
+                  <a
+                    href={student.linkedinUrl || `https://www.linkedin.com/in/${student.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full"
+                  >
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs h-7 gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-500 border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5 cursor-pointer shadow-xs"
+                    >
+                      <LinkedinIcon className="h-3 w-3 shrink-0" />
+                      <span className="truncate">LinkedIn</span>
+                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
                     </Button>
                   </a>
                 </div>
