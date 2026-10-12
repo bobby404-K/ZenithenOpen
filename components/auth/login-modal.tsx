@@ -9,10 +9,8 @@ import {
   X,
 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useAuth } from "@/components/auth/auth-context";
-import { VerifiedStudent } from "@/lib/auth/usn-verification";
+import { Button } f
+  sn-verification";
 
 export function LoginModal() {
   const { isLoginModalOpen, closeLoginModal, loginUser } = useAuth();
@@ -114,13 +112,7 @@ export function LoginModal() {
       setErrorMessage("Unable to connect to authentication server. Please try again.");
     } finally {
       setIsConnectingGithub(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-2xl overflow-hidden text-foreground">
-        {/* Ambient background light responding to theme */}
+    }ground light responding to theme */}
         <div
           className="absolute -top-16 -right-16 h-36 w-36 rounded-full blur-3xl pointer-events-none"
           style={{ background: "var(--glow)" }}
