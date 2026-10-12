@@ -5,14 +5,7 @@ import { VerifiedStudent } from "@/lib/auth/usn-verification";
 
 export interface AuthenticatedStudentUser {
   usn: string;
-  name: string;
-  department: string;
-  year: string;
-  college: string;
-  githubUsername: string;
-  avatarUrl: string;
-  role: "MEMBER" | "MENTOR" | "ADMIN";
-  loggedInAt: string;
+
 }
 
 interface AuthContextType {
