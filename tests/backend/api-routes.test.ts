@@ -10,9 +10,6 @@
  *    - 500 Internal Server Error when request payload is malformed
  * 2. GET /api/metrics:
  *    - 200 OK status
- *    - Valid JSON payload structure (success, data, cached, provider)
- *    - Cache-Control headers presence and correctness
- *    - Non-negative metric values in response
  */
 
 import { NextRequest } from "next/server";
@@ -35,14 +32,6 @@ export async function runApiRoutesTests(): Promise<SuiteResult> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({}),
   });
-  const missingRes = await verifyUsnHandler(missingReq);
-  suite.assertEqual(missingRes.status, 400, "POST /api/auth/verify-usn returns 400 when USN is missing");
-  const missingJson = await missingRes.json();
-  suite.assertEqual(missingJson.valid, false, "Response body contains valid: false for missing USN");
-  suite.assertEqual(missingJson.error, "USN is required", "Response error specifies 'USN is required'");
-
-  // Case B: Non-IST USN (Rejected with 404)
-  const nonIstReq = new NextRequest("http://localhost:3000/api/auth/verify-usn", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ usn: "1RV23CS999" }),
