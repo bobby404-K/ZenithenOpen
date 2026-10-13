@@ -3,6 +3,26 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.21.0] - 2026-10-13
+
+### 🏆 Strict Quality Merge Verification Standard & 5-Tier Leaderboard Ranking Algorithm
+
+- **Strict Quality Merge Threshold Requirement**:
+  - Enforced strict repository qualification criteria: A merged pull request is recognized as a Quality Merge only if the repository has at least 100 stars AND 100 forks (`stars >= 100 && forks >= 100`).
+  - Pull requests in repositories below either threshold do not qualify.
+  - Updated philosophical banners and guidelines in `app/leaderboard/page.tsx` and sync engines.
+- **Strict 5-Tier Leaderboard Ranking Algorithm**:
+  - Enforced priority tiebreak ranking comparator across API routes (`app/api/students/leaderboard/route.ts`) and interactive client sorting (`app/leaderboard/page.tsx`):
+    $$\text{Quality Merge} > \text{Total PR} > \text{Open PR} > \text{Closed PR} > \text{Total Merges}$$
+  - Dynamic rank assignments and podium highlights adhere strictly to this multi-tier order.
+  - Aligned mock competitor datasets in `lib/data/student-competition.ts`.
+- **Automated Test Suite Enhancements**:
+  - Added boundary condition tests for exact 100 stars & 100 forks thresholds in `tests/backend/github-sync.test.ts`.
+  - Added full ranking compliance assertion loops in `tests/backend/leaderboard-route.test.ts`.
+  - All test suites passing.
+
+---
+
 ## [1.20.0] - 2026-10-13
 
 ### 📊 Pure Pull Request Contributor Metrics & Complete Removal of Points

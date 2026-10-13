@@ -37,6 +37,37 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
     "Student includes structured topContribution details"
   );
 
+  // Validate strict 5-tier sorting order: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
+  let sortingCompliant = true;
+  for (let i = 0; i < defaultData.competitors.length - 1; i++) {
+    const a = defaultData.competitors[i].week;
+    const b = defaultData.competitors[i + 1].week;
+
+    const qDiff = (a.qualityPrs ?? 0) - (b.qualityPrs ?? 0);
+    if (qDiff !== 0) {
+      if (qDiff < 0) sortingCompliant = false;
+      continue;
+    }
+    const tDiff = (a.prs ?? 0) - (b.prs ?? 0);
+    if (tDiff !== 0) {
+      if (tDiff < 0) sortingCompliant = false;
+      continue;
+    }
+    const oDiff = (a.openPrs ?? 0) - (b.openPrs ?? 0);
+    if (oDiff !== 0) {
+      if (oDiff < 0) sortingCompliant = false;
+      continue;
+    }
+    const cDiff = (a.closedPrs ?? 0) - (b.closedPrs ?? 0);
+    if (cDiff !== 0) {
+      if (cDiff < 0) sortingCompliant = false;
+      continue;
+    }
+    const mDiff = (a.mergedPrs ?? 0) - (b.mergedPrs ?? 0);
+    if (mDiff < 0) sortingCompliant = false;
+  }
+  suite.assertEqual(sortingCompliant, true, "Leaderboard satisfies strict 5-tier ranking order (Quality > Total PR > Open > Closed > Merges)");
+
   // --- 2. Month Timeframe Query ---
   const monthReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month");
   const monthRes = await GET(monthReq);
