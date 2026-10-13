@@ -78,6 +78,27 @@ export async function runGitHubSyncTests(): Promise<SuiteResult> {
   );
   suite.assertEqual(nonQualityPr, false, "PR below 100 stars and 100 forks is not marked as Quality PR");
 
+  const exactThresholdBoundary = evaluateQualityPr(
+    { labels: [], comments: 0, body: "test" },
+    "org/repo",
+    { stars: 100, forks: 100 }
+  );
+  suite.assertEqual(exactThresholdBoundary, true, "Repository with exactly 100 stars and 100 forks qualifies as Quality PR");
+
+  const underStarsBoundary = evaluateQualityPr(
+    { labels: [], comments: 0, body: "test" },
+    "org/repo",
+    { stars: 99, forks: 100 }
+  );
+  suite.assertEqual(underStarsBoundary, false, "Repository with 99 stars and 100 forks fails Quality PR");
+
+  const underForksBoundary = evaluateQualityPr(
+    { labels: [], comments: 0, body: "test" },
+    "org/repo",
+    { stars: 100, forks: 99 }
+  );
+  suite.assertEqual(underForksBoundary, false, "Repository with 100 stars and 99 forks fails Quality PR");
+
   // --- 3. Contribution Points Calculation Formula ---
   const mockPrs: GitHubPullRequestItem[] = [
     {

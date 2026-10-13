@@ -127,7 +127,7 @@ export default function LeaderboardPage() {
           <div className="mt-6 flex items-center space-x-2.5 text-xs text-foreground bg-card border border-border p-3.5 rounded-xl max-w-3xl">
             <Info className="h-4 w-4 text-primary shrink-0" />
             <span>
-              <strong>Quality PR Standard:</strong> Contributions to campus repositories (<code>IST-ZenithenLab/ZenithenOpen</code>) or public repositories with ≥100 stars and ≥100 forks are recognized as Quality PRs.
+              <strong>Quality Merge Standard:</strong> A pull request is recognized as a Quality Merge only if the repository has at least 100 stars AND 100 forks (&ge;100 stars and &ge;100 forks).
             </span>
           </div>
 

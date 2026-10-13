@@ -198,7 +198,7 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       },
     },
     overall: {
-      rank: 4,
+      rank: 3,
       qualityPrs: 34,
       prs: 39,
       openPrs: 2,
@@ -257,7 +257,7 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
       },
     },
     overall: {
-      rank: 3,
+      rank: 4,
       qualityPrs: 32,
       prs: 36,
       openPrs: 2,
