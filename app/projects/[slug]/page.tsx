@@ -630,8 +630,8 @@ export default function ProjectDeepDivePage({
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-primary">{contributor.mergedPrs} PRs</p>
-                          <p className="text-[10px] text-muted-foreground">{contributor.points} pts</p>
+                          <p className="font-bold text-primary">{contributor.mergedPrs} Merged</p>
+                          <p className="text-[10px] text-amber-500 font-semibold">{contributor.qualityPrs} Quality</p>
                         </div>
                       </Link>
                     ))}

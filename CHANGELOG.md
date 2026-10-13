@@ -3,6 +3,33 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] - 2026-10-13
+
+### 📊 Pure Pull Request Contributor Metrics & Complete Removal of Points
+
+- **5-Stat Pull Request Metrics Standard Across Platform**:
+  - Enforced exact 5-metric contributor sequence across all profiles, leaderboards, and student cards:
+    1. **Quality Merge** (gold/amber)
+    2. **Total PR** (default foreground)
+    3. **Open PR** (blue)
+    4. **Closed PR** (rose)
+    5. **Total Merges** (emerald)
+- **Elimination of Points Counters**:
+  - Removed all arbitrary `points`, `PTS`, and artificial weights across UI components, member dossiers, project contributor listings, and admin tables.
+  - Replaced scoring with real open-source pull request verification and activity metrics.
+- **Podium & Leaderboard Standings Enhancement (`app/leaderboard/page.tsx`)**:
+  - Updated Top 3 podium cards with 5-column metric counters.
+  - Updated all standings table headers and data rows to display `Quality Merge`, `Total PR`, `Open PR`, `Closed PR`, and `Total Merges`.
+  - Added multi-criteria sort filters corresponding to the 5 PR categories.
+- **Programs & Profiles Alignment (`app/programs/page.tsx`, `app/members/[username]/page.tsx`)**:
+  - Updated sprint competitor cards to display the 5-stat grid.
+  - Student profile dossier stats grid updated with exact 5 metric cards.
+- **Automated Test Suite (100% Pass Rate)**:
+  - Updated data contracts and leaderboard route test assertions.
+  - All **653 / 653 backend tests passing across 25 suites**.
+
+---
+
 ## [1.19.0] - 2026-10-13
 
 ### 🌟 Dynamic Project Deep-Dive & Student Contributor Profile Showcase Pages

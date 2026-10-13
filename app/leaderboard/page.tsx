@@ -8,7 +8,6 @@ import {
   ArrowRight,
   GitPullRequest,
   Loader2,
-  ExternalLink,
   Sparkles,
   RefreshCw,
 } from "lucide-react";
@@ -19,7 +18,7 @@ import { StudentContributor } from "@/lib/data/student-competition";
 
 export default function LeaderboardPage() {
   const [timeframe, setTimeframe] = React.useState<"week" | "month" | "overall">("month");
-  const [sortBy, setSortBy] = React.useState<"merged" | "quality" | "prs">("merged");
+  const [sortBy, setSortBy] = React.useState<"quality" | "prs" | "open" | "closed" | "merged">("quality");
   const [competitors, setCompetitors] = React.useState<StudentContributor[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSyncing, setIsSyncing] = React.useState(false);
@@ -59,14 +58,27 @@ export default function LeaderboardPage() {
     }
   };
 
-  // Sort competitors according to user selection
+  // Sort competitors: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
   const sortedCompetitors = React.useMemo(() => {
     return [...competitors].sort((a, b) => {
-      const statsA = a[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; prs?: number };
-      const statsB = b[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; prs?: number };
-      if (sortBy === "merged") return (statsB.mergedPrs ?? statsB.prs ?? 0) - (statsA.mergedPrs ?? statsA.prs ?? 0);
-      if (sortBy === "quality") return (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
-      return (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      const statsA = a[timeframe] as unknown as { qualityPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
+      const statsB = b[timeframe] as unknown as { qualityPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
+      if (sortBy === "quality") {
+        const qDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
+        if (qDiff !== 0) return qDiff;
+        const totalDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
+        if (totalDiff !== 0) return totalDiff;
+        const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+        if (openDiff !== 0) return openDiff;
+        const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+        if (closedDiff !== 0) return closedDiff;
+        return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      }
+      if (sortBy === "prs") return (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      if (sortBy === "open") return (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+      if (sortBy === "closed") return (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+      if (sortBy === "merged") return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      return 0;
     });
   }, [competitors, timeframe, sortBy]);
 
@@ -156,27 +168,17 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Sort Filter */}
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground self-start sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground self-start sm:self-auto">
               <span>Sort by:</span>
-              <button
-                onClick={() => setSortBy("merged")}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                  sortBy === "merged"
-                    ? "border-primary/40 bg-primary/15 text-primary font-semibold"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Merged PRs
-              </button>
               <button
                 onClick={() => setSortBy("quality")}
                 className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
                   sortBy === "quality"
-                    ? "border-primary/40 bg-primary/15 text-primary font-semibold"
+                    ? "border-amber-500/40 bg-amber-500/15 text-amber-500 font-semibold"
                     : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Quality PRs
+                Quality Merge
               </button>
               <button
                 onClick={() => setSortBy("prs")}
@@ -186,7 +188,37 @@ export default function LeaderboardPage() {
                     : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Total PRs
+                Total PR
+              </button>
+              <button
+                onClick={() => setSortBy("open")}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                  sortBy === "open"
+                    ? "border-blue-500/40 bg-blue-500/15 text-blue-500 font-semibold"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Open PR
+              </button>
+              <button
+                onClick={() => setSortBy("closed")}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                  sortBy === "closed"
+                    ? "border-rose-500/40 bg-rose-500/15 text-rose-500 font-semibold"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Closed PR
+              </button>
+              <button
+                onClick={() => setSortBy("merged")}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                  sortBy === "merged"
+                    ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500 font-semibold"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Total Merges
               </button>
             </div>
           </div>
@@ -223,7 +255,7 @@ export default function LeaderboardPage() {
             {topThree.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {topThree.map((student, idx) => {
-                  const stats = (student[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; prs?: number; topContribution?: { title: string; prUrl: string } }) || {};
+                  const stats = (student[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; openPrs?: number; closedPrs?: number; prs?: number; topContribution?: { title: string; prUrl: string } }) || {};
                   const rankNum = idx + 1;
                   const medalEmoji = rankNum === 1 ? "🥇" : rankNum === 2 ? "🥈" : "🥉";
                   const borderAccent =
@@ -277,23 +309,35 @@ export default function LeaderboardPage() {
                       </div>
 
                       {/* Stats */}
-                      <div className="mt-6 pt-4 border-t border-border grid grid-cols-3 gap-2 text-center">
-                        <div className="rounded-lg bg-primary/10 p-2 border border-primary/20">
-                          <p className="text-lg font-extrabold text-primary">{stats.mergedPrs ?? stats.prs ?? 0}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-                            Merged
-                          </p>
-                        </div>
-                        <div className="rounded-lg bg-emerald-500/10 p-2 border border-emerald-500/20">
-                          <p className="text-lg font-extrabold text-emerald-500">{stats.qualityPrs ?? 0}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                      <div className="mt-6 pt-4 border-t border-border grid grid-cols-5 gap-1 text-center">
+                        <div className="rounded-lg bg-amber-500/10 p-1.5 border border-amber-500/20">
+                          <p className="text-sm font-extrabold text-amber-500">{stats.qualityPrs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Quality Merge">
                             Quality
                           </p>
                         </div>
-                        <div className="rounded-lg bg-muted/40 p-2">
-                          <p className="text-lg font-extrabold text-foreground">{stats.prs ?? 0}</p>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
-                            Total PRs
+                        <div className="rounded-lg bg-muted/40 p-1.5">
+                          <p className="text-sm font-extrabold text-foreground">{stats.prs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Total PR">
+                            Total PR
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-blue-500/10 p-1.5 border border-blue-500/20">
+                          <p className="text-sm font-extrabold text-blue-500">{stats.openPrs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Open PR">
+                            Open
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-rose-500/10 p-1.5 border border-rose-500/20">
+                          <p className="text-sm font-extrabold text-rose-500">{stats.closedPrs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Closed PR">
+                            Closed
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-emerald-500/10 p-1.5 border border-emerald-500/20">
+                          <p className="text-sm font-extrabold text-emerald-500">{stats.mergedPrs ?? stats.prs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Total Merges">
+                            Merges
                           </p>
                         </div>
                       </div>
@@ -342,10 +386,11 @@ export default function LeaderboardPage() {
                       <th className="py-3 px-4 w-16">Rank</th>
                       <th className="py-3 px-4">Contributor</th>
                       <th className="py-3 px-4">Department</th>
-                      <th className="py-3 px-4 text-center">Merged PRs</th>
-                      <th className="py-3 px-4 text-center">Quality PRs</th>
-                      <th className="py-3 px-4 text-center">Open PRs</th>
-                      <th className="py-3 px-4 text-center">Closed PRs</th>
+                      <th className="py-3 px-4 text-center">Quality Merge</th>
+                      <th className="py-3 px-4 text-center">Total PR</th>
+                      <th className="py-3 px-4 text-center">Open PR</th>
+                      <th className="py-3 px-4 text-center">Closed PR</th>
+                      <th className="py-3 px-4 text-center">Total Merges</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -387,17 +432,20 @@ export default function LeaderboardPage() {
                           <td className="py-3.5 px-4 text-muted-foreground max-w-xs truncate">
                             {student.department}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-primary text-sm">
-                            {stats.mergedPrs ?? stats.prs ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center text-emerald-600 font-semibold">
+                          <td className="py-3.5 px-4 text-center font-bold text-amber-500 text-sm">
                             {stats.qualityPrs ?? 0}
                           </td>
-                          <td className="py-3.5 px-4 text-center text-muted-foreground">
+                          <td className="py-3.5 px-4 text-center font-bold text-foreground">
+                            {stats.prs ?? 0}
+                          </td>
+                          <td className="py-3.5 px-4 text-center text-blue-500 font-semibold">
                             {stats.openPrs ?? 0}
                           </td>
-                          <td className="py-3.5 px-4 text-center text-muted-foreground">
+                          <td className="py-3.5 px-4 text-center text-rose-500 font-semibold">
                             {stats.closedPrs ?? 0}
+                          </td>
+                          <td className="py-3.5 px-4 text-center font-bold text-emerald-600 text-sm">
+                            {stats.mergedPrs ?? stats.prs ?? 0}
                           </td>
                         </tr>
                       );

@@ -87,12 +87,11 @@ function computeTimeframeStats(
       };
 
   return {
-    points: mergedPrs * 100 + qualityPrs * 50 + openPrs * 25, // Internal weight for sorting
-    prs,
-    mergedPrs,
     qualityPrs,
+    prs,
     openPrs,
     closedPrs,
+    mergedPrs,
     reviews: Math.floor(prs * 0.5),
     commits: prs * 3,
     topContribution,
@@ -172,23 +171,37 @@ export async function GET(request: NextRequest) {
       dbContributors = [...STUDENT_COMPETITORS];
     }
 
-    // 3. Sort purely by Merged PRs, then Quality PRs, then Total PRs (Merit ranking algorithm)
+    // 3. Sort purely by: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
     interface ExtendedStats {
-      mergedPrs?: number;
       qualityPrs?: number;
       prs?: number;
+      openPrs?: number;
+      closedPrs?: number;
+      mergedPrs?: number;
     }
 
     dbContributors.sort((a, b) => {
       const statsA = a[timeframe] as unknown as ExtendedStats;
       const statsB = b[timeframe] as unknown as ExtendedStats;
-      const mergedDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
-      if (mergedDiff !== 0) return mergedDiff;
 
+      // 1. Quality Merge
       const qualityDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
       if (qualityDiff !== 0) return qualityDiff;
 
-      return (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      // 2. Total PR
+      const totalPrDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      if (totalPrDiff !== 0) return totalPrDiff;
+
+      // 3. Open PR
+      const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+      if (openDiff !== 0) return openDiff;
+
+      // 4. Closed PR
+      const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+      if (closedDiff !== 0) return closedDiff;
+
+      // 5. Total Merges
+      return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
     });
 
     // 4. Assign dynamic ranks

@@ -127,6 +127,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     const prs = user.contributions.filter((c: any) => c.type === ContributionType.PULL_REQUEST);
     const mergedPrs = prs.filter((c: any) => c.status === ContributionStatus.MERGED).length;
     const openPrs = prs.filter((c: any) => c.status === ContributionStatus.OPEN).length;
+    const closedPrs = prs.filter((c: any) => c.status === ContributionStatus.CLOSED).length;
     const qualityPrs = prs.filter((c: any) => c.isQualityPr).length;
     const codeReviews = user.contributions.filter((c: any) => c.type === ContributionType.CODE_REVIEW).length;
     const commits = user.contributions.filter((c: any) => c.type === ContributionType.COMMIT).length;
@@ -150,6 +151,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
         totalPrs: prs.length,
         mergedPrs,
         openPrs,
+        closedPrs,
         qualityPrs,
         codeReviews,
         commits,

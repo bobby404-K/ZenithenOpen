@@ -298,7 +298,7 @@ export default function AdminPage() {
                         <span className="font-bold text-foreground">{member.mergedPrCount}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">Points: </span>
+                        <span className="text-muted-foreground">Contributions: </span>
                         <span className="font-bold text-primary">{member.totalContributions}</span>
                       </div>
                       <a
