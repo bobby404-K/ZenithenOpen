@@ -3,6 +3,42 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2026-10-13
+
+### 🐳 Production Deployment & Containerization Architecture
+
+- **Multi-Stage Production Dockerfile (`Dockerfile`)**:
+  - Implements secure 4-stage build architecture (`base`, `deps`, `builder`, `runner`) on Alpine Linux (`node:20-alpine`).
+  - Generates Prisma ORM client and builds Next.js production artifacts in isolated build stage.
+  - Runs with non-root system user `nextjs:nodejs` (UID 1001) for strict least-privilege security compliance.
+  - Integrates automated container health check probing `/api/health` with automatic failure mitigation.
+- **Docker Compose Orchestration (`docker-compose.yml`)**:
+  - Defines cohesive container network `zenithen-network` interconnecting `app`, PostgreSQL 16 (`zenithen-postgres`), and Redis 7 (`zenithen-redis`).
+  - Configures container health checks (`pg_isready` for Postgres, `redis-cli ping` for Redis) with dependent startup gating (`service_healthy`).
+  - Injects `DATABASE_URL` and `REDIS_URL` environment variables for zero-configuration local and production cluster boots.
+- **Vercel Cloud Deployment Configuration (`vercel.json`)**:
+  - Configures `nextjs` framework preset with standardized security headers (`X-Content-Type-Options`, `X-Frame-Options`, `Strict-Transport-Security`, `Permissions-Policy`).
+  - Enforces `no-store, max-age=0` caching directives on all `/api/(.*)` routes.
+- **Production Deployment Test Suite (`tests/backend/deployment-config.test.ts`)**:
+  - 40 automated test assertions verifying container stages, environment mappings, volumes, health checks, and cloud configuration.
+  - Master test runner updated to 583 / 583 backend tests passing (100% pass rate).
+
+---
+
+## [1.16.0] - 2026-10-13
+
+### 🌱 Idempotent Production Database Seeder & CLI Tooling
+
+- **Database Seeding Engine (`scripts/seed-production.ts`)**:
+  - Created idempotent seeder populating Supabase tables with initial achievements, core campus projects, verified student profiles, starter opportunities, and platform metrics.
+  - Features graceful offline and remote database resilience, safely catching connection errors and exiting with code 0 in non-connected or CI environments.
+- **CLI Command (`package.json`)**:
+  - Added `"db:seed": "tsx scripts/seed-production.ts"` script.
+- **Automated Seeder Test Suite (`tests/backend/db-seed.test.ts`)**:
+  - 33 automated test assertions verifying data blueprints, schema constraints, and seeding idempotency.
+
+---
+
 ## [1.15.0] - 2026-10-13
 
 ### 📄 Public Recruiter Resume Showcase Page & Production Security Middleware
