@@ -24,7 +24,14 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
 
   const topWeekStudent = defaultData.competitors[0];
   suite.assertEqual(topWeekStudent.week.rank, 1, "First student has rank 1 for week timeframe");
-  suite.assert(topWeekStudent.week.points > 0, "Top student has positive points");
+  suite.assert(
+    typeof topWeekStudent.week.prs === "number" && topWeekStudent.week.prs > 0,
+    "Top student has positive PR count"
+  );
+  suite.assert(
+    typeof topWeekStudent.week.qualityPrs === "number",
+    "Top student has tracked quality PRs"
+  );
   suite.assert(
     typeof topWeekStudent.week.topContribution?.title === "string",
     "Student includes structured topContribution details"

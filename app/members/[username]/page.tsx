@@ -33,6 +33,7 @@ interface MemberStats {
   totalPrs: number;
   mergedPrs: number;
   openPrs: number;
+  closedPrs: number;
   qualityPrs: number;
   codeReviews: number;
   commits: number;
@@ -371,20 +372,12 @@ export default function MemberProfilePage({
             </div>
           </div>
 
-          {/* Contribution Metrics Grid */}
-          <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-border/60 pt-6">
-            <div className="rounded-xl bg-primary/10 border border-primary/20 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-primary mb-1">
-                <GitPullRequest className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Merged PRs</span>
-              </div>
-              <p className="text-2xl font-extrabold text-primary">{profile.stats?.mergedPrs ?? 0}</p>
-            </div>
-
+          {/* Contribution Metrics Grid: Quality Merge, Total PR, Open PR, Closed PR, Total Merges */}
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3 border-t border-border/60 pt-6">
             <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3.5 text-center">
               <div className="flex items-center justify-center gap-1.5 text-xs text-amber-600 mb-1">
                 <Star className="h-3.5 w-3.5 fill-amber-500" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Quality PRs</span>
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Quality Merge</span>
               </div>
               <p className="text-2xl font-extrabold text-amber-500">{profile.stats?.qualityPrs ?? 0}</p>
             </div>
@@ -392,19 +385,33 @@ export default function MemberProfilePage({
             <div className="rounded-xl bg-muted/40 border border-border/50 p-3.5 text-center">
               <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-1">
                 <Layers className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Total PRs</span>
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Total PR</span>
               </div>
               <p className="text-2xl font-extrabold text-foreground">{profile.stats?.totalPrs ?? 0}</p>
             </div>
 
-            <div className="rounded-xl bg-muted/40 border border-border/50 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-1">
-                <Award className="h-3.5 w-3.5 text-purple-500" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Achievements</span>
+            <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-3.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-blue-600 mb-1">
+                <GitPullRequest className="h-3.5 w-3.5" />
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Open PR</span>
               </div>
-              <p className="text-2xl font-extrabold text-purple-500">
-                {profile.achievements?.length ?? 0}
-              </p>
+              <p className="text-2xl font-extrabold text-blue-500">{profile.stats?.openPrs ?? 0}</p>
+            </div>
+
+            <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-3.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-rose-600 mb-1">
+                <GitPullRequest className="h-3.5 w-3.5" />
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Closed PR</span>
+              </div>
+              <p className="text-2xl font-extrabold text-rose-500">{profile.stats?.closedPrs ?? 0}</p>
+            </div>
+
+            <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3.5 text-center">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 mb-1">
+                <GitPullRequest className="h-3.5 w-3.5" />
+                <span className="font-semibold uppercase tracking-wider text-[11px]">Total Merges</span>
+              </div>
+              <p className="text-2xl font-extrabold text-emerald-500">{profile.stats?.mergedPrs ?? 0}</p>
             </div>
           </div>
         </div>

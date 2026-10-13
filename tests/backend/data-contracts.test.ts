@@ -112,8 +112,8 @@ export async function runDataContractsTests(): Promise<SuiteResult> {
     for (const tf of ["week", "month", "overall"] as const) {
       const stats = student[tf];
       suite.assert(
-        stats.rank >= 1 && stats.points >= 0 && stats.prs >= 0,
-        `Competitor '${student.username}' ${tf} stats are valid (Rank: ${stats.rank}, Pts: ${stats.points})`
+        stats.rank >= 1 && (stats.points ?? 0) >= 0 && stats.prs >= 0,
+        `Competitor '${student.username}' ${tf} stats are valid (Rank: ${stats.rank}, PRs: ${stats.prs})`
       );
       suite.assert(
         stats.qualityPrs <= stats.prs,

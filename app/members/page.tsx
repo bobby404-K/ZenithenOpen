@@ -404,7 +404,7 @@ export default function MembersPage() {
                   </div>
 
                   <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 text-[11px] text-foreground leading-relaxed">
-                    Connecting your GitHub account automatically verifies pull requests, assigns student role badges, and tracks leaderboard points.
+                    Connecting your GitHub account automatically verifies pull requests, assigns student role badges, and tracks leaderboard rankings.
                   </div>
 
                   <div className="pt-2 flex justify-end space-x-2">
