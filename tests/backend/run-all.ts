@@ -43,6 +43,7 @@ import { runResumeShareTests } from "./resume-share.test";
 import { runDbSeedTests } from "./db-seed.test";
 import { runDeploymentConfigTests } from "./deployment-config.test";
 import { runLearningPathsRouteTests } from "./learning-paths-route.test";
+import { runShowcasePagesTests } from "./showcase-pages.test";
 import { SuiteResult } from "./test-utils";
 
 async function main() {
@@ -79,6 +80,7 @@ async function main() {
     results.push(await runDbSeedTests());
     results.push(await runDeploymentConfigTests());
     results.push(await runLearningPathsRouteTests());
+    results.push(await runShowcasePagesTests());
   } catch (error) {
     console.error("\n[FATAL ERROR IN TEST RUNNER]:", error);
     process.exit(1);

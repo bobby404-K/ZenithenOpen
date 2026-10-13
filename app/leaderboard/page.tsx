@@ -253,24 +253,25 @@ export default function LeaderboardPage() {
 
                       {/* Student Profile Info */}
                       <div className="mt-5 flex items-center space-x-4">
-                        <img
-                          src={student.avatarUrl}
-                          alt={student.name}
-                          className="h-14 w-14 rounded-full border-2 border-border object-cover group-hover:scale-105 transition-transform"
-                        />
+                        <Link href={`/members/${student.username}`} className="shrink-0">
+                          <img
+                            src={student.avatarUrl}
+                            alt={student.name}
+                            className="h-14 w-14 rounded-full border-2 border-border object-cover group-hover:scale-105 transition-transform"
+                          />
+                        </Link>
                         <div>
-                          <h3 className="font-bold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
-                            {student.name}
-                          </h3>
-                          <a
-                            href={`https://github.com/${student.username}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <Link href={`/members/${student.username}`}>
+                            <h3 className="font-bold text-foreground text-lg leading-tight hover:text-primary transition-colors">
+                              {student.name}
+                            </h3>
+                          </Link>
+                          <Link
+                            href={`/members/${student.username}`}
                             className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 font-mono"
                           >
                             <span>@{student.username}</span>
-                            <ExternalLink className="h-2.5 w-2.5" />
-                          </a>
+                          </Link>
                           <p className="text-[11px] text-muted-foreground mt-0.5">{student.department}</p>
                         </div>
                       </div>
@@ -360,24 +361,26 @@ export default function LeaderboardPage() {
                           </td>
                           <td className="py-3.5 px-4">
                             <div className="flex items-center space-x-3">
-                              <img
-                                src={student.avatarUrl}
-                                alt={student.name}
-                                className="h-8 w-8 rounded-full border border-border object-cover"
-                              />
+                              <Link href={`/members/${student.username}`} className="shrink-0">
+                                <img
+                                  src={student.avatarUrl}
+                                  alt={student.name}
+                                  className="h-8 w-8 rounded-full border border-border object-cover hover:scale-105 transition-transform"
+                                />
+                              </Link>
                               <div>
-                                <span className="font-bold text-foreground group-hover:text-primary transition-colors block">
+                                <Link
+                                  href={`/members/${student.username}`}
+                                  className="font-bold text-foreground hover:text-primary transition-colors block"
+                                >
                                   {student.name}
-                                </span>
-                                <a
-                                  href={`https://github.com/${student.username}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[11px] text-muted-foreground hover:text-foreground font-mono inline-flex items-center gap-1"
+                                </Link>
+                                <Link
+                                  href={`/members/${student.username}`}
+                                  className="text-[11px] text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-1"
                                 >
                                   @{student.username}
-                                  <ExternalLink className="h-2.5 w-2.5" />
-                                </a>
+                                </Link>
                               </div>
                             </div>
                           </td>

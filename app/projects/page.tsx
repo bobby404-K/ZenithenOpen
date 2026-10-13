@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   FolderGit2,
   Search,
@@ -242,14 +243,12 @@ export default function ProjectsPage() {
                       </div>
                       <div>
                         <CardTitle className="text-xl font-bold text-foreground hover:text-primary transition-colors">
-                          <a
-                            href={project.repositoryUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <Link
+                            href={`/projects/${project.slug || project.id}`}
                             className="inline-flex items-center gap-1.5"
                           >
                             <span>{project.name}</span>
-                          </a>
+                          </Link>
                         </CardTitle>
                         <p className="text-xs font-medium text-muted-foreground mt-0.5">
                           {project.tagline}
@@ -298,21 +297,33 @@ export default function ProjectsPage() {
                   </div>
                 </div>
 
-                {/* Card Footer with GitHub Navigation Button */}
-                <div className="p-6 pt-0 border-t border-border/60 bg-muted/20 rounded-b-xl flex items-center justify-between gap-3 mt-auto">
+                {/* Card Footer with Explore & GitHub Navigation Buttons */}
+                <div className="p-6 pt-0 border-t border-border/60 bg-muted/20 rounded-b-xl flex items-center justify-between gap-2.5 mt-auto">
+                  <Link
+                    href={`/projects/${project.slug || project.id}`}
+                    className="flex-1"
+                  >
+                    <Button
+                      variant="default"
+                      className="w-full gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold py-2.5 shadow-xs cursor-pointer"
+                    >
+                      <span>Explore</span>
+                      <ExternalLink className="h-3 w-3 opacity-70" />
+                    </Button>
+                  </Link>
+
                   <a
                     href={project.repositoryUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full"
+                    className="shrink-0"
                   >
                     <Button
-                      variant="default"
-                      className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold py-2.5 shadow-xs cursor-pointer"
+                      variant="outline"
+                      className="gap-1.5 border-border text-xs font-semibold py-2.5 cursor-pointer"
                     >
-                      <GithubIcon className="h-4 w-4" />
-                      <span>View on GitHub</span>
-                      <ExternalLink className="h-3.5 w-3.5 ml-auto text-primary-foreground/70" />
+                      <GithubIcon className="h-3.5 w-3.5" />
+                      <span>Repo</span>
                     </Button>
                   </a>
                 </div>

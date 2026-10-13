@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Users2,
   Search,
   Filter,
-  Sparkles,
   GitPullRequest,
-  ExternalLink,
   Loader2,
   CheckCircle2,
   AlertCircle,
@@ -221,24 +220,28 @@ export default function MembersPage() {
                   {/* Top Bar: Avatar & Role */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center space-x-3.5">
-                      {member.avatarUrl ? (
-                        <img
-                          src={member.avatarUrl}
-                          alt={member.name}
-                          className="h-12 w-12 rounded-full border border-border object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLElement).style.display = "none";
-                          }}
-                        />
-                      ) : (
-                        <div className="h-12 w-12 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-base">
-                          {member.name.charAt(0)}
-                        </div>
-                      )}
+                      <Link href={`/members/${member.username}`} className="shrink-0">
+                        {member.avatarUrl ? (
+                          <img
+                            src={member.avatarUrl}
+                            alt={member.name}
+                            className="h-12 w-12 rounded-full border border-border object-cover hover:scale-105 transition-transform"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-base hover:scale-105 transition-transform">
+                            {member.name.charAt(0)}
+                          </div>
+                        )}
+                      </Link>
                       <div>
-                        <h3 className="font-bold text-foreground text-base group-hover:text-primary transition-colors">
-                          {member.name}
-                        </h3>
+                        <Link href={`/members/${member.username}`}>
+                          <h3 className="font-bold text-foreground text-base hover:text-primary transition-colors">
+                            {member.name}
+                          </h3>
+                        </Link>
                         <p className="text-xs text-muted-foreground font-mono">@{member.username}</p>
                       </div>
                     </div>
@@ -306,15 +309,23 @@ export default function MembersPage() {
                     )}
                   </div>
 
-                  <a
-                    href={`https://github.com/${member.username}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium text-xs"
-                  >
-                    <span>Profile</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/members/${member.username}`}
+                      className="inline-flex items-center gap-1 text-primary hover:underline font-semibold text-xs"
+                    >
+                      <span>Profile</span>
+                    </Link>
+                    <a
+                      href={`https://github.com/${member.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+                      title="GitHub Profile"
+                    >
+                      <GithubIcon className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
                 </div>
               </Card>
             ))}
