@@ -3,6 +3,30 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] - 2026-10-13
+
+### 🌟 Dynamic Project Deep-Dive & Student Contributor Profile Showcase Pages
+
+- **Dynamic Project Deep-Dive Showcase Page (`app/projects/[slug]/page.tsx`)**:
+  - Implements the complete repository deep-dive view with Next.js 15 async route parameters (`params: Promise<{ slug: string }>`).
+  - Features project hero with status badges, primary language color indicator, stars/forks/PR counters, and 1-click clone terminal snippet with clipboard copy.
+  - Displays structured project narrative, tag chips, and live starter opportunities board with direct GitHub issue claims.
+  - Renders repository maintainers, top student contributors, and recent merged pull request audit records.
+- **Dynamic Student Contributor Profile Page (`app/members/[username]/page.tsx`)**:
+  - Implements public student dossier resolving profile data from `/api/members/[username]`.
+  - Features verified student identity card, USN status, academic affiliation (department & cohort), and proof-of-work PR metrics grid (Merged PRs, Quality PRs, Total PRs, Unlocked Badges).
+  - Displays unlocked honors & achievement badges shelf, skill technology chips, and verified pull request activity.
+  - Integrates interactive peer mentorship booking modal communicating directly with `/api/mentorship/requests`.
+- **Platform-Wide Navigation & Catalog Linking**:
+  - Connected `app/projects/page.tsx` cards with primary `Explore` action button and clickable titles linking to `/projects/[slug]`.
+  - Linked `app/members/page.tsx` avatars, names, and profile buttons to `/members/[username]`.
+  - Linked `app/leaderboard/page.tsx` top-contributor cards and table rows to `/members/[username]`.
+- **Showcase Pages Automated Test Suite (`tests/backend/showcase-pages.test.ts`)**:
+  - 32 automated test assertions validating project lookups, case-insensitivity, member contracts, statistics schemas, and 404 handling.
+  - Master test runner expanded to **652 / 652 backend tests passing across 25 test suites (100% pass rate)**.
+
+---
+
 ## [1.18.0] - 2026-10-13
 
 ### 🎓 Learning Paths API & Student Progress Tracking Engine
