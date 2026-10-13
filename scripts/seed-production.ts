@@ -218,6 +218,87 @@ export const SEED_DATA = {
       isOpen: true,
     },
   ],
+
+  learningPaths: [
+    {
+      slug: "modern-fullstack-oss",
+      title: "Full-Stack Web with Next.js & TypeScript",
+      description: "Master modern web engineering: App Router, Server Components, TypeScript type-safety, accessible design systems, and Prisma ORM.",
+      level: "BEGINNER" as Difficulty,
+      estimatedWeeks: 6,
+      iconName: "Code2",
+      color: "#3b82f6",
+      targetSkills: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL"],
+      modulesJson: [
+        {
+          weekNumber: 1,
+          title: "TypeScript Essentials & Git Architecture",
+          summary: "Strict type models, generics, Git hygiene, and branching workflows.",
+          milestoneProject: "Build a typed CLI task tracker with automated GitHub Actions CI.",
+        },
+        {
+          weekNumber: 2,
+          title: "Next.js App Router Architecture",
+          summary: "Server components, streaming with Suspense, and Turbopack internals.",
+          milestoneProject: "Deploy a static docsite with dynamic route handlers on Vercel.",
+        },
+      ],
+    },
+    {
+      slug: "ai-applied-systems",
+      title: "Applied AI & Open Data Science",
+      description: "Build production machine learning pipelines, fine-tune open models, and deploy bio-signal and LLM tooling.",
+      level: "INTERMEDIATE" as Difficulty,
+      estimatedWeeks: 8,
+      iconName: "Sparkles",
+      color: "#a855f7",
+      targetSkills: ["Python", "PyTorch", "Hugging Face", "FastAPI", "Vector DBs"],
+      modulesJson: [
+        {
+          weekNumber: 1,
+          title: "PyTorch Tensors & GPU Acceleration",
+          summary: "Fundamental tensor operations, autograd engine, and CUDA acceleration.",
+          milestoneProject: "Implement a custom convolutional model for signal classification.",
+        },
+      ],
+    },
+    {
+      slug: "cloud-devops-tooling",
+      title: "DevOps, Containers & Cloud Engineering",
+      description: "Multi-stage Docker builds, Kubernetes cluster management, monitoring, and automated CI/CD pipelines.",
+      level: "INTERMEDIATE" as Difficulty,
+      estimatedWeeks: 6,
+      iconName: "FolderGit2",
+      color: "#10b981",
+      targetSkills: ["Docker", "Docker Compose", "GitHub Actions", "Linux", "Kubernetes"],
+      modulesJson: [
+        {
+          weekNumber: 1,
+          title: "Linux Systems & Container Internals",
+          summary: "cgroups, namespaces, multi-stage Dockerfiles, and Alpine base layers.",
+          milestoneProject: "Containerize a multi-service stack with health checks and volumes.",
+        },
+      ],
+    },
+    {
+      slug: "gsoc-contributor-playbook",
+      title: "Google Summer of Code (GSoC) Playbook",
+      description: "Navigating open-source organizations, interacting with maintainers, drafting winning proposals, and submitting qualifying PRs.",
+      level: "ADVANCED" as Difficulty,
+      estimatedWeeks: 8,
+      iconName: "Award",
+      color: "#f59e0b",
+      targetSkills: ["Proposal Writing", "Open Source Etiquette", "Code Review", "Architecture Design"],
+      modulesJson: [
+        {
+          weekNumber: 1,
+          title: "Organization Scouting & First Contact",
+          summary: "Selecting mentorship organizations, joining developer mailing lists/Slack.",
+          milestoneProject: "Submit your first triaged bug fix to a target GSoC organization.",
+        },
+      ],
+    },
+  ],
 };
 
 export async function seedDatabase(client?: PrismaClient): Promise<{
@@ -227,6 +308,7 @@ export async function seedDatabase(client?: PrismaClient): Promise<{
     projects: number;
     students: number;
     opportunities: number;
+    learningPaths: number;
   };
   notice?: string;
 }> {
@@ -236,6 +318,7 @@ export async function seedDatabase(client?: PrismaClient): Promise<{
     projects: 0,
     students: 0,
     opportunities: 0,
+    learningPaths: 0,
   };
 
   try {
@@ -358,7 +441,36 @@ export async function seedDatabase(client?: PrismaClient): Promise<{
       summary.opportunities += 1;
     }
 
-    // 5. Initial Community Metric Snapshot
+    // 5. Seed Engineering Learning Paths
+    for (const lp of SEED_DATA.learningPaths) {
+      await prisma.learningPath.upsert({
+        where: { slug: lp.slug },
+        update: {
+          title: lp.title,
+          description: lp.description,
+          level: lp.level,
+          estimatedWeeks: lp.estimatedWeeks,
+          iconName: lp.iconName,
+          color: lp.color,
+          targetSkills: lp.targetSkills,
+          modulesJson: lp.modulesJson,
+        },
+        create: {
+          slug: lp.slug,
+          title: lp.title,
+          description: lp.description,
+          level: lp.level,
+          estimatedWeeks: lp.estimatedWeeks,
+          iconName: lp.iconName,
+          color: lp.color,
+          targetSkills: lp.targetSkills,
+          modulesJson: lp.modulesJson,
+        },
+      });
+      summary.learningPaths += 1;
+    }
+
+    // 6. Initial Community Metric Snapshot
     const existingMetrics = await prisma.communityMetricSnapshot.findFirst();
     if (!existingMetrics) {
       await prisma.communityMetricSnapshot.create({
@@ -411,7 +523,8 @@ async function main() {
   console.log(`   - Achievements seeded:   ${result.inserted.achievements}`);
   console.log(`   - Projects seeded:       ${result.inserted.projects}`);
   console.log(`   - Students seeded:       ${result.inserted.students}`);
-  console.log(`   - Opportunities seeded:  ${result.inserted.opportunities}\n`);
+  console.log(`   - Opportunities seeded:  ${result.inserted.opportunities}`);
+  console.log(`   - Learning paths seeded: ${result.inserted.learningPaths}\n`);
 }
 
 if (process.argv[1]?.includes("seed-production")) {

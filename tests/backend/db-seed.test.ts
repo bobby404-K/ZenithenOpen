@@ -58,7 +58,15 @@ export async function runDbSeedTests(): Promise<SuiteResult> {
     );
   }
 
-  // --- 5. seedDatabase Execution & Resilience ---
+  // --- 5. Blueprint Learning Paths Data Integrity ---
+  suite.assert(Array.isArray(SEED_DATA.learningPaths), "Learning paths blueprint is an array");
+  suite.assert(SEED_DATA.learningPaths.length >= 4, "Includes at least 4 engineering learning roadmaps");
+  const fullstackPath = SEED_DATA.learningPaths.find((lp) => lp.slug === "modern-fullstack-oss");
+  suite.assert(Boolean(fullstackPath), "Includes 'modern-fullstack-oss' learning roadmap");
+  suite.assert(fullstackPath ? fullstackPath.estimatedWeeks > 0 : false, "Learning roadmap has positive estimatedWeeks");
+  suite.assert(fullstackPath ? Array.isArray(fullstackPath.targetSkills) : false, "Target skills is an array");
+
+  // --- 6. seedDatabase Execution & Resilience ---
   const result = await seedDatabase();
   suite.assertEqual(result.success, true, "seedDatabase executes safely and returns success: true");
   suite.assert(

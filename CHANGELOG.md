@@ -3,6 +3,29 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2026-10-13
+
+### 🎓 Learning Paths API & Student Progress Tracking Engine
+
+- **Learning Paths REST Endpoints (`app/api/learning-paths/route.ts` & `app/api/learning-paths/[id]/route.ts`)**:
+  - Delivers structured engineering roadmaps across Full-Stack Web, Applied AI, Cloud DevOps, and Open-Source Fellowships.
+  - Implements multi-criteria filtering by difficulty level (`Beginner`, `Intermediate`, `Advanced`), search query, and pagination limits.
+  - Features Upstash Redis distributed caching with resilient offline fallback to local curriculum blueprints.
+- **Student Milestone Progress Tracking (`app/api/learning-paths/[id]/progress/route.ts`)**:
+  - Provides `GET` and `PUT` progress tracking endpoints storing student enrollment, active weekly module, and completed weeks in Supabase PostgreSQL.
+- **Programs Hub Live Integration (`app/programs/page.tsx`)**:
+  - Added interactive `Engineering Learning Roadmaps` track to the Programs Hub with live data fetching from `/api/learning-paths`.
+  - Features weekly module accordions, target skill tags, progress meters, and dynamic week progression buttons.
+- **Upstash Redis Wildcard Key Invalidation (`lib/redis/client.ts`)**:
+  - Upgraded in-memory fallback and Upstash Redis client with wildcard pattern invalidation support (`client.keys` & `deleteFromMemory`).
+- **Database Seeder Enhancement (`scripts/seed-production.ts`)**:
+  - Extended production database seeder with foundational learning path blueprints.
+- **Automated Test Suite (`tests/backend/learning-paths-route.test.ts`)**:
+  - 25 automated assertions verifying path retrieval, level filtering, search matching, slug lookups, progress persistence, and offline fallback.
+  - Master backend runner expanded to **614 / 614 tests passing across 24 test suites (100% pass rate)**.
+
+---
+
 ## [1.17.0] - 2026-10-13
 
 ### 🐳 Production Deployment & Containerization Architecture
