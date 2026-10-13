@@ -3,6 +3,24 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-10-13
+
+### 📄 Public Recruiter Resume Showcase Page & Production Security Middleware
+
+- **Public Recruiter Resume Showcase Page (`app/resume/share/[token]/page.tsx`)**:
+  - Implements the unauthenticated public candidate dossier view for external recruiters, hiring partners, and mentors.
+  - Dynamically unwraps Next.js 15 asynchronous route params (`params: Promise<{ token: string }>`) and resolves frozen resume snapshots from `/api/resume/share/[token]`.
+  - Displays real-time candidate metadata: full name, USN, college affiliation, GitHub handle, custom headline, generation timestamp, view count, and days until link expiration.
+  - Displays audited open-source repositories contributed to with star metrics, fork counts, authored PRs, and architectural impacts ($\ge 100$ stars and $\ge 100$ forks).
+  - Provides 1-click ATS Markdown download (`.md`), fast clipboard copy, print-to-PDF (`window.print()`), and visual vs raw markdown toggle.
+- **Production Security Middleware & Request Tracing (`middleware.ts`)**:
+  - Introduces distributed request correlation with unique `x-request-id` headers and platform version tagging (`x-zenithen-version: 1.15.0`).
+  - Enforces baseline security response headers (`nosniff`, `SAMEORIGIN`, `origin-when-cross-origin`).
+  - Mitigates automated path traversal attempts, dotfile queries, and vulnerability scanner probes.
+  - Disabled `x-powered-by` header via `poweredByHeader: false` in `next.config.ts`.
+
+---
+
 ## [1.14.0] - 2026-10-12
 
 ### 🚀 Production-Ready Backend Platform & Strict CI Gate Enforcement
