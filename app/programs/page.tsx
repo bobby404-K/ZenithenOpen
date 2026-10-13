@@ -21,6 +21,8 @@ import {
   Plus,
   X,
   AlertCircle,
+  BookOpen,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +35,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Project } from "@/types";
+import { Project, LearningPath } from "@/types";
 import { GithubIcon } from "@/components/ui/icons";
 import {
   STUDENT_COMPETITORS,
@@ -140,6 +142,23 @@ const PROGRAMS: ProgramItem[] = [
     actionLabel: "Explore Fellowship Resources",
     actionHref: "/resources",
     icon: Coins,
+  },
+  {
+    id: "learning-paths",
+    category: "Learning Roadmaps",
+    title: "Engineering Curriculums & Roadmaps",
+    badge: "Structured Tracks",
+    description:
+      "Curated, step-by-step engineering tracks designed for IST students. Master full-stack Next.js, applied AI systems, cloud containerization, and open-source fellowship playbooks.",
+    details: [
+      "Full-Stack Web with Next.js & TypeScript (6 Weeks)",
+      "Applied AI & Open Data Science (8 Weeks)",
+      "DevOps, Containers & Cloud Engineering (6 Weeks)",
+      "Google Summer of Code (GSoC) Playbook (8 Weeks)",
+    ],
+    actionLabel: "Explore Learning Paths",
+    actionHref: "#learning-paths-catalog",
+    icon: Rocket,
   },
 ];
 
@@ -700,6 +719,11 @@ export default function ProgramsPage() {
                   remainingStudents={remainingStudents}
                 />
               )}
+
+              {/* Engineering Learning Paths & Roadmaps */}
+              {currentProgram.id === "learning-paths" && (
+                <LearningPathsSection />
+              )}
             </div>
           )}
         </div>
@@ -1030,6 +1054,270 @@ function StudentLeaderboardSection({
           })}
         </div>
       </div>
+    </motion.div>
+  );
+}
+
+function LearningPathsSection() {
+  const [paths, setPaths] = React.useState<LearningPath[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [selectedLevel, setSelectedLevel] = React.useState<string>("all");
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [expandedSlug, setExpandedSlug] = React.useState<string | null>(null);
+  const [enrolledMap, setEnrolledMap] = React.useState<Record<string, { currentWeek: number; completedWeeks: number[] }>>({});
+
+  React.useEffect(() => {
+    let active = true;
+    async function loadPaths() {
+      try {
+        setLoading(true);
+        const query = new URLSearchParams();
+        if (selectedLevel !== "all") query.set("level", selectedLevel);
+        if (searchQuery.trim()) query.set("search", searchQuery.trim());
+        const res = await fetch(`/api/learning-paths?${query.toString()}`);
+        const data = await res.json();
+        if (active && data.success && Array.isArray(data.paths)) {
+          setPaths(data.paths);
+        }
+      } catch (err) {
+        console.warn("Failed to load learning paths:", err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    loadPaths();
+    return () => {
+      active = false;
+    };
+  }, [selectedLevel, searchQuery]);
+
+  const toggleExpand = (slug: string) => {
+    setExpandedSlug((prev) => (prev === slug ? null : slug));
+  };
+
+  const handleProgress = async (path: LearningPath) => {
+    const current = enrolledMap[path.slug] || { currentWeek: 1, completedWeeks: [] };
+    const nextWeek = Math.min(current.currentWeek + 1, path.estimatedWeeks);
+    const newCompleted = Array.from(new Set([...current.completedWeeks, current.currentWeek]));
+
+    setEnrolledMap((prev) => ({
+      ...prev,
+      [path.slug]: { currentWeek: nextWeek, completedWeeks: newCompleted },
+    }));
+
+    try {
+      await fetch(`/api/learning-paths/${path.slug}/progress`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "current-user",
+          currentWeek: nextWeek,
+          completedWeeks: newCompleted,
+          isCompleted: nextWeek >= path.estimatedWeeks,
+        }),
+      });
+    } catch (e) {
+      console.warn("Progress update failed:", e);
+    }
+  };
+
+  return (
+    <motion.div
+      id="learning-paths-catalog"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="space-y-6 pt-2"
+    >
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/80 pb-6">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-primary font-mono">
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>Structured Tracks</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mt-1">
+            Engineering Learning Roadmaps
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+            Step-by-step engineering tracks authored for IST student contributors. Master foundational systems, applied AI, and cloud architectures.
+          </p>
+        </div>
+
+        {/* Level Filters */}
+        <div className="flex items-center gap-1.5 p-1 rounded-lg border border-border/60 bg-muted/30">
+          {(["all", "beginner", "intermediate", "advanced"] as const).map((lvl) => (
+            <button
+              key={lvl}
+              onClick={() => setSelectedLevel(lvl)}
+              className={cn(
+                "px-3 py-1 text-xs font-semibold rounded-md transition-all capitalize font-mono",
+                selectedLevel === lvl
+                  ? "bg-background text-foreground shadow-sm border border-border/80"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {lvl}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Search Input */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Filter by skill (e.g. Next.js, PyTorch, Docker)..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 text-xs font-mono h-9 bg-muted/20 border-border/60"
+        />
+      </div>
+
+      {/* Roadmaps Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-48 rounded-xl border border-border/40 bg-muted/20 animate-pulse" />
+          ))}
+        </div>
+      ) : paths.length === 0 ? (
+        <div className="text-center py-12 rounded-xl border border-dashed border-border/60 text-muted-foreground text-sm font-mono">
+          No learning paths found matching your criteria.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {paths.map((path) => {
+            const isExpanded = expandedSlug === path.slug;
+            const progress = enrolledMap[path.slug];
+            const isStarted = Boolean(progress);
+
+            return (
+              <Card
+                key={path.id || path.slug}
+                className="relative overflow-hidden border border-border/60 bg-card hover:border-primary/40 transition-all shadow-sm"
+              >
+                {/* Accent line */}
+                <div
+                  className="h-1 w-full"
+                  style={{ backgroundColor: path.color || "var(--primary)" }}
+                />
+
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge variant="outline" className="font-mono text-[10px] uppercase">
+                      {path.level}
+                    </Badge>
+                    <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                      <Sparkles className="h-3 w-3 text-primary" />
+                      <span>{path.estimatedWeeks} Weeks</span>
+                    </div>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-foreground mt-2">
+                    {path.title}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground line-clamp-2">
+                    {path.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4 pb-3">
+                  {/* Target Skills */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {path.targetSkills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Progress indicator if started */}
+                  {isStarted && (
+                    <div className="p-2.5 rounded-lg bg-muted/40 border border-border/50 text-xs font-mono">
+                      <div className="flex justify-between items-center text-muted-foreground mb-1">
+                        <span>Current Week</span>
+                        <span className="font-bold text-primary">
+                          Week {progress.currentWeek} of {path.estimatedWeeks}
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="bg-primary h-full transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, (progress.completedWeeks.length / path.estimatedWeeks) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Expandable Weekly Curriculum */}
+                  {isExpanded && path.curriculum && path.curriculum.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 pt-2 border-t border-border/40"
+                    >
+                      <div className="text-[11px] font-mono font-semibold text-muted-foreground uppercase">
+                        Weekly Modules
+                      </div>
+                      {path.curriculum.map((week) => (
+                        <div
+                          key={week.weekNumber}
+                          className="p-2 rounded-md bg-muted/30 border border-border/40 text-xs space-y-1"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-foreground">
+                              Week {week.weekNumber}: {week.title}
+                            </span>
+                            {progress?.completedWeeks?.includes(week.weekNumber) && (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                            )}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground leading-snug">
+                            {week.summary}
+                          </p>
+                          {week.milestoneProject && (
+                            <div className="text-[10px] font-mono text-primary flex items-center gap-1 mt-1">
+                              <Rocket className="h-2.5 w-2.5" />
+                              <span>Project: {week.milestoneProject}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </CardContent>
+
+                <CardFooter className="pt-2 border-t border-border/40 flex items-center justify-between gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => toggleExpand(path.slug)}
+                    className="text-xs h-8 text-muted-foreground hover:text-foreground font-mono gap-1"
+                  >
+                    <span>{isExpanded ? "Hide Modules" : "View Curriculum"}</span>
+                    <ChevronDown className={cn("h-3 w-3 transition-transform", isExpanded && "rotate-180")} />
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleProgress(path)}
+                    className="text-xs h-8 font-mono gap-1"
+                  >
+                    <CheckCircle2 className="h-3 w-3" />
+                    <span>{isStarted ? "Log Next Week" : "Start Roadmap"}</span>
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </motion.div>
   );
 }

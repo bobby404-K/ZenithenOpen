@@ -36,7 +36,16 @@ function setToMemory(key: string, value: unknown, ttlSeconds?: number): void {
 }
 
 function deleteFromMemory(key: string): void {
-  memoryFallback.delete(key);
+  if (key.includes("*")) {
+    const pattern = new RegExp("^" + key.replace(/\*/g, ".*") + "$");
+    for (const k of Array.from(memoryFallback.keys())) {
+      if (pattern.test(k)) {
+        memoryFallback.delete(k);
+      }
+    }
+  } else {
+    memoryFallback.delete(key);
+  }
 }
 
 // Global singleton to prevent recreating clients across Next.js hot reloads
@@ -146,7 +155,14 @@ export async function deleteCached(key: string): Promise<boolean> {
   if (!client) return true;
 
   try {
-    await client.del(key);
+    if (key.includes("*")) {
+      const matchingKeys = await client.keys(key);
+      if (Array.isArray(matchingKeys) && matchingKeys.length > 0) {
+        await client.del(...matchingKeys);
+      }
+    } else {
+      await client.del(key);
+    }
     return true;
   } catch (error) {
     console.warn(`[Redis] Error deleting key "${key}":`, error);
