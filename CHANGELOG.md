@@ -3,6 +3,23 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.0] - 2026-10-14
+
+### ⏱️ Campus Repositories Leaderboard Timeframe Filtering & Interactive Toggles
+
+- **Timeframe Parameterization on Campus Leaderboard API**:
+  - Enhanced `/api/projects/leaderboard` to support `timeframe=week`, `timeframe=month`, and `timeframe=overall`.
+  - Added dynamic Prisma date filters (`createdAt >= 7 days ago` for week, `30 days ago` for month) on campus repository contributions.
+  - Implemented timeframe-aware fallback allocations reflecting dynamic campus PR activity across different time horizons.
+  - Updated Redis caching key to partition cached rankings by timeframe (`projects:campus-leaderboard:timeframe:${timeframe}:limit:${limit}`).
+- **Interactive Timeframe Toggles in Projects Catalog**:
+  - Embedded `This Week`, `This Month`, and `All-Time` pill switcher directly in the Campus Leaderboard header on `/projects`.
+  - Instant client-side refetching upon toggle change with smooth loading indicator.
+- **Automated Backend Test Coverage**:
+  - Extended `tests/backend/campus-projects-leaderboard.test.ts` to validate all timeframe query parameters and data contracts.
+
+---
+
 ## [1.23.0] - 2026-10-14
 
 ### 🏛️ Dedicated Campus Repositories Projects Leaderboard & Merges Algorithm

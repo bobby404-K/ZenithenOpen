@@ -51,6 +51,7 @@ export default function ProjectsPage() {
   // Campus Repositories Leaderboard State
   const [campusLeaderboard, setCampusLeaderboard] = React.useState<CampusLeaderboardEntry[]>([]);
   const [loadingLeaderboard, setLoadingLeaderboard] = React.useState<boolean>(true);
+  const [leaderboardTimeframe, setLeaderboardTimeframe] = React.useState<"week" | "month" | "overall">("month");
 
   // Modal State for Registering a Project
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
@@ -101,7 +102,7 @@ export default function ProjectsPage() {
     async function fetchCampusLeaderboard() {
       try {
         setLoadingLeaderboard(true);
-        const res = await fetch("/api/projects/leaderboard");
+        const res = await fetch(`/api/projects/leaderboard?timeframe=${leaderboardTimeframe}`);
         const data = await res.json();
         if (isMounted && data.success && Array.isArray(data.leaderboard)) {
           setCampusLeaderboard(data.leaderboard);
@@ -116,7 +117,7 @@ export default function ProjectsPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [leaderboardTimeframe]);
 
   // Handle registering a new project
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -237,7 +238,30 @@ export default function ProjectsPage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Timeframe Filter Buttons */}
+              <div className="flex items-center rounded-xl bg-muted/60 p-1 border border-border">
+                {(
+                  [
+                    { key: "week", label: "This Week" },
+                    { key: "month", label: "This Month" },
+                    { key: "overall", label: "All-Time" },
+                  ] as const
+                ).map((tf) => (
+                  <button
+                    key={tf.key}
+                    onClick={() => setLeaderboardTimeframe(tf.key)}
+                    className={`px-3 py-1 text-xs font-medium rounded-lg transition-all duration-150 cursor-pointer ${
+                      leaderboardTimeframe === tf.key
+                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tf.label}
+                  </button>
+                ))}
+              </div>
+
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-semibold">
                 <GitMerge className="h-3.5 w-3.5" />
                 <span>Campus Merges Algorithm</span>
