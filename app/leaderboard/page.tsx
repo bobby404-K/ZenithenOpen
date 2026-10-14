@@ -10,10 +10,12 @@ import {
   Loader2,
   Sparkles,
   RefreshCw,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { StudentContributor } from "@/lib/data/student-competition";
 
 export default function LeaderboardPage() {
@@ -22,6 +24,33 @@ export default function LeaderboardPage() {
   const [competitors, setCompetitors] = React.useState<StudentContributor[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSyncing, setIsSyncing] = React.useState(false);
+
+  // Quick-Preview Student Card Modal State
+  const [previewStudent, setPreviewStudent] = React.useState<StudentPreviewData | null>(null);
+  const [previewModalOpen, setPreviewModalOpen] = React.useState(false);
+
+  const openStudentPreview = React.useCallback(
+    (student: StudentContributor, stats: { qualityPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number }) => {
+      setPreviewStudent({
+        username: student.username,
+        name: student.name,
+        avatarUrl: student.avatarUrl,
+        department: student.department,
+        year: student.year,
+        badge: student.badge,
+        badgeColor: student.badgeColor,
+        linkedinUrl: student.linkedinUrl,
+        githubUrl: `https://github.com/${student.username}`,
+        qualityPrs: stats.qualityPrs,
+        totalPrs: stats.prs,
+        openPrs: stats.openPrs,
+        closedPrs: stats.closedPrs,
+        mergedPrs: stats.mergedPrs ?? stats.prs,
+      });
+      setPreviewModalOpen(true);
+    },
+    []
+  );
 
   // Fetch live student rankings from API
   const fetchLeaderboard = React.useCallback(async () => {
@@ -270,7 +299,7 @@ export default function LeaderboardPage() {
                       key={student.id}
                       className={`relative p-6 bg-card border ${borderAccent} flex flex-col justify-between overflow-hidden group hover:shadow-xl transition-all`}
                     >
-                      {/* Top Rank Badge */}
+                      {/* Top Rank Badge & Quick Card Preview */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <span className="text-2xl">{medalEmoji}</span>
@@ -278,9 +307,19 @@ export default function LeaderboardPage() {
                             Rank #{rankNum}
                           </span>
                         </div>
-                        <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${student.badgeColor}`}>
-                          {student.badge}
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => openStudentPreview(student, stats)}
+                            title={`Quick preview card for ${student.name}`}
+                            className="h-6 px-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold text-cyan-400 hover:text-cyan-300 transition-all hover:scale-105 cursor-pointer"
+                          >
+                            <User className="h-3 w-3" />
+                            <span>Preview</span>
+                          </button>
+                          <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${student.badgeColor}`}>
+                            {student.badge}
+                          </Badge>
+                        </div>
                       </div>
 
                       {/* Student Profile Info */}
@@ -414,12 +453,21 @@ export default function LeaderboardPage() {
                                 />
                               </Link>
                               <div>
-                                <Link
-                                  href={`/members/${student.username}`}
-                                  className="font-bold text-foreground hover:text-primary transition-colors block"
-                                >
-                                  {student.name}
-                                </Link>
+                                <div className="flex items-center gap-1.5">
+                                  <Link
+                                    href={`/members/${student.username}`}
+                                    className="font-bold text-foreground hover:text-primary transition-colors block"
+                                  >
+                                    {student.name}
+                                  </Link>
+                                  <button
+                                    onClick={() => openStudentPreview(student, stats)}
+                                    title={`Quick preview card for ${student.name}`}
+                                    className="h-5 w-5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer shrink-0"
+                                  >
+                                    <User className="h-2.5 w-2.5" />
+                                  </button>
+                                </div>
                                 <Link
                                   href={`/members/${student.username}`}
                                   className="text-[11px] text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-1"
@@ -456,6 +504,13 @@ export default function LeaderboardPage() {
             </div>
           </div>
         )}
+
+        {/* Quick-Preview Student Card Modal */}
+        <StudentPreviewModal
+          student={previewStudent}
+          isOpen={previewModalOpen}
+          onClose={() => setPreviewModalOpen(false)}
+        />
       </div>
     </div>
   );

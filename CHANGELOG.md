@@ -3,6 +3,32 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.0] - 2026-10-14
+
+### 🪪 Contributor Quick-Preview Student Card Modal
+
+- **Cross-Platform Quick Preview Modal**:
+  - Introduced reusable, high-fidelity `<StudentPreviewModal />` component in `@/components/members/student-preview-modal`.
+  - Built strictly to reference aesthetic standards:
+    - Ambient dark radial backdrop gradient and circular avatar with radiant cyan glow ring.
+    - Verified IST Student badge, student department and academic year subtitle.
+    - Direct external GitHub and LinkedIn social navigation action buttons.
+    - 5 PR metric stat cards (Quality Merge, Total PR, Open, Closed, Merged).
+    - Campus repository merges callout when student has official campus contributions.
+    - Quick actions: Direct link to student's Proof-of-Work Resume and Full Profile page.
+- **Ubiquitous Contributor Integration**:
+  - Integrated quick-preview modal triggers on the Leaderboard page (`/leaderboard`):
+    - Top 3 podium cards with dedicated Preview button.
+    - Contributor table rows with instant-access user preview trigger.
+  - Integrated on Campus Repositories Projects Leaderboard (`/projects`):
+    - Podium cards and rank 4+ list standings.
+  - Integrated on Homepage (`/`):
+    - Monthly top contributors ranking list.
+- **Automated Backend Test Suite**:
+  - Added `tests/backend/student-preview-modal.test.ts` validating data contract, mapping, URL fallbacks, and metric calculations across all contributor sources.
+
+---
+
 ## [1.28.0] - 2026-10-14
 
 ### 👤 Profile Layout Simplification & Mentorship Request Option Removal

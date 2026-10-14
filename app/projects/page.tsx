@@ -15,12 +15,14 @@ import {
   AlertCircle,
   Trophy,
   GitMerge,
+  User,
 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { Project } from "@/types";
 
 interface CampusLeaderboardEntry {
@@ -52,6 +54,31 @@ export default function ProjectsPage() {
   const [campusLeaderboard, setCampusLeaderboard] = React.useState<CampusLeaderboardEntry[]>([]);
   const [loadingLeaderboard, setLoadingLeaderboard] = React.useState<boolean>(true);
   const [leaderboardTimeframe, setLeaderboardTimeframe] = React.useState<"week" | "month" | "overall">("month");
+
+  // Quick-Preview Student Card Modal State
+  const [previewStudent, setPreviewStudent] = React.useState<StudentPreviewData | null>(null);
+  const [previewModalOpen, setPreviewModalOpen] = React.useState(false);
+
+  const openStudentPreview = React.useCallback((entry: CampusLeaderboardEntry) => {
+    setPreviewStudent({
+      username: entry.username,
+      name: entry.name,
+      avatarUrl: entry.avatarUrl,
+      department: entry.department,
+      year: entry.year,
+      badge: entry.badge,
+      badgeColor: entry.badgeColor,
+      linkedinUrl: entry.linkedinUrl,
+      campusMerges: entry.campusMerges,
+      qualityPrs: entry.campusQualityMerges,
+      openPrs: entry.campusOpenPrs,
+      closedPrs: entry.campusClosedPrs,
+      mergedPrs: entry.campusMerges,
+      totalPrs: entry.campusTotalPrs,
+      topRepo: entry.topCampusRepo,
+    });
+    setPreviewModalOpen(true);
+  }, []);
 
   // Modal State for Registering a Project
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
@@ -316,6 +343,13 @@ export default function ProjectsPage() {
                           </span>
 
                           <div className="flex items-center space-x-1.5">
+                            <button
+                              onClick={() => openStudentPreview(entry)}
+                              title={`Quick preview card for ${entry.name}`}
+                              className="h-7 w-7 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
+                            >
+                              <User className="h-3.5 w-3.5" />
+                            </button>
                             <a
                               href={`https://github.com/${entry.username}`}
                               target="_blank"
@@ -423,6 +457,13 @@ export default function ProjectsPage() {
                       <div className="flex items-center space-x-3 justify-end">
                         {/* Direct GitHub & LinkedIn Icons */}
                         <div className="flex items-center space-x-1.5">
+                          <button
+                            onClick={() => openStudentPreview(entry)}
+                            title={`Quick preview card for ${entry.name}`}
+                            className="h-7 w-7 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
+                          >
+                            <User className="h-3.5 w-3.5" />
+                          </button>
                           <a
                             href={`https://github.com/${entry.username}`}
                             target="_blank"
@@ -775,6 +816,13 @@ export default function ProjectsPage() {
             </div>
           </div>
         )}
+
+        {/* Quick-Preview Student Card Modal */}
+        <StudentPreviewModal
+          student={previewStudent}
+          isOpen={previewModalOpen}
+          onClose={() => setPreviewModalOpen(false)}
+        />
       </div>
     </div>
   );
