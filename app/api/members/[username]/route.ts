@@ -11,6 +11,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getCached, setCached, deleteCached } from "@/lib/redis/client";
 import { z } from "zod";
 import { ContributionStatus, ContributionType } from "@prisma/client";
+import { STUDENT_COMPETITORS } from "@/lib/data/student-competition";
 
 const UpdateProfileSchema = z.object({
   bio: z.string().max(500, "Bio cannot exceed 500 characters").optional(),
@@ -89,8 +90,52 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       console.warn("[Member Profile] Database query notice:", dbErr);
     }
 
+    const studentMatch = STUDENT_COMPETITORS.find(
+      (c) =>
+        c.username.toLowerCase() === cleanUsername ||
+        c.username.toLowerCase().replace(/[-_]/g, "") === cleanUsername.replace(/[-_]/g, "")
+    );
+
     if (!user) {
-      if (cleanUsername === "bobby404-k" || cleanUsername === "ist-zenithenlab") {
+      if (studentMatch) {
+        const stats = studentMatch.overall;
+        user = {
+          id: studentMatch.id,
+          name: studentMatch.name,
+          email: `${studentMatch.username}@zenithen.ist`,
+          image: studentMatch.avatarUrl,
+          bio: studentMatch.department.includes("·") ? studentMatch.department : `${studentMatch.department} • ${studentMatch.badge}`,
+          department: studentMatch.department,
+          yearOfStudy: studentMatch.year,
+          role: "STUDENT",
+          isMentor: false,
+          mentorshipTopics: ["Frontend", "Open Source", "TypeScript"],
+          linkedinUrl: studentMatch.linkedinUrl || `https://linkedin.com/in/${studentMatch.username}`,
+          portfolioUrl: `https://github.com/${studentMatch.username}`,
+          createdAt: new Date(),
+          githubAccount: {
+            username: studentMatch.username,
+            avatarUrl: studentMatch.avatarUrl,
+            followers: 15,
+            publicRepos: 8,
+          },
+          skills: [{ name: "TypeScript" }, { name: "React" }, { name: "Next.js" }],
+          achievements: [],
+          contributions: stats.prs > 0 ? [
+            {
+              id: `ctb-${studentMatch.username}-1`,
+              title: stats.topContribution.title,
+              url: stats.topContribution.prUrl,
+              prNumber: 1,
+              type: ContributionType.PULL_REQUEST,
+              status: ContributionStatus.MERGED,
+              isQualityPr: stats.qualityPrs > 0,
+              mergedAt: new Date(),
+              createdAt: new Date(),
+            },
+          ] : [],
+        };
+      } else if (cleanUsername === "bobby404-k" || cleanUsername === "ist-zenithenlab") {
         user = {
           id: `usr-${cleanUsername}`,
           name: cleanUsername === "bobby404-k" ? "Bobby K" : "IST ZenithenLab",
@@ -147,14 +192,14 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       portfolioUrl: user.portfolioUrl || "",
       joinedAt: user.createdAt,
       stats: {
-        totalContributions: user.contributions.length,
-        totalPrs: prs.length,
-        mergedPrs,
-        openPrs,
-        closedPrs,
-        qualityPrs,
-        codeReviews,
-        commits,
+        totalContributions: user.contributions.length || (studentMatch ? studentMatch.overall.prs : 0),
+        totalPrs: prs.length || (studentMatch ? studentMatch.overall.prs : 0),
+        mergedPrs: mergedPrs || (studentMatch ? studentMatch.overall.mergedPrs : 0),
+        openPrs: openPrs || (studentMatch ? studentMatch.overall.openPrs : 0),
+        closedPrs: closedPrs || (studentMatch ? studentMatch.overall.closedPrs : 0),
+        qualityPrs: qualityPrs || (studentMatch ? studentMatch.overall.qualityPrs : 0),
+        codeReviews: codeReviews || (studentMatch ? studentMatch.overall.reviews : 0),
+        commits: commits || (studentMatch ? studentMatch.overall.commits : 0),
         followers: user.githubAccount?.followers || 0,
         publicRepos: user.githubAccount?.publicRepos || 0,
       },
