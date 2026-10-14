@@ -14,7 +14,7 @@ const buttonVariants = cva(
         emerald:
           "bg-emerald-600 text-white shadow-sm hover:bg-emerald-500 border border-emerald-500/50",
         outline:
-          "border border-border bg-card text-foreground hover:bg-muted hover:text-foreground shadow-xs",
+          "border border-border bg-card text-foreground hover:bg-white hover:text-black hover:border-white shadow-xs transition-colors",
         ghost:
           "text-muted-foreground hover:bg-muted hover:text-foreground",
         link:

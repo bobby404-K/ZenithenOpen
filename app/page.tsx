@@ -202,7 +202,7 @@ export default function HomePage() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border hover:border-primary/40 text-foreground cursor-pointer">
+                          <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer">
                             <span>Good First Issues</span>
                             <ExternalLink className="h-3 w-3" />
                           </Button>
@@ -481,7 +481,7 @@ export default function HomePage() {
                   {/* Option at the bottom to view all students */}
                   <div className="pt-2 text-center">
                     <Link href="/programs#student-competition">
-                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 border-border hover:bg-muted cursor-pointer">
+                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer">
                         <span>View All Campus Contributors in Open Source Arena</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
