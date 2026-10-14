@@ -3,6 +3,21 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0] - 2026-10-14
+
+### ⚡ Real-Time GitHub Webhook Campus Merges Cache Invalidation
+
+- **Instant Campus Leaderboard Invalidation on Merges**:
+  - Enhanced GitHub real-time webhook endpoint (`/api/github/webhook`) to detect pull requests and push events affecting campus repositories (`IST-ZenithenLab/*`).
+  - Automatically invalidates all partitioned campus projects leaderboard Redis caches (`projects:campus-leaderboard:*`, `projects:campus-leaderboard:timeframe:*`).
+  - Guarantees immediate zero-stale reflection of campus merges on the Projects Leaderboard without waiting for TTL expiration.
+- **Resilient Webhook Database Operations**:
+  - Wrapped user lookups and contribution persistence in safe error-handling routines for offline and intermittent database resilience.
+- **Automated Backend Test Coverage**:
+  - Expanded `tests/backend/github-webhook.test.ts` to verify campus repository PR event routing and cache invalidation flags.
+
+---
+
 ## [1.24.0] - 2026-10-14
 
 ### ⏱️ Campus Repositories Leaderboard Timeframe Filtering & Interactive Toggles
