@@ -3,6 +3,24 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0] - 2026-10-14
+
+### 🚀 Interactive Step-by-Step "First Campus PR" Guide for IST Contributors
+
+- **Personalized First PR Walkthrough Engine**:
+  - Implemented `<InteractiveFirstPrGuide />` in `@/components/resources/interactive-first-pr-guide`:
+    - Real-time command personalizer taking the student's GitHub username and feature/branch slug and updating all 7 terminal commands dynamically.
+    - Persistent step tracking with `localStorage` persistence so students can track progress across study sessions.
+    - Live progress bar indicator tracking PR readiness from 0% to 100%.
+    - One-click terminal command copy with visual feedback.
+    - Direct links to IST-ZenithenLab/ZenithenOpen issues and pull request compare views.
+- **Pre-flight Quality Checklist**:
+  - Added interactive pre-flight verification covering TypeScript builds (`npm run typecheck`), atomic commit scoping, Conventional Commits formatting, and GitHub issue linkage.
+- **Milestone Celebration Banner**:
+  - Displays celebratory banner upon completion of all 7 steps with a direct link to submit their pull request to earn their verified campus badge.
+- **Resources Page Integration**:
+  - Upgraded `/resources` "Make First PR" tab with the interactive workflow component.
+
 ## [1.31.0] - 2026-10-14
 
 ### 🎖️ Student Proof-of-Work Resume & Shareable Badge Card Export
