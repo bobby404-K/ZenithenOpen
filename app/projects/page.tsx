@@ -13,19 +13,44 @@ import {
   Loader2,
   CheckCircle2,
   AlertCircle,
+  Trophy,
+  GitMerge,
 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Project } from "@/types";
+
+interface CampusLeaderboardEntry {
+  rank: number;
+  userId: string;
+  name: string;
+  username: string;
+  avatarUrl: string;
+  department: string;
+  year: string;
+  badge: string;
+  badgeColor: string;
+  linkedinUrl: string;
+  campusMerges: number;
+  campusQualityMerges: number;
+  campusOpenPrs: number;
+  campusClosedPrs: number;
+  campusTotalPrs: number;
+  topCampusRepo: string;
+}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedLanguage, setSelectedLanguage] = React.useState<string>("All");
+
+  // Campus Repositories Leaderboard State
+  const [campusLeaderboard, setCampusLeaderboard] = React.useState<CampusLeaderboardEntry[]>([]);
+  const [loadingLeaderboard, setLoadingLeaderboard] = React.useState<boolean>(true);
 
   // Modal State for Registering a Project
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
@@ -69,6 +94,29 @@ export default function ProjectsPage() {
     }, 250);
     return () => clearTimeout(timer);
   }, [fetchProjects]);
+
+  // Fetch Campus Repositories Leaderboard
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchCampusLeaderboard() {
+      try {
+        setLoadingLeaderboard(true);
+        const res = await fetch("/api/projects/leaderboard");
+        const data = await res.json();
+        if (isMounted && data.success && Array.isArray(data.leaderboard)) {
+          setCampusLeaderboard(data.leaderboard);
+        }
+      } catch (err) {
+        console.error("[ProjectsPage] Failed to fetch campus leaderboard:", err);
+      } finally {
+        if (isMounted) setLoadingLeaderboard(false);
+      }
+    }
+    fetchCampusLeaderboard();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Handle registering a new project
   const handleCreateProject = async (e: React.FormEvent) => {
@@ -168,9 +216,244 @@ export default function ProjectsPage() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* ======================================================== */}
+        {/* Campus Repositories Contributor Leaderboard Section       */}
+        {/* Ranked strictly by total merges made into campus repos   */}
+        {/* ======================================================== */}
+        <div className="mt-10 mb-16 rounded-3xl border border-border bg-card/60 backdrop-blur-sm p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/60 pb-6">
+            <div>
+              <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-amber-500 font-mono">
+                <Trophy className="h-4 w-4" />
+                <span>Campus Repositories Leaderboard</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mt-1">
+                Top Contributors to Campus Repos
+              </h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Distinct algorithm ranking student engineers purely by how many pull requests they merged into official IST campus repositories (<code className="text-primary font-mono text-[11px]">IST-ZenithenLab/*</code>).
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-mono font-semibold">
+                <GitMerge className="h-3.5 w-3.5" />
+                <span>Campus Merges Algorithm</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted border border-border text-muted-foreground text-xs font-mono">
+                <span>IST-ZenithenLab</span>
+              </span>
+            </div>
+          </div>
+
+          {loadingLeaderboard ? (
+            <div className="py-12 flex flex-col items-center justify-center text-muted-foreground">
+              <Loader2 className="h-7 w-7 animate-spin text-primary mb-2" />
+              <p className="text-xs font-medium">Computing campus repository merges standings...</p>
+            </div>
+          ) : campusLeaderboard.length === 0 ? (
+            <div className="py-8 text-center text-xs text-muted-foreground">
+              No campus repository merges recorded yet. Contributions will sync automatically.
+            </div>
+          ) : (
+            <div className="mt-6 space-y-6">
+              {/* Top 3 Podium Highlights */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {campusLeaderboard.slice(0, 3).map((entry, idx) => {
+                  const isFirst = idx === 0;
+                  const isSecond = idx === 1;
+
+                  return (
+                    <div
+                      key={entry.userId}
+                      className={`relative rounded-2xl border p-5 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 ${
+                        isFirst
+                          ? "border-amber-500/50 bg-gradient-to-b from-amber-500/10 via-card to-card ring-1 ring-amber-500/20 shadow-lg"
+                          : isSecond
+                          ? "border-slate-400/50 bg-gradient-to-b from-slate-400/10 via-card to-card ring-1 ring-slate-400/20 shadow-md"
+                          : "border-amber-700/50 bg-gradient-to-b from-amber-700/10 via-card to-card ring-1 ring-amber-700/20 shadow-md"
+                      }`}
+                    >
+                      <div>
+                        {/* Top Rank Badge & Social Navigation */}
+                        <div className="flex items-center justify-between mb-3">
+                          <span
+                            className={`font-mono font-bold text-xs px-2.5 py-0.5 rounded-full border ${
+                              isFirst
+                                ? "bg-amber-500/20 text-amber-500 border-amber-500/40"
+                                : isSecond
+                                ? "bg-slate-400/20 text-slate-300 border-slate-400/40"
+                                : "bg-amber-700/20 text-amber-600 border-amber-700/40"
+                            }`}
+                          >
+                            Rank #{entry.rank} {isFirst ? "🏆 Champion" : isSecond ? "🥈 Runner-Up" : "🥉 Bronze"}
+                          </span>
+
+                          <div className="flex items-center space-x-1.5">
+                            <a
+                              href={`https://github.com/${entry.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`@${entry.username} on GitHub`}
+                              className="h-7 w-7 rounded-full bg-muted/80 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
+                            >
+                              <GithubIcon className="h-3.5 w-3.5" />
+                            </a>
+                            <a
+                              href={entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`@${entry.username} on LinkedIn`}
+                              className="h-7 w-7 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
+                            >
+                              <LinkedinIcon className="h-3.5 w-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        {/* Contributor Profile Link */}
+                        <Link
+                          href={`/members/${encodeURIComponent(entry.username)}`}
+                          className="flex items-center space-x-3 group"
+                        >
+                          <img
+                            src={entry.avatarUrl}
+                            alt={entry.name}
+                            className="h-12 w-12 rounded-full border-2 border-border object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-foreground text-sm group-hover:text-primary transition-colors truncate">
+                              {entry.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-mono truncate">
+                              @{entry.username}
+                            </p>
+                          </div>
+                        </Link>
+
+                        {/* Top Campus Repo Badge */}
+                        <div className="mt-3 text-[11px] text-muted-foreground">
+                          <span className="font-semibold text-foreground">Top Campus Repo:</span>{" "}
+                          <span className="font-mono text-primary text-[10px] bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+                            {entry.topCampusRepo}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Merges Metric - Prominently Displayed */}
+                      <div className="mt-4 pt-3 border-t border-border/60 flex items-end justify-between">
+                        <div>
+                          <p className="text-[11px] text-muted-foreground uppercase font-mono font-semibold">Campus Merges</p>
+                          <p className="text-2xl font-extrabold text-foreground">{entry.campusMerges}</p>
+                        </div>
+                        <div className="text-right text-[11px] text-muted-foreground font-mono">
+                          <span className="text-amber-500 font-semibold">{entry.campusQualityMerges} Quality</span>
+                          {" • "}
+                          <span>{entry.campusOpenPrs} Open</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Full Standings List (Rank #4 and below) */}
+              {campusLeaderboard.length > 3 && (
+                <div className="rounded-2xl border border-border/70 bg-card/40 divide-y divide-border/60 overflow-hidden">
+                  <div className="p-3 bg-muted/30 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                    <span>Rank & Contributor</span>
+                    <span>Campus Repo Merges</span>
+                  </div>
+
+                  {campusLeaderboard.slice(3).map((entry) => (
+                    <div
+                      key={entry.userId}
+                      className="p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/30 transition-colors group"
+                    >
+                      <div className="flex items-center space-x-3.5 min-w-0">
+                        <span className="font-mono font-bold text-xs text-muted-foreground w-6 text-center">
+                          #{entry.rank}
+                        </span>
+                        <Link
+                          href={`/members/${encodeURIComponent(entry.username)}`}
+                          className="flex items-center space-x-3 min-w-0"
+                        >
+                          <img
+                            src={entry.avatarUrl}
+                            alt={entry.name}
+                            className="h-9 w-9 rounded-full border border-border object-cover group-hover:scale-105 transition-transform shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-bold text-foreground text-xs group-hover:text-primary transition-colors truncate">
+                              {entry.name}
+                            </p>
+                            <p className="text-[11px] text-muted-foreground font-mono truncate">
+                              @{entry.username} • {entry.department}
+                            </p>
+                          </div>
+                        </Link>
+                      </div>
+
+                      <div className="flex items-center space-x-3 justify-end">
+                        {/* Direct GitHub & LinkedIn Icons */}
+                        <div className="flex items-center space-x-1.5">
+                          <a
+                            href={`https://github.com/${entry.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`@${entry.username} on GitHub`}
+                            className="h-7 w-7 rounded-full bg-muted/60 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
+                          >
+                            <GithubIcon className="h-3.5 w-3.5" />
+                          </a>
+                          <a
+                            href={entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`@${entry.username} on LinkedIn`}
+                            className="h-7 w-7 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
+                          >
+                            <LinkedinIcon className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
+
+                        {/* Top Campus Repo Badge */}
+                        <span className="hidden md:inline-block font-mono text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded border border-border truncate max-w-[200px]">
+                          {entry.topCampusRepo}
+                        </span>
+
+                        {/* Campus Merges Badge */}
+                        <span className="font-bold text-xs font-mono px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 shrink-0">
+                          {entry.campusMerges} Merged
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ======================================================== */}
+        {/* Campus Repositories Catalog Section                       */}
+        {/* ======================================================== */}
+        <div className="border-b border-border pb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                All Campus Repositories
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Explore active projects and find issues to contribute to.
+              </p>
+            </div>
+          </div>
 
           {/* Search & Filter Bar */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
