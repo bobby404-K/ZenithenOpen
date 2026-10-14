@@ -306,10 +306,15 @@ export default function HomePage() {
                   href="https://github.com/IST-ZenithenLab/ZenithenOpen/issues?q=is%3Aissue+is%3Aopen+label%3Agood-first-issue"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-primary hover:underline font-semibold"
                 >
-                  <span>Explore Good First Issues</span>
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer"
+                  >
+                    <span>Explore Good First Issues</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Button>
                 </a>
               </div>
             </Card>
@@ -367,10 +372,15 @@ export default function HomePage() {
                   href="https://github.com/IST-ZenithenLab/First-PR"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-primary hover:underline font-semibold"
                 >
-                  <span>Open First-PR Repo</span>
-                  <ExternalLink className="h-3.5 w-3.5" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer"
+                  >
+                    <span>Open First-PR Repo</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Button>
                 </a>
               </div>
             </Card>
