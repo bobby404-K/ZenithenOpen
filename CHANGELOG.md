@@ -3,6 +3,27 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.0] - 2026-10-14
+
+### 🚀 GitHub Repository Metadata Auto-Sync for Campus Projects
+
+- **Automated Repository Metadata Ingestion**:
+  - Implemented `GET` and `POST /api/projects/lookup` route for automatic inspection of GitHub repository metadata:
+    - Normalizes GitHub repository identifiers across HTTPS URLs, git SSH formats, and `owner/repo` direct notation.
+    - Synchronizes repository name, tagline, description, primary language, topics/tags, stars count, and forks count.
+    - Intelligent campus repository detection (`IST-ZenithenLab/*`).
+    - Redis-cached with 1-hour TTL (`github:lookup:{owner}:{repo}`).
+- **Interactive Auto-Fill Registration Flow**:
+  - Enhanced the "Register Campus Repository" modal on `/projects`:
+    - Positioned GitHub repository URL input with instant "Auto-Fill from GitHub" action.
+    - Automatic lookup on input blur to eliminate manual typing friction for student creators.
+    - Added verified live GitHub metadata pill displaying stars, forks, and detected primary language.
+    - Passes authentic stars and forks count during project creation into Supabase PostgreSQL.
+- **Automated Backend Test Suite**:
+  - Added `tests/backend/projects-lookup.test.ts` validating URL parsing permutations, error responses, metadata extraction, and caching behavior.
+
+---
+
 ## [1.29.0] - 2026-10-14
 
 ### 🪪 Contributor Quick-Preview Student Card Modal

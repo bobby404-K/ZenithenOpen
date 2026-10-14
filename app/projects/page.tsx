@@ -16,6 +16,7 @@ import {
   Trophy,
   GitMerge,
   User,
+  Sparkles,
 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,59 @@ export default function ProjectsPage() {
   const [submitting, setSubmitting] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+
+  // GitHub Repository Auto-Sync State
+  const [isLookingUpRepo, setIsLookingUpRepo] = React.useState(false);
+  const [repoSyncedMetadata, setRepoSyncedMetadata] = React.useState<{
+    stars: number;
+    forks: number;
+    primaryLanguage: string;
+    owner: string;
+    name: string;
+  } | null>(null);
+  const [lookupNotice, setLookupNotice] = React.useState<string | null>(null);
+
+  const lookupGitHubMetadata = React.useCallback(async (rawUrl: string) => {
+    const trimmed = rawUrl.trim();
+    if (!trimmed || (!trimmed.includes("/") && !trimmed.includes("github.com"))) {
+      return;
+    }
+
+    setIsLookingUpRepo(true);
+    setLookupNotice(null);
+    try {
+      const res = await fetch(`/api/projects/lookup?repo=${encodeURIComponent(trimmed)}`);
+      const data = await res.json();
+      if (data.success && data.metadata) {
+        const meta = data.metadata;
+        setProjName(meta.name);
+        if (meta.description || meta.tagline) {
+          setProjTagline(meta.description || meta.tagline);
+        }
+        if (meta.primaryLanguage) {
+          setProjLanguage(meta.primaryLanguage);
+        }
+        if (Array.isArray(meta.topics) && meta.topics.length > 0) {
+          setProjTags(meta.topics.join(", "));
+        }
+        setRepoSyncedMetadata({
+          stars: meta.starsCount ?? 0,
+          forks: meta.forksCount ?? 0,
+          primaryLanguage: meta.primaryLanguage,
+          owner: meta.owner,
+          name: meta.name,
+        });
+        setLookupNotice(`Auto-fetched details for @${meta.owner}/${meta.name}`);
+      } else {
+        setLookupNotice(data.error || "Could not auto-fetch GitHub metadata.");
+      }
+    } catch (err) {
+      console.warn("[ProjectsPage] Repo lookup notice:", err);
+      setLookupNotice("Unable to reach GitHub metadata service.");
+    } finally {
+      setIsLookingUpRepo(false);
+    }
+  }, []);
 
   const languages = ["All", "TypeScript", "Python", "Go", "Rust", "C++"];
 
@@ -173,6 +227,8 @@ export default function ProjectsPage() {
           repositoryUrl: projRepoUrl.trim(),
           primaryLanguage: projLanguage,
           tags: parsedTags.length > 0 ? parsedTags : [projLanguage],
+          starsCount: repoSyncedMetadata?.stars ?? 0,
+          forksCount: repoSyncedMetadata?.forks ?? 0,
           isFeatured: true,
         }),
       });
@@ -193,6 +249,8 @@ export default function ProjectsPage() {
         setProjTagline("");
         setProjRepoUrl("");
         setProjTags("");
+        setRepoSyncedMetadata(null);
+        setLookupNotice(null);
       }, 1800);
     } catch (_err: unknown) {
       setFormError("Network error connecting to projects service.");
@@ -717,6 +775,65 @@ export default function ProjectsPage() {
                     </div>
                   )}
 
+                  {/* Repository URL with GitHub Auto-Sync Button */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-semibold text-foreground">
+                        Repository URL
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => lookupGitHubMetadata(projRepoUrl)}
+                        disabled={isLookingUpRepo || !projRepoUrl.trim()}
+                        className="text-[11px] font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      >
+                        {isLookingUpRepo ? (
+                          <>
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                            <span>Fetching...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-3 w-3" />
+                            <span>Auto-Fill from GitHub</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <Input
+                      required
+                      placeholder="https://github.com/IST-ZenithenLab/..."
+                      value={projRepoUrl}
+                      onChange={(e) => setProjRepoUrl(e.target.value)}
+                      onBlur={() => {
+                        if (projRepoUrl.trim() && !repoSyncedMetadata) {
+                          lookupGitHubMetadata(projRepoUrl);
+                        }
+                      }}
+                      className="bg-background border-border text-foreground text-xs font-mono"
+                    />
+                  </div>
+
+                  {/* Auto-Sync Live Metadata Pill */}
+                  {repoSyncedMetadata && (
+                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2.5 flex items-center justify-between text-xs text-emerald-400">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                        <span className="font-semibold">Auto-Synced from GitHub:</span>
+                        <span className="font-mono text-[11px] text-foreground">
+                          ⭐ {repoSyncedMetadata.stars} stars • 🍴 {repoSyncedMetadata.forks} forks • {repoSyncedMetadata.primaryLanguage}
+                        </span>
+                      </div>
+                      <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold shrink-0">
+                        Verified
+                      </span>
+                    </div>
+                  )}
+
+                  {lookupNotice && !repoSyncedMetadata && (
+                    <p className="text-[11px] text-muted-foreground italic">{lookupNotice}</p>
+                  )}
+
                   <div>
                     <label className="text-xs font-semibold text-foreground block mb-1.5">
                       Project Name
@@ -727,19 +844,6 @@ export default function ProjectsPage() {
                       value={projName}
                       onChange={(e) => setProjName(e.target.value)}
                       className="bg-background border-border text-foreground text-xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-foreground block mb-1.5">
-                      Repository URL
-                    </label>
-                    <Input
-                      required
-                      placeholder="https://github.com/IST-ZenithenLab/..."
-                      value={projRepoUrl}
-                      onChange={(e) => setProjRepoUrl(e.target.value)}
-                      className="bg-background border-border text-foreground text-xs font-mono"
                     />
                   </div>
 
