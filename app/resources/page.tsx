@@ -12,30 +12,21 @@ import {
   Newspaper,
   Calendar,
   ChevronRight,
-  Copy,
-  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/components/navigation/navigation-context";
+import { InteractiveFirstPrGuide } from "@/components/resources/interactive-first-pr-guide";
 
 const VALID_RESOURCE_TABS = ["learn-to-pr", "make-first-pr", "blog"] as const;
 type ResourceTab = (typeof VALID_RESOURCE_TABS)[number];
 
 export default function ResourcesPage() {
   const { activeSection } = useNavigation();
-  const [copiedIndex, setCopiedIndex] = React.useState<number | null>(null);
-
   // Robust algorithm matching Programs: safely falls back to default if activeSection is invalid or null
   const defaultTab: ResourceTab = "learn-to-pr";
   const currentTab: ResourceTab = VALID_RESOURCE_TABS.includes(activeSection as ResourceTab)
     ? (activeSection as ResourceTab)
     : defaultTab;
-
-  const copyToClipboard = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
 
   const learnConcepts = [
     {
@@ -74,57 +65,7 @@ export default function ResourcesPage() {
     },
   ];
 
-  const firstPrSteps = [
-    {
-      step: 1,
-      title: "Find a Good First Issue",
-      description:
-        "Visit our curated campus opportunities board or any ZenithenOpen repository and filter issues by the 'good first issue' label.",
-      command: "https://github.com/IST-ZenithenLab/ZenithenOpen/issues?q=label%3A%22good+first+issue%22",
-    },
-    {
-      step: 2,
-      title: "Fork the Repository to Your GitHub",
-      description:
-        "Click the 'Fork' button at the top-right of the repository on GitHub to create your personal copy.",
-      command: "Click 'Fork' on GitHub -> Select your personal account",
-    },
-    {
-      step: 3,
-      title: "Clone Your Fork Locally",
-      description:
-        "Download your repository onto your local development machine using git in your terminal.",
-      command: "git clone https://github.com/<your-username>/ZenithenOpen.git",
-    },
-    {
-      step: 4,
-      title: "Create a Dedicated Feature Branch",
-      description:
-        "Never work directly on main. Create and switch to a descriptive branch for your change.",
-      command: "git checkout -b feature/my-first-contribution",
-    },
-    {
-      step: 5,
-      title: "Make Your Edits & Verify Quality",
-      description:
-        "Implement your code or documentation changes, then run local validation scripts to ensure linting passes.",
-      command: "npm run lint; npm test",
-    },
-    {
-      step: 6,
-      title: "Commit and Push to Origin",
-      description:
-        "Stage your files, commit with a descriptive conventional message, and push to your remote fork.",
-      command: 'git add -A && git commit -m "docs: add contributor profile" && git push -u origin feature/my-first-contribution',
-    },
-    {
-      step: 7,
-      title: "Open Your Pull Request",
-      description:
-        "Navigate to GitHub and click 'Compare & pull request'. Fill out the PR template describing your changes and link the relevant issue.",
-      command: "https://github.com/IST-ZenithenLab/ZenithenOpen/pulls",
-    },
-  ];
+
 
   const blogPosts = [
     {
@@ -259,65 +200,8 @@ export default function ResourcesPage() {
 
           {/* Section: Make First PR */}
           {currentTab === "make-first-pr" && (
-            <section className="space-y-6 rounded-2xl border-2 border-primary/30 bg-card p-6 sm:p-10 shadow-lg shadow-primary/5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 border border-primary/25 text-primary">
-                    <Terminal className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider font-mono text-primary px-2.5 py-0.5 rounded-md bg-muted border border-border">
-                      Interactive Walkthrough
-                    </span>
-                    <h2 className="text-2xl font-bold text-foreground mt-1">
-                      Make Your First PR (Make First PR)
-                    </h2>
-                  </div>
-                </div>
-                <span className="text-xs font-mono text-primary font-semibold hidden sm:inline-block">
-                  7 Guided Steps
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 pt-2">
-                {firstPrSteps.map((step, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-primary/40 transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold font-mono">
-                          {step.step}
-                        </span>
-                        <h3 className="text-sm font-bold text-foreground">
-                          {step.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-muted-foreground ml-8 leading-relaxed mb-3">
-                      {step.description}
-                    </p>
-
-                    <div className="ml-8 flex items-center justify-between rounded-xl bg-muted/60 border border-border/80 px-3.5 py-2.5 font-mono text-xs text-foreground overflow-x-auto">
-                      <code className="text-[11px] truncate mr-2">{step.command}</code>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard(step.command, idx)}
-                        className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer shrink-0"
-                        title="Copy command"
-                      >
-                        {copiedIndex === idx ? (
-                          <Check className="h-3.5 w-3.5 text-primary" />
-                        ) : (
-                          <Copy className="h-3.5 w-3.5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <section className="space-y-6">
+              <InteractiveFirstPrGuide />
             </section>
           )}
 
