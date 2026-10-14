@@ -46,6 +46,7 @@ import { runLearningPathsRouteTests } from "./learning-paths-route.test";
 import { runShowcasePagesTests } from "./showcase-pages.test";
 import { runCampusProjectsLeaderboardTests } from "./campus-projects-leaderboard.test";
 import { runStudentPreviewModalTests } from "./student-preview-modal.test";
+import { runProjectsLookupTests } from "./projects-lookup.test";
 import { SuiteResult } from "./test-utils";
 
 async function main() {
@@ -85,6 +86,7 @@ async function main() {
     results.push(await runShowcasePagesTests());
     results.push(await runCampusProjectsLeaderboardTests());
     results.push(await runStudentPreviewModalTests());
+    results.push(await runProjectsLookupTests());
   } catch (error) {
     console.error("\n[FATAL ERROR IN TEST RUNNER]:", error);
     process.exit(1);
