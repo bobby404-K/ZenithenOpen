@@ -3,6 +3,20 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.0] - 2026-10-14
+
+### 🛡️ Dependabot Security Vulnerability Resolution & Transitive Dependency Overrides
+
+- **Security Hardening & Vulnerability Remediation**:
+  - Implemented selective dependency overrides in `package.json` for high-severity transitive dependencies:
+    - Pinned `deepmerge-ts` to `>=8.0.0` resolving GHSA-ggr8-5vv4-36mx recursive object stack exhaustion.
+    - Pinned `braces` to `^3.0.3` and `micromatch` to `^4.0.8` addressing GHSA-vfj7-8cjw-p6xm.
+  - Achieved `0 vulnerabilities` across all production dependencies (`npm audit --omit=dev`).
+- **Build & Quality Gates Verification**:
+  - Re-verified TypeScript compiler type safety, ESLint quality rules, and all 705 backend test suite assertions passing with 100% green rate.
+
+---
+
 ## [1.25.0] - 2026-10-14
 
 ### ⚡ Real-Time GitHub Webhook Campus Merges Cache Invalidation
