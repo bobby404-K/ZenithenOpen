@@ -3,6 +3,18 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2026-10-14
+
+### 👤 Profile Layout Simplification & Mentorship Request Option Removal
+
+- **Removed Mentorship Action Buttons from Contributor Profile**:
+  - Removed the top-bar orange `Request Mentorship` button from `/members/[username]`.
+  - Removed the `Peer Mentorship Availability` banner card and `Request Mentorship Session` action from the profile sidebar.
+  - Removed the inline mentorship modal dialog, unneeded form states, and dead event handlers from the member profile controller.
+  - Preserved essential profile actions: `Proof-of-Work Resume`, `Share Profile`, direct GitHub/LinkedIn icon buttons, and 5 PR metric counters.
+
+---
+
 ## [1.27.0] - 2026-10-14
 
 ### 🔍 Visual Browser Verification & Walkthrough Demonstration
