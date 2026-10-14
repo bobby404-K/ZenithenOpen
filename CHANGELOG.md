@@ -3,6 +3,24 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0] - 2026-10-14
+
+### 🔍 Visual Browser Verification & Walkthrough Demonstration
+
+- **Visual Quality Assurance & Timeframe Interaction Verification**:
+  - Validated interactive behavior and DOM updates for Campus Leaderboard timeframes (`This Week`, `This Month`, `All-Time`).
+  - Verified podium rendering for top 3 campus repository contributors.
+  - Confirmed student profile view (`/members/abhijit-saha`) aligns with reference specifications:
+    - Ambient dark gradient and circular avatar with radiant cyan glow ring.
+    - Role subtitle `Frontend Builder · Early Open Source`.
+    - Direct external navigation action buttons for GitHub and LinkedIn.
+    - `← Back to Hall of Fame` top navigation link.
+    - 5 PR metric cards: Quality Merge, TOTAL PRS, Open, Closed, Merged.
+- **Generated Walkthrough Artifacts**:
+  - Saved visual walkthrough documentation and WebP recording to the artifacts system.
+
+---
+
 ## [1.26.0] - 2026-10-14
 
 ### 🛡️ Dependabot Security Vulnerability Resolution & Transitive Dependency Overrides
