@@ -17,7 +17,7 @@ import { CampusEvolutionSection } from "@/components/dashboard/campus-evolution-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Project, Opportunity } from "@/types";
 import { StudentContributor } from "@/lib/data/student-competition";
 
@@ -396,31 +396,64 @@ export default function HomePage() {
                     return (
                       <div
                         key={student.id}
-                        className="p-4 rounded-xl border border-border bg-card flex items-center justify-between hover:border-primary/40 transition-colors"
+                        className="p-4 rounded-xl border border-border bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary/40 transition-all group"
                       >
-                        <div className="flex items-center space-x-3.5">
+                        <Link
+                          href={`/members/${encodeURIComponent(student.username)}`}
+                          className="flex items-center space-x-3.5 flex-1 min-w-0"
+                        >
                           <span className="font-mono font-bold text-xs text-muted-foreground w-6">
                             #{idx + 1}
                           </span>
                           <img
                             src={student.avatarUrl}
                             alt={student.name}
-                            className="h-10 w-10 rounded-full border border-border object-cover"
+                            className="h-10 w-10 rounded-full border border-border object-cover group-hover:scale-105 transition-transform"
                           />
-                          <div>
-                            <p className="font-bold text-foreground text-sm leading-tight">{student.name}</p>
-                            <p className="text-xs text-muted-foreground font-mono">@{student.username}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-foreground text-sm leading-tight group-hover:text-primary transition-colors truncate">
+                              {student.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-mono truncate">
+                              @{student.username} • {student.department}
+                            </p>
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-2 text-right">
-                          <span className="font-bold text-xs font-mono px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                            {mergedCount} Merged
-                          </span>
-                          {qualityCount > 0 && (
-                            <span className="font-semibold text-[11px] font-mono px-2 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-                              {qualityCount} Quality
+                        </Link>
+
+                        <div className="flex items-center space-x-2.5 justify-end">
+                          {/* Direct GitHub & LinkedIn Social Action Icons */}
+                          <div className="flex items-center space-x-1.5 mr-1">
+                            <a
+                              href={`https://github.com/${student.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`@${student.username} on GitHub`}
+                              className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
+                            >
+                              <GithubIcon className="h-4 w-4" />
+                            </a>
+                            <a
+                              href={student.linkedinUrl || `https://linkedin.com/in/${student.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`@${student.username} on LinkedIn`}
+                              className="h-8 w-8 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
+                            >
+                              <LinkedinIcon className="h-4 w-4" />
+                            </a>
+                          </div>
+
+                          {/* Metric Badges */}
+                          <div className="flex items-center space-x-2 text-right">
+                            <span className="font-bold text-xs font-mono px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
+                              {mergedCount} Merged
                             </span>
-                          )}
+                            {qualityCount > 0 && (
+                              <span className="font-semibold text-[11px] font-mono px-2 py-1 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                {qualityCount} Quality
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );

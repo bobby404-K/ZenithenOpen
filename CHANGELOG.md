@@ -3,6 +3,30 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0] - 2026-10-13
+
+### 👤 Student Profile Card Reference Alignment & Social Profile Navigation
+
+- **Profile View Design Alignment with Reference**:
+  - Transformed `/members/[username]` hero card into a centered layout with ambient dark gradient and cyan glow ring around the circular avatar.
+  - Aligned typography: bold white name, cyan role subtitle (`Frontend Builder · Early Open Source`).
+  - Added centered circular dark action buttons for GitHub and LinkedIn with hover elevation and direct external navigation.
+  - Linked top navigation to Hall of Fame (`← Back to Hall of Fame` at `/leaderboard`).
+  - Implemented the 5 stat cards grid under `Open Source Contributions` styled with glassmorphism and metric accents:
+    1. **Quality Merge** (amber star & count)
+    2. **TOTAL PRS** (white count & slate label)
+    3. **Open** (emerald icon & count)
+    4. **Closed** (rose icon & count)
+    5. **Merged** (purple icon & count)
+- **Homepage Monthly Leaderboard Clickable Social Navigation**:
+  - Upgraded Monthly Leaderboard rows on homepage (`app/page.tsx`) to link directly to `/members/[username]`.
+  - Added dedicated round GitHub and LinkedIn icon buttons for each contributor row, enabling instant external navigation without interfering with row click.
+- **Dataset and Route Compatibility**:
+  - Added reference contributor profile Abhijit Saha (`abhijit-saha`) to `lib/data/student-competition.ts`.
+  - Added full fallback support in `/api/members/[username]` to resolve student competitors from data registry.
+
+---
+
 ## [1.21.0] - 2026-10-13
 
 ### 🏆 Strict Quality Merge Verification Standard & 5-Tier Leaderboard Ranking Algorithm

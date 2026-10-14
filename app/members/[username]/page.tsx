@@ -5,6 +5,8 @@ import Link from "next/link";
 import {
   GraduationCap,
   GitPullRequest,
+  GitMerge,
+  CircleSlash,
   Star,
   Award,
   ExternalLink,
@@ -16,7 +18,6 @@ import {
   CheckCircle2,
   FileText,
   AlertCircle,
-  Layers,
   Send,
   Loader2,
   MessageSquare,
@@ -245,19 +246,26 @@ export default function MemberProfilePage({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 transition-colors">
+    <div className="min-h-screen bg-background text-foreground py-10 px-4 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Navigation & Action Bar */}
         <div className="flex items-center justify-between">
           <Link
-            href="/members"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors group"
+            href="/leaderboard"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
-            <span>Back to Member Directory</span>
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            <span>Back to Hall of Fame</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <Link href={`/resume?username=${encodeURIComponent(profile.username)}`}>
+              <Button variant="outline" size="sm" className="text-xs h-8 gap-1.5 border-border">
+                <FileText className="h-3.5 w-3.5 text-primary" />
+                <span>Proof-of-Work Resume</span>
+              </Button>
+            </Link>
+
             <Button
               variant="outline"
               size="sm"
@@ -276,142 +284,122 @@ export default function MemberProfilePage({
                 </>
               )}
             </Button>
-            <a
-              href={`https://github.com/${profile.username}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button size="sm" className="text-xs h-8 gap-1.5 bg-primary text-primary-foreground">
-                <GithubIcon className="h-3.5 w-3.5" />
-                <span>GitHub Profile</span>
-                <ExternalLink className="h-3 w-3 opacity-70" />
+
+            {(profile.isMentor || profile.role === "MENTOR" || profile.mentorshipTopics?.length > 0) && (
+              <Button
+                size="sm"
+                onClick={() => setMentorshipModalOpen(true)}
+                className="text-xs h-8 gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
+              >
+                <MessageSquare className="h-3.5 w-3.5" />
+                <span>Request Mentorship</span>
               </Button>
-            </a>
+            )}
           </div>
         </div>
 
-        {/* Hero Profile Card */}
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
-            <div className="flex items-start space-x-5">
-              <img
-                src={profile.avatarUrl || `https://github.com/${profile.username}.png`}
-                alt={profile.name}
-                className="h-20 w-20 rounded-2xl border-2 border-border object-cover shadow-sm shrink-0"
-              />
-              <div className="space-y-1.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-                    {profile.name}
-                  </h1>
-                  <span
-                    className={`text-[10px] font-semibold uppercase px-2.5 py-0.5 rounded-full border ${
-                      profile.role === "ADMIN"
-                        ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
-                        : profile.role === "MENTOR"
-                        ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                        : "bg-primary/10 text-primary border-primary/20"
-                    }`}
-                  >
-                    {profile.role}
-                  </span>
-                  <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                    <CheckCircle2 className="h-3 w-3" />
-                    <span>Verified IST Student</span>
-                  </div>
-                </div>
+        {/* Hero Profile Card - Strictly Matching 1st Reference Image */}
+        <div className="relative rounded-3xl border border-slate-800/80 bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-black p-8 sm:p-12 overflow-hidden shadow-2xl text-center">
+          <div className="absolute inset-0 bg-radial-at-t from-cyan-500/10 via-transparent to-transparent pointer-events-none" />
 
-                <p className="text-xs font-mono text-muted-foreground">@{profile.username}</p>
-
-                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
-                  <GraduationCap className="h-4 w-4 text-primary shrink-0" />
-                  <span>{profile.department}</span>
-                  <span className="text-border">•</span>
-                  <span>{profile.yearOfStudy}</span>
-                </div>
-
-                {profile.bio && (
-                  <p className="text-sm text-muted-foreground leading-relaxed pt-2 max-w-2xl">
-                    {profile.bio}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex flex-wrap sm:flex-col items-start sm:items-end gap-2.5 shrink-0 pt-2 sm:pt-0">
-              <Link href={`/resume?username=${encodeURIComponent(profile.username)}`}>
-                <Button variant="outline" size="sm" className="text-xs h-8 gap-1.5 border-border">
-                  <FileText className="h-3.5 w-3.5 text-primary" />
-                  <span>Proof-of-Work Resume</span>
-                </Button>
-              </Link>
-
-              {(profile.isMentor || profile.role === "MENTOR" || profile.mentorshipTopics?.length > 0) && (
-                <Button
-                  size="sm"
-                  onClick={() => setMentorshipModalOpen(true)}
-                  className="text-xs h-8 gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
-                >
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  <span>Request Mentorship</span>
-                </Button>
-              )}
-
-              {profile.linkedinUrl && (
-                <a
-                  href={profile.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 font-medium"
-                >
-                  <LinkedinIcon className="h-3.5 w-3.5 text-blue-500" />
-                  <span>LinkedIn Profile</span>
-                </a>
-              )}
-            </div>
+          {/* Centered Circular Avatar with Cyan Glow */}
+          <div className="relative mx-auto w-fit">
+            <img
+              src={profile.avatarUrl || `https://github.com/${profile.username}.png`}
+              alt={profile.name}
+              className="h-28 w-28 sm:h-32 sm:w-32 rounded-full border-2 border-cyan-400/60 ring-4 ring-cyan-500/20 object-cover shadow-2xl mx-auto"
+            />
           </div>
 
-          {/* Contribution Metrics Grid: Quality Merge, Total PR, Open PR, Closed PR, Total Merges */}
-          <div className="mt-8 grid grid-cols-2 sm:grid-cols-5 gap-3 border-t border-border/60 pt-6">
-            <div className="rounded-xl bg-amber-500/10 border border-amber-500/20 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-amber-600 mb-1">
-                <Star className="h-3.5 w-3.5 fill-amber-500" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Quality Merge</span>
-              </div>
-              <p className="text-2xl font-extrabold text-amber-500">{profile.stats?.qualityPrs ?? 0}</p>
+          {/* Name */}
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mt-5">
+            {profile.name}
+          </h1>
+
+          {/* Role / Subtitle */}
+          <p className="text-sm sm:text-base font-medium text-cyan-400 mt-2">
+            {profile.bio || profile.department || "Frontend Builder · Early Open Source"}
+          </p>
+
+          {/* Direct Circular GitHub and LinkedIn Icons Navigation */}
+          <div className="flex items-center justify-center gap-3.5 mt-5">
+            <a
+              href={profile.portfolioUrl || `https://github.com/${profile.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`@${profile.username} on GitHub`}
+              className="h-10 w-10 rounded-full bg-slate-950/80 border border-slate-700/80 hover:border-slate-400 text-slate-300 hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-lg"
+            >
+              <GithubIcon className="h-5 w-5" />
+            </a>
+            <a
+              href={profile.linkedinUrl || `https://linkedin.com/in/${profile.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={`@${profile.username} on LinkedIn`}
+              className="h-10 w-10 rounded-full bg-slate-950/80 border border-slate-700/80 hover:border-blue-400 text-slate-300 hover:text-blue-400 flex items-center justify-center transition-all hover:scale-110 shadow-lg"
+            >
+              <LinkedinIcon className="h-5 w-5" />
+            </a>
+          </div>
+
+          {/* Metadata Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
+            <span className="font-mono">@{profile.username}</span>
+            <span className="text-slate-700">•</span>
+            <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              <CheckCircle2 className="h-3 w-3" />
+              <span>Verified IST Student</span>
+            </div>
+            {profile.yearOfStudy && (
+              <>
+                <span className="text-slate-700">•</span>
+                <span>{profile.yearOfStudy}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Open Source Contributions Section Title */}
+        <div className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground text-center">
+            Open Source Contributions
+          </h2>
+
+          {/* 5 Stat Cards Grid: Quality Merge, TOTAL PRS, Open, Closed, Merged */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
+            {/* 1. Quality Merge */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-5 flex flex-col items-center justify-center text-center shadow-lg transition-transform hover:-translate-y-1">
+              <Star className="h-5 w-5 text-amber-400 fill-amber-400 mb-2" />
+              <span className="text-3xl font-extrabold text-amber-400">{profile.stats?.qualityPrs ?? 0}</span>
+              <span className="text-xs font-semibold text-amber-400/90 tracking-wide mt-2">Quality Merge</span>
             </div>
 
-            <div className="rounded-xl bg-muted/40 border border-border/50 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground mb-1">
-                <Layers className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Total PR</span>
-              </div>
-              <p className="text-2xl font-extrabold text-foreground">{profile.stats?.totalPrs ?? 0}</p>
+            {/* 2. TOTAL PRS */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-5 flex flex-col items-center justify-center text-center shadow-lg transition-transform hover:-translate-y-1">
+              <span className="text-3xl font-extrabold text-foreground mt-1">{profile.stats?.totalPrs ?? 0}</span>
+              <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase mt-3">TOTAL PRS</span>
             </div>
 
-            <div className="rounded-xl bg-blue-500/10 border border-blue-500/20 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-blue-600 mb-1">
-                <GitPullRequest className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Open PR</span>
-              </div>
-              <p className="text-2xl font-extrabold text-blue-500">{profile.stats?.openPrs ?? 0}</p>
+            {/* 3. Open */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-5 flex flex-col items-center justify-center text-center shadow-lg transition-transform hover:-translate-y-1">
+              <GitPullRequest className="h-5 w-5 text-emerald-400 mb-2" />
+              <span className="text-3xl font-extrabold text-emerald-400">{profile.stats?.openPrs ?? 0}</span>
+              <span className="text-xs font-semibold text-emerald-400/90 tracking-wide mt-2">Open</span>
             </div>
 
-            <div className="rounded-xl bg-rose-500/10 border border-rose-500/20 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-rose-600 mb-1">
-                <GitPullRequest className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Closed PR</span>
-              </div>
-              <p className="text-2xl font-extrabold text-rose-500">{profile.stats?.closedPrs ?? 0}</p>
+            {/* 4. Closed */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-5 flex flex-col items-center justify-center text-center shadow-lg transition-transform hover:-translate-y-1">
+              <CircleSlash className="h-5 w-5 text-rose-400 mb-2" />
+              <span className="text-3xl font-extrabold text-rose-400">{profile.stats?.closedPrs ?? 0}</span>
+              <span className="text-xs font-semibold text-rose-400/90 tracking-wide mt-2">Closed</span>
             </div>
 
-            <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3.5 text-center">
-              <div className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 mb-1">
-                <GitPullRequest className="h-3.5 w-3.5" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">Total Merges</span>
-              </div>
-              <p className="text-2xl font-extrabold text-emerald-500">{profile.stats?.mergedPrs ?? 0}</p>
+            {/* 5. Merged */}
+            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md p-5 flex flex-col items-center justify-center text-center shadow-lg transition-transform hover:-translate-y-1">
+              <GitMerge className="h-5 w-5 text-purple-400 mb-2" />
+              <span className="text-3xl font-extrabold text-purple-400">{profile.stats?.mergedPrs ?? 0}</span>
+              <span className="text-xs font-semibold text-purple-400/90 tracking-wide mt-2">Merged</span>
             </div>
           </div>
         </div>
