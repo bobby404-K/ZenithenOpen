@@ -10,7 +10,6 @@ import {
   Compass,
   Users2,
   ExternalLink,
-  User,
 } from "lucide-react";
 import { HeroSection } from "@/components/dashboard/hero-section";
 import { LiveMetricsDashboard } from "@/components/dashboard/live-metrics";
@@ -18,7 +17,7 @@ import { CampusEvolutionSection } from "@/components/dashboard/campus-evolution-
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { GithubIcon } from "@/components/ui/icons";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { Project, Opportunity } from "@/types";
 import { StudentContributor } from "@/lib/data/student-competition";
@@ -450,15 +449,8 @@ export default function HomePage() {
                         </Link>
 
                         <div className="flex items-center space-x-2.5 justify-end">
-                          {/* Direct GitHub & LinkedIn Social Action Icons */}
+                          {/* Direct GitHub Action Icon */}
                           <div className="flex items-center space-x-1.5 mr-1">
-                            <button
-                              onClick={() => openStudentPreview(student, mergedCount, qualityCount)}
-                              title={`Quick preview card for ${student.name}`}
-                              className="h-8 w-8 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
-                            >
-                              <User className="h-4 w-4" />
-                            </button>
                             <a
                               href={`https://github.com/${student.username}`}
                               target="_blank"
@@ -467,15 +459,6 @@ export default function HomePage() {
                               className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
                             >
                               <GithubIcon className="h-4 w-4" />
-                            </a>
-                            <a
-                              href={student.linkedinUrl || `https://linkedin.com/in/${student.username}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title={`@${student.username} on LinkedIn`}
-                              className="h-8 w-8 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
-                            >
-                              <LinkedinIcon className="h-4 w-4" />
                             </a>
                           </div>
 

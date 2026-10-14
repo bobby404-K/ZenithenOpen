@@ -10,7 +10,6 @@ import {
   Loader2,
   Sparkles,
   RefreshCw,
-  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -308,14 +307,6 @@ export default function LeaderboardPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => openStudentPreview(student, stats)}
-                            title={`Quick preview card for ${student.name}`}
-                            className="h-6 px-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center gap-1 text-[10px] font-semibold text-cyan-400 hover:text-cyan-300 transition-all hover:scale-105 cursor-pointer"
-                          >
-                            <User className="h-3 w-3" />
-                            <span>Preview</span>
-                          </button>
                           <Badge variant="outline" className={`text-[10px] px-2 py-0.5 ${student.badgeColor}`}>
                             {student.badge}
                           </Badge>
@@ -460,13 +451,6 @@ export default function LeaderboardPage() {
                                   >
                                     {student.name}
                                   </Link>
-                                  <button
-                                    onClick={() => openStudentPreview(student, stats)}
-                                    title={`Quick preview card for ${student.name}`}
-                                    className="h-5 w-5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer shrink-0"
-                                  >
-                                    <User className="h-2.5 w-2.5" />
-                                  </button>
                                 </div>
                                 <Link
                                   href={`/members/${student.username}`}

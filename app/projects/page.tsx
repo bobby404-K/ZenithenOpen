@@ -15,14 +15,13 @@ import {
   AlertCircle,
   Trophy,
   GitMerge,
-  User,
   Sparkles,
 } from "lucide-react";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { GithubIcon } from "@/components/ui/icons";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { Project } from "@/types";
 
@@ -401,13 +400,6 @@ export default function ProjectsPage() {
                           </span>
 
                           <div className="flex items-center space-x-1.5">
-                            <button
-                              onClick={() => openStudentPreview(entry)}
-                              title={`Quick preview card for ${entry.name}`}
-                              className="h-7 w-7 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
-                            >
-                              <User className="h-3.5 w-3.5" />
-                            </button>
                             <a
                               href={`https://github.com/${entry.username}`}
                               target="_blank"
@@ -416,15 +408,6 @@ export default function ProjectsPage() {
                               className="h-7 w-7 rounded-full bg-muted/80 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
                             >
                               <GithubIcon className="h-3.5 w-3.5" />
-                            </a>
-                            <a
-                              href={entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title={`@${entry.username} on LinkedIn`}
-                              className="h-7 w-7 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
-                            >
-                              <LinkedinIcon className="h-3.5 w-3.5" />
                             </a>
                           </div>
                         </div>
@@ -513,15 +496,8 @@ export default function ProjectsPage() {
                       </div>
 
                       <div className="flex items-center space-x-3 justify-end">
-                        {/* Direct GitHub & LinkedIn Icons */}
+                        {/* Direct GitHub Icon */}
                         <div className="flex items-center space-x-1.5">
-                          <button
-                            onClick={() => openStudentPreview(entry)}
-                            title={`Quick preview card for ${entry.name}`}
-                            className="h-7 w-7 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
-                          >
-                            <User className="h-3.5 w-3.5" />
-                          </button>
                           <a
                             href={`https://github.com/${entry.username}`}
                             target="_blank"
@@ -530,15 +506,6 @@ export default function ProjectsPage() {
                             className="h-7 w-7 rounded-full bg-muted/60 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
                           >
                             <GithubIcon className="h-3.5 w-3.5" />
-                          </a>
-                          <a
-                            href={entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title={`@${entry.username} on LinkedIn`}
-                            className="h-7 w-7 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-500 hover:text-blue-400 transition-all hover:scale-110"
-                          >
-                            <LinkedinIcon className="h-3.5 w-3.5" />
                           </a>
                         </div>
 
