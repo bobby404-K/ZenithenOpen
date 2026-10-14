@@ -68,6 +68,23 @@ export async function runCampusProjectsLeaderboardTests(): Promise<SuiteResult> 
   const limitData = await limitRes.json();
   suite.assert(limitData.leaderboard.length <= 3, "Limit query returns <= 3 entries");
 
+  // --- 5. Verify Timeframe Parameter (week, month, overall) ---
+  const weekReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=week");
+  const weekRes = await GET(weekReq);
+  suite.assertEqual(weekRes.status, 200, "GET with timeframe=week returns 200 OK");
+  const weekData = await weekRes.json();
+  suite.assertEqual(weekData.timeframe, "week", "Response echoes timeframe: week");
+  suite.assert(Array.isArray(weekData.leaderboard), "week leaderboard is an array");
+  suite.assert(weekData.leaderboard.length > 0, "week leaderboard has data");
+
+  const overallReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=overall");
+  const overallRes = await GET(overallReq);
+  suite.assertEqual(overallRes.status, 200, "GET with timeframe=overall returns 200 OK");
+  const overallData = await overallRes.json();
+  suite.assertEqual(overallData.timeframe, "overall", "Response echoes timeframe: overall");
+  suite.assert(Array.isArray(overallData.leaderboard), "overall leaderboard is an array");
+  suite.assert(overallData.leaderboard.length > 0, "overall leaderboard has data");
+
   return suite.summary();
 }
 
