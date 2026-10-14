@@ -3,6 +3,24 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0] - 2026-10-14
+
+### 🏛️ Dedicated Campus Repositories Projects Leaderboard & Merges Algorithm
+
+- **Distinct Campus Merges Leaderboard Ranking Algorithm**:
+  - Implemented a dedicated ranking algorithm for the Projects section (`/projects`), ranking student engineers strictly by the total number of pull requests merged into official IST campus repositories (`IST-ZenithenLab/*`).
+  - Algorithm priority order:
+    $$\text{Campus Merges} (\text{descending}) \rightarrow \text{Campus Quality Merges} (\text{descending}) \rightarrow \text{Campus Total PRs} (\text{descending})$$
+  - Completely separate from the platform Hall of Fame leaderboard to incentivize students building and maintaining campus infrastructure.
+- **Dedicated Campus Projects Leaderboard API**:
+  - Created `/api/projects/leaderboard` with live Prisma database aggregation over campus contributions, resilient cached fallbacks, and 3-minute Redis caching.
+- **Rich Campus Leaderboard Interface on Projects Section**:
+  - Added interactive Top 3 Podium Cards (Gold, Silver, Bronze) highlighting champion contributors, their total campus merges, top campus repository, and direct social profile action buttons.
+  - Implemented detailed rankings directory with seamless contributor profile links (`/members/[username]`) and external GitHub / LinkedIn navigation buttons.
+  - Added full test suite `tests/backend/campus-projects-leaderboard.test.ts` verifying all sorting, boundary conditions, and limit parameters.
+
+---
+
 ## [1.22.0] - 2026-10-13
 
 ### 👤 Student Profile Card Reference Alignment & Social Profile Navigation
