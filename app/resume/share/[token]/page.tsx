@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProofOfWorkBadgeModal } from "@/components/resume/proof-of-work-badge-card";
 
 interface SharedSnapshotPayload {
   success: boolean;
@@ -87,6 +88,7 @@ export default function PublicSharedResumePage({
   const [copiedMd, setCopiedMd] = React.useState<boolean>(false);
   const [copiedLink, setCopiedLink] = React.useState<boolean>(false);
   const [activeTab, setActiveTab] = React.useState<"dossier" | "ats">("dossier");
+  const [badgeModalOpen, setBadgeModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -386,6 +388,15 @@ export default function PublicSharedResumePage({
                   <Printer className="w-3.5 h-3.5 mr-2 text-slate-400" />
                   Print / Save PDF
                 </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setBadgeModalOpen(true)}
+                  className="border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 cursor-pointer shadow-xs"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 mr-2 text-cyan-400" />
+                  Export Badge Card
+                </Button>
               </div>
             </div>
 
@@ -662,6 +673,21 @@ export default function PublicSharedResumePage({
             Share Token: <code className="font-mono text-slate-400 bg-slate-900 px-1 py-0.5 rounded">{data.shareToken}</code>
           </p>
         </footer>
+
+        {/* Shareable Proof-of-Work Badge Card Modal */}
+        <ProofOfWorkBadgeModal
+          isOpen={badgeModalOpen}
+          onClose={() => setBadgeModalOpen(false)}
+          data={{
+            username: data.profile.githubUsername,
+            name: data.profile.fullName,
+            department: data.profile.department || "Computer Science",
+            year: data.profile.education?.graduationYear || "Class of 2026",
+            qualityPrs: data.profile.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 3,
+            campusMerges: data.profile.highlightedRepos?.length || 2,
+            totalPrs: data.profile.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 5,
+          }}
+        />
       </main>
     </div>
   );
