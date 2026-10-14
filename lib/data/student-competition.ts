@@ -7,14 +7,16 @@ export interface TopContributionInfo {
 
 export interface ContributorTimeframeStats {
   rank: number;
-  qualityPrs: number; // 1. Quality Merge
-  prs: number;        // 2. Total PR
-  openPrs: number;    // 3. Open PR
-  closedPrs: number;  // 4. Closed PR
-  mergedPrs: number;  // 5. Total Merges
+  qualityPrs: number;        // Tier 1: Quality Merges (>=100 stars && >=100 forks, merged)
+  qualityOpenPrs?: number;   // Tier 2: Quality Open PRs (>=100 stars && >=100 forks, open)
+  qualityClosedPrs?: number; // Tier 3: Quality Closed PRs (>=100 stars && >=100 forks, closed)
+  mergedPrs: number;         // Tier 4: Total Merges (all merged PRs on user's account)
+  prs: number;               // Total PRs (informational)
+  openPrs: number;           // Total Open PRs (informational)
+  closedPrs: number;         // Total Closed PRs (informational)
   reviews?: number;
   commits?: number;
-  points?: number;    // Deprecated, kept optional for backwards compat
+  points?: number;           // Deprecated, kept optional for backwards compat
   topContribution: TopContributionInfo;
 }
 

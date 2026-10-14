@@ -62,6 +62,8 @@ function computeTimeframeStats(
   const prs = filtered.length;
   const mergedPrs = filtered.filter((c) => c.status === ContributionStatus.MERGED).length;
   const qualityPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.MERGED).length;
+  const qualityOpenPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.OPEN).length;
+  const qualityClosedPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.CLOSED).length;
   const openPrs = filtered.filter((c) => c.status === ContributionStatus.OPEN).length;
   const closedPrs = filtered.filter((c) => c.status === ContributionStatus.CLOSED).length;
 
@@ -88,6 +90,8 @@ function computeTimeframeStats(
 
   return {
     qualityPrs,
+    qualityOpenPrs,
+    qualityClosedPrs,
     prs,
     openPrs,
     closedPrs,
@@ -171,9 +175,15 @@ export async function GET(request: NextRequest) {
       dbContributors = [...STUDENT_COMPETITORS];
     }
 
-    // 3. Sort purely by: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
+    // 3. Sort strictly by 4-tier hierarchy:
+    // Tier 1: Quality Merged PRs (>=100 stars && >=100 forks, merged)
+    // Tier 2: Quality Open PRs (>=100 stars && >=100 forks, open)
+    // Tier 3: Quality Closed PRs (>=100 stars && >=100 forks, closed unmerged)
+    // Tier 4: Total Merges (all merged PRs on user's account)
     interface ExtendedStats {
       qualityPrs?: number;
+      qualityOpenPrs?: number;
+      qualityClosedPrs?: number;
       prs?: number;
       openPrs?: number;
       closedPrs?: number;
@@ -184,24 +194,28 @@ export async function GET(request: NextRequest) {
       const statsA = a[timeframe] as unknown as ExtendedStats;
       const statsB = b[timeframe] as unknown as ExtendedStats;
 
-      // 1. Quality Merge
+      // Tier 1: Quality Merged PRs
       const qualityDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
       if (qualityDiff !== 0) return qualityDiff;
 
-      // 2. Total PR
-      const totalPrDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
-      if (totalPrDiff !== 0) return totalPrDiff;
-
-      // 3. Open PR
-      const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+      // Tier 2: Quality Open PRs (only for >=100 stars && >=100 forks)
+      const qOpenB = statsB.qualityOpenPrs ?? statsB.openPrs ?? 0;
+      const qOpenA = statsA.qualityOpenPrs ?? statsA.openPrs ?? 0;
+      const openDiff = qOpenB - qOpenA;
       if (openDiff !== 0) return openDiff;
 
-      // 4. Closed PR
-      const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+      // Tier 3: Quality Closed PRs (only for >=100 stars && >=100 forks)
+      const qClosedB = statsB.qualityClosedPrs ?? statsB.closedPrs ?? 0;
+      const qClosedA = statsA.qualityClosedPrs ?? statsA.closedPrs ?? 0;
+      const closedDiff = qClosedB - qClosedA;
       if (closedDiff !== 0) return closedDiff;
 
-      // 5. Total Merges
-      return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      // Tier 4: Total Merges (all merged PRs on user's account, not just quality)
+      const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      if (mergeDiff !== 0) return mergeDiff;
+
+      // Deterministic alphabetical fallback
+      return a.username.localeCompare(b.username);
     });
 
     // 4. Assign dynamic ranks

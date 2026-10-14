@@ -86,21 +86,33 @@ export default function LeaderboardPage() {
     }
   };
 
-  // Sort competitors: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
+  // Sort competitors: Tier 1: Quality Merge -> Tier 2: Quality Open PR -> Tier 3: Quality Closed PR -> Tier 4: Total Merges
   const sortedCompetitors = React.useMemo(() => {
     return [...competitors].sort((a, b) => {
-      const statsA = a[timeframe] as unknown as { qualityPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
-      const statsB = b[timeframe] as unknown as { qualityPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
+      const statsA = a[timeframe] as unknown as { qualityPrs?: number; qualityOpenPrs?: number; qualityClosedPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
+      const statsB = b[timeframe] as unknown as { qualityPrs?: number; qualityOpenPrs?: number; qualityClosedPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
       if (sortBy === "quality") {
+        // Tier 1: Quality Merge (>=100 stars && >=100 forks, merged)
         const qDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
         if (qDiff !== 0) return qDiff;
-        const totalDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
-        if (totalDiff !== 0) return totalDiff;
-        const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+
+        // Tier 2: Quality Open PR (>=100 stars && >=100 forks, open)
+        const qOpenB = statsB.qualityOpenPrs ?? statsB.openPrs ?? 0;
+        const qOpenA = statsA.qualityOpenPrs ?? statsA.openPrs ?? 0;
+        const openDiff = qOpenB - qOpenA;
         if (openDiff !== 0) return openDiff;
-        const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+
+        // Tier 3: Quality Closed PR (>=100 stars && >=100 forks, closed unmerged)
+        const qClosedB = statsB.qualityClosedPrs ?? statsB.closedPrs ?? 0;
+        const qClosedA = statsA.qualityClosedPrs ?? statsA.closedPrs ?? 0;
+        const closedDiff = qClosedB - qClosedA;
         if (closedDiff !== 0) return closedDiff;
-        return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+
+        // Tier 4: Total Merges (all merged PRs on user's account)
+        const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+        if (mergeDiff !== 0) return mergeDiff;
+
+        return a.username.localeCompare(b.username);
       }
       if (sortBy === "prs") return (statsB.prs ?? 0) - (statsA.prs ?? 0);
       if (sortBy === "open") return (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);

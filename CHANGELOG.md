@@ -3,6 +3,21 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.0] - 2026-10-14
+
+### 🏆 Strict 4-Tier Leaderboard Ranking Algorithm
+
+- **Deterministic 4-Tier Sorting Hierarchy**:
+  - Implemented strict 4-tier ranking algorithm in `app/api/students/leaderboard/route.ts` and `app/leaderboard/page.tsx`:
+    - **Tier 1 (Primary)**: Quality Merged PRs (repositories with >=100 stars and >=100 forks, status = MERGED).
+    - **Tier 2 (First Tie-breaker)**: Quality Open PRs (repositories with >=100 stars and >=100 forks, status = OPEN).
+    - **Tier 3 (Second Tie-breaker)**: Quality Closed PRs (repositories with >=100 stars and >=100 forks, status = CLOSED unmerged).
+    - **Tier 4 (Third Tie-breaker)**: Total Merges (all merged pull requests across the student's entire GitHub account).
+  - Added deterministic alphabetical tie-breaker by student username for identical records.
+- **Granular Quality Pull Request Metrics**:
+  - Extended `ContributorTimeframeStats` in `lib/data/student-competition.ts` with `qualityOpenPrs` and `qualityClosedPrs`.
+  - Updated `computeTimeframeStats` to compute quality open PRs and quality closed PRs directly from authentic PostgreSQL contribution records.
+
 ## [1.32.0] - 2026-10-14
 
 ### 🚀 Interactive Step-by-Step "First Campus PR" Guide for IST Contributors
