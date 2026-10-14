@@ -14,20 +14,15 @@ import {
   Copy,
   Check,
   Sparkles,
-  BookOpen,
-  CheckCircle2,
   FileText,
   AlertCircle,
-  Send,
-  Loader2,
-  MessageSquare,
+  CheckCircle2,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
 
 interface MemberStats {
   totalContributions: number;
@@ -98,16 +93,6 @@ export default function MemberProfilePage({
   const [error, setError] = React.useState<string | null>(null);
   const [copiedShare, setCopiedShare] = React.useState<boolean>(false);
 
-  // Mentorship Modal State
-  const [mentorshipModalOpen, setMentorshipModalOpen] = React.useState<boolean>(false);
-  const [menteeName, setMenteeName] = React.useState<string>("");
-  const [menteeEmail, setMenteeEmail] = React.useState<string>("");
-  const [mentorshipTopic, setMentorshipTopic] = React.useState<string>("GSoC Preparation");
-  const [mentorshipGoal, setMentorshipGoal] = React.useState<string>("");
-  const [submittingMentorship, setSubmittingMentorship] = React.useState<boolean>(false);
-  const [mentorshipSent, setMentorshipSent] = React.useState<boolean>(false);
-  const [mentorshipError, setMentorshipError] = React.useState<string | null>(null);
-
   React.useEffect(() => {
     let isMounted = true;
     async function fetchMember() {
@@ -121,9 +106,6 @@ export default function MemberProfilePage({
 
         if (res.ok && data.username) {
           setProfile(data);
-          if (data.mentorshipTopics && data.mentorshipTopics.length > 0) {
-            setMentorshipTopic(data.mentorshipTopics[0]);
-          }
         } else {
           setError(data.error || `Member '@${username}' was not found.`);
         }
@@ -147,45 +129,6 @@ export default function MemberProfilePage({
       navigator.clipboard.writeText(window.location.href);
       setCopiedShare(true);
       setTimeout(() => setCopiedShare(false), 2000);
-    }
-  };
-
-  const handleSendMentorship = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profile) return;
-    setSubmittingMentorship(true);
-    setMentorshipError(null);
-
-    try {
-      const res = await fetch("/api/mentorship/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          menteeName: menteeName.trim(),
-          menteeEmail: menteeEmail.trim(),
-          topic: mentorshipTopic,
-          message: mentorshipGoal.trim(),
-          mentorId: profile.id,
-          mentorUsername: profile.username,
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setMentorshipSent(true);
-        setTimeout(() => {
-          setMentorshipSent(false);
-          setMentorshipModalOpen(false);
-          setMentorshipGoal("");
-        }, 2200);
-      } else {
-        setMentorshipError(data.error || "Failed to submit mentorship request.");
-      }
-    } catch (err) {
-      console.error("[MemberProfilePage] Mentorship request error:", err);
-      setMentorshipError("Failed to submit request. Please verify network connectivity.");
-    } finally {
-      setSubmittingMentorship(false);
     }
   };
 
@@ -284,17 +227,6 @@ export default function MemberProfilePage({
                 </>
               )}
             </Button>
-
-            {(profile.isMentor || profile.role === "MENTOR" || profile.mentorshipTopics?.length > 0) && (
-              <Button
-                size="sm"
-                onClick={() => setMentorshipModalOpen(true)}
-                className="text-xs h-8 gap-1.5 bg-amber-500 hover:bg-amber-600 text-white"
-              >
-                <MessageSquare className="h-3.5 w-3.5" />
-                <span>Request Mentorship</span>
-              </Button>
-            )}
           </div>
         </div>
 
@@ -552,45 +484,6 @@ export default function MemberProfilePage({
               </CardContent>
             </Card>
 
-            {/* Mentorship Availability Banner */}
-            {(profile.isMentor || profile.mentorshipTopics?.length > 0) && (
-              <Card className="border-amber-500/30 bg-amber-500/5">
-                <CardContent className="p-6 space-y-4">
-                  <div className="flex items-center gap-2 text-sm font-bold text-amber-600">
-                    <BookOpen className="h-4 w-4" />
-                    <span>Peer Mentorship Availability</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    Available to mentor junior developers and conduct pull request architectural reviews.
-                  </p>
-
-                  {profile.mentorshipTopics && profile.mentorshipTopics.length > 0 && (
-                    <div className="space-y-1.5">
-                      <p className="text-[11px] font-semibold text-foreground">Topics Guided:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {profile.mentorshipTopics.map((topic, idx) => (
-                          <span
-                            key={idx}
-                            className="text-[10px] bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded font-mono"
-                          >
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <Button
-                    onClick={() => setMentorshipModalOpen(true)}
-                    className="w-full text-xs bg-amber-500 hover:bg-amber-600 text-white gap-2 shadow-xs"
-                  >
-                    <Send className="h-3.5 w-3.5" />
-                    <span>Request Mentorship Session</span>
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-
             {/* Academic Information */}
             <Card className="border-border bg-card">
               <CardContent className="p-6 space-y-3">
@@ -617,141 +510,6 @@ export default function MemberProfilePage({
           </div>
         </div>
       </div>
-
-      {/* Mentorship Request Modal */}
-      {mentorshipModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl text-foreground">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600">
-                  <MessageSquare className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">Request Mentorship</h3>
-                  <p className="text-xs text-muted-foreground">Connect with @{profile.username}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setMentorshipModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground p-1 text-sm cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-
-            {mentorshipSent ? (
-              <div className="mt-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center space-y-2">
-                <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto" />
-                <h4 className="text-sm font-bold text-foreground">Session Request Dispatched!</h4>
-                <p className="text-xs text-muted-foreground">
-                  Your mentorship request has been forwarded to @{profile.username}.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSendMentorship} className="mt-6 space-y-4">
-                {mentorshipError && (
-                  <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-600 flex items-start gap-2">
-                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                    <span>{mentorshipError}</span>
-                  </div>
-                )}
-
-                <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    Your Name
-                  </label>
-                  <Input
-                    required
-                    placeholder="e.g. John Doe"
-                    value={menteeName}
-                    onChange={(e) => setMenteeName(e.target.value)}
-                    className="bg-background border-border text-foreground text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    Your Campus Email
-                  </label>
-                  <Input
-                    required
-                    type="email"
-                    placeholder="student@zenithen.ist"
-                    value={menteeEmail}
-                    onChange={(e) => setMenteeEmail(e.target.value)}
-                    className="bg-background border-border text-foreground text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    Guidance Topic
-                  </label>
-                  <select
-                    value={mentorshipTopic}
-                    onChange={(e) => setMentorshipTopic(e.target.value)}
-                    className="w-full h-9 rounded-md border border-border bg-background px-3 py-1 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    {profile.mentorshipTopics && profile.mentorshipTopics.length > 0 ? (
-                      profile.mentorshipTopics.map((topic, idx) => (
-                        <option key={idx} value={topic}>
-                          {topic}
-                        </option>
-                      ))
-                    ) : (
-                      <option value="GSoC Preparation">GSoC Preparation</option>
-                    )}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-foreground block mb-1.5">
-                    What would you like to achieve?
-                  </label>
-                  <textarea
-                    required
-                    rows={3}
-                    placeholder="Describe your current PR roadblock or learning goal..."
-                    value={mentorshipGoal}
-                    onChange={(e) => setMentorshipGoal(e.target.value)}
-                    className="w-full rounded-md border border-border bg-background p-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                  />
-                </div>
-
-                <div className="pt-2 flex justify-end space-x-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setMentorshipModalOpen(false)}
-                    disabled={submittingMentorship}
-                    className="text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={submittingMentorship}
-                    className="text-xs bg-amber-500 hover:bg-amber-600 text-white gap-1.5"
-                  >
-                    {submittingMentorship ? (
-                      <>
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-3.5 w-3.5" />
-                        <span>Send Request</span>
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
