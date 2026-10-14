@@ -86,25 +86,35 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing pull_request object" }, { status: 400 });
       }
 
+      const repoFullName = payload.repository?.full_name || "unknown-repo";
       const authorUsername = (pr.user?.login || "").trim().toLowerCase();
       if (!authorUsername) {
         return NextResponse.json({ message: "Ignored: Missing author username" });
       }
 
       // Check if author is a registered student
-      const user = await prisma.user.findFirst({
-        where: {
-          OR: [
-            { githubAccount: { username: { equals: authorUsername, mode: "insensitive" } } },
-            { email: { startsWith: authorUsername, mode: "insensitive" } },
-          ],
-        },
-        include: { githubAccount: true },
-      });
+      let user: any = null;
+      try {
+        user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { githubAccount: { username: { equals: authorUsername, mode: "insensitive" } } },
+              { email: { startsWith: authorUsername, mode: "insensitive" } },
+            ],
+          },
+          include: { githubAccount: true },
+        });
+      } catch (dbErr) {
+        console.warn("[GitHub Webhook] Prisma user lookup notice:", dbErr);
+      }
 
       if (!user) {
+        if (repoFullName.toLowerCase().includes("ist-zenithenlab")) {
+          await deleteCached("projects:campus-leaderboard:*");
+        }
         return NextResponse.json({
           message: `Ignored: Author '${authorUsername}' is not a registered student`,
+          isCampusRepo: repoFullName.toLowerCase().includes("ist-zenithenlab"),
         });
       }
 
@@ -117,7 +127,6 @@ export async function POST(request: NextRequest) {
       }
 
       // Extract repository and evaluate quality criteria (with upstream fork resolution)
-      const repoFullName = payload.repository?.full_name || "unknown-repo";
       const repoStats = await fetchRepositoryStats(repoFullName);
       const isQualityPr = evaluateQualityPr(
         {
@@ -132,46 +141,62 @@ export async function POST(request: NextRequest) {
       );
 
       const prUrl = pr.html_url;
-      const existing = await prisma.contribution.findFirst({
-        where: { url: prUrl },
-      });
+      try {
+        const existing = await prisma.contribution.findFirst({
+          where: { url: prUrl },
+        });
 
-      if (existing) {
-        await prisma.contribution.update({
-          where: { id: existing.id },
-          data: {
-            title: pr.title || existing.title,
-            status,
-            isQualityPr,
-            mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
-            closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
-          },
-        });
-      } else {
-        await prisma.contribution.create({
-          data: {
-            userId: user.id,
-            title: pr.title || "Pull Request",
-            url: prUrl,
-            prNumber: Number(pr.number || 0),
-            type: ContributionType.PULL_REQUEST,
-            status,
-            isQualityPr,
-            mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
-            closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
-            createdAt: new Date(pr.created_at || Date.now()),
-          },
-        });
+        if (existing) {
+          await prisma.contribution.update({
+            where: { id: existing.id },
+            data: {
+              title: pr.title || existing.title,
+              status,
+              isQualityPr,
+              mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
+              closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
+            },
+          });
+        } else {
+          await prisma.contribution.create({
+            data: {
+              userId: user.id,
+              title: pr.title || "Pull Request",
+              url: prUrl,
+              prNumber: Number(pr.number || 0),
+              type: ContributionType.PULL_REQUEST,
+              status,
+              isQualityPr,
+              mergedAt: pr.merged_at ? new Date(pr.merged_at) : null,
+              closedAt: pr.closed_at ? new Date(pr.closed_at) : null,
+              createdAt: new Date(pr.created_at || Date.now()),
+            },
+          });
+        }
+      } catch (dbErr) {
+        console.warn("[GitHub Webhook] Prisma contribution update notice:", dbErr);
       }
 
       // Invalidate aggregate caches so leaderboards update instantly
-      await Promise.all([
+      const isCampusRepo = repoFullName.toLowerCase().includes("ist-zenithenlab");
+      const cacheInvalidationPromises = [
         deleteCached("metrics:community"),
         deleteCached("leaderboard:week"),
         deleteCached("leaderboard:month"),
         deleteCached("leaderboard:overall"),
         deleteCached(`github:prs:${authorUsername}`),
-      ]);
+      ];
+
+      if (isCampusRepo) {
+        cacheInvalidationPromises.push(
+          deleteCached("projects:campus-leaderboard:*"),
+          deleteCached("projects:campus-leaderboard:timeframe:week:limit:20"),
+          deleteCached("projects:campus-leaderboard:timeframe:month:limit:20"),
+          deleteCached("projects:campus-leaderboard:timeframe:overall:limit:20")
+        );
+      }
+
+      await Promise.all(cacheInvalidationPromises);
 
       return NextResponse.json({
         success: true,
@@ -180,6 +205,7 @@ export async function POST(request: NextRequest) {
         prNumber: pr.number,
         status,
         isQualityPr,
+        isCampusRepo,
       });
     }
 
@@ -267,10 +293,15 @@ export async function POST(request: NextRequest) {
             skipDuplicates: true,
           });
 
-          await Promise.all([
+          const isCampusRepo = (payload.repository?.full_name || "").toLowerCase().includes("ist-zenithenlab");
+          const pushInvalidations = [
             deleteCached("metrics:community"),
             deleteCached(`github:commits:${pusherName}`),
-          ]);
+          ];
+          if (isCampusRepo) {
+            pushInvalidations.push(deleteCached("projects:campus-leaderboard:*"));
+          }
+          await Promise.all(pushInvalidations);
         }
       }
 
