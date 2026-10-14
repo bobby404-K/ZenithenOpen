@@ -10,6 +10,7 @@ import {
   Compass,
   Users2,
   ExternalLink,
+  User,
 } from "lucide-react";
 import { HeroSection } from "@/components/dashboard/hero-section";
 import { LiveMetricsDashboard } from "@/components/dashboard/live-metrics";
@@ -18,6 +19,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { Project, Opportunity } from "@/types";
 import { StudentContributor } from "@/lib/data/student-competition";
 
@@ -25,6 +27,33 @@ export default function HomePage() {
   const [featuredProjects, setFeaturedProjects] = React.useState<Project[]>([]);
   const [_featuredOpportunities, setFeaturedOpportunities] = React.useState<Opportunity[]>([]);
   const [topContributors, setTopContributors] = React.useState<StudentContributor[]>([]);
+
+  // Quick-Preview Student Card Modal State
+  const [previewStudent, setPreviewStudent] = React.useState<StudentPreviewData | null>(null);
+  const [previewModalOpen, setPreviewModalOpen] = React.useState(false);
+
+  const openStudentPreview = React.useCallback(
+    (student: StudentContributor, mergedCount: number, qualityCount: number) => {
+      setPreviewStudent({
+        username: student.username,
+        name: student.name,
+        avatarUrl: student.avatarUrl,
+        department: student.department,
+        year: student.year,
+        badge: student.badge,
+        badgeColor: student.badgeColor,
+        linkedinUrl: student.linkedinUrl,
+        githubUrl: `https://github.com/${student.username}`,
+        qualityPrs: qualityCount,
+        totalPrs: student.month.prs,
+        openPrs: student.month.openPrs,
+        closedPrs: student.month.closedPrs,
+        mergedPrs: mergedCount,
+      });
+      setPreviewModalOpen(true);
+    },
+    []
+  );
 
   React.useEffect(() => {
     // 1. Fetch featured projects
@@ -423,6 +452,13 @@ export default function HomePage() {
                         <div className="flex items-center space-x-2.5 justify-end">
                           {/* Direct GitHub & LinkedIn Social Action Icons */}
                           <div className="flex items-center space-x-1.5 mr-1">
+                            <button
+                              onClick={() => openStudentPreview(student, mergedCount, qualityCount)}
+                              title={`Quick preview card for ${student.name}`}
+                              className="h-8 w-8 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 hover:text-cyan-300 transition-all hover:scale-110 cursor-pointer"
+                            >
+                              <User className="h-4 w-4" />
+                            </button>
                             <a
                               href={`https://github.com/${student.username}`}
                               target="_blank"
@@ -556,6 +592,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      {/* Quick-Preview Student Card Modal */}
+      <StudentPreviewModal
+        student={previewStudent}
+        isOpen={previewModalOpen}
+        onClose={() => setPreviewModalOpen(false)}
+      />
     </div>
   );
 }
