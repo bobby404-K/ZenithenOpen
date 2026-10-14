@@ -11,10 +11,12 @@ import {
   Sparkles,
   Edit3,
   Share2,
+  ShieldCheck,
 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ProofOfWorkBadgeModal } from "@/components/resume/proof-of-work-badge-card";
 import { MOCK_RESUME_DATA } from "@/lib/data/mock-data";
 import { ResumeProfileData } from "@/types";
 
@@ -23,6 +25,7 @@ export default function ResumeBuilderPage() {
   const [shareCopied, setShareCopied] = React.useState(false);
   const [sharing, setSharing] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
+  const [badgeModalOpen, setBadgeModalOpen] = React.useState(false);
   const [data, setData] = React.useState<ResumeProfileData>(MOCK_RESUME_DATA);
   const [handleInput, setHandleInput] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -169,6 +172,16 @@ ${data.education.degree} in ${data.education.field} — ${data.education.institu
                 <Share2 className="h-3.5 w-3.5" />
               )}
               <span>{sharing ? "Generating..." : shareCopied ? "Link Copied!" : "Share Link"}</span>
+            </Button>
+
+            <Button
+              onClick={() => setBadgeModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 cursor-pointer shadow-xs"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+              <span>Shareable Badge</span>
             </Button>
 
             <Button
@@ -332,6 +345,21 @@ ${data.education.degree} in ${data.education.field} — ${data.education.institu
             </div>
           </div>
         </div>
+
+        {/* Shareable Proof-of-Work Badge Card Modal */}
+        <ProofOfWorkBadgeModal
+          isOpen={badgeModalOpen}
+          onClose={() => setBadgeModalOpen(false)}
+          data={{
+            username: data.githubUsername,
+            name: data.fullName,
+            department: data.education?.field || "Computer Science",
+            year: data.education?.graduationYear || "Class of 2026",
+            qualityPrs: data.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 3,
+            campusMerges: data.highlightedRepos?.length || 2,
+            totalPrs: data.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 5,
+          }}
+        />
       </div>
     </div>
   );

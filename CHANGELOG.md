@@ -3,6 +3,30 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.31.0] - 2026-10-14
+
+### 🎖️ Student Proof-of-Work Resume & Shareable Badge Card Export
+
+- **Dynamic Proof-of-Work Badge Card Generator API**:
+  - Implemented `GET /api/resume/badge/[username]` route producing official verifiable credentials:
+    - Default SVG format generating high-resolution vector badge card with dark gradient, neon cyan border glow, IST Bengaluru verified shield, student avatar initials, verified name, and 3 key metrics (Quality Merges, Campus Merges, Total Merges).
+    - JSON format (`?format=json`) providing structured metadata and instant embed code snippets.
+    - Public edge-cached headers (`s-maxage=1800, stale-while-revalidate=3600`).
+- **One-Click Share and Embed Modal**:
+  - Built `<ProofOfWorkBadgeModal />` component in `@/components/resume/proof-of-work-badge-card`:
+    - Real-time interactive preview of candidate's verified proof-of-work credential.
+    - One-click LinkedIn direct post share (`https://www.linkedin.com/sharing/share-offsite/...`).
+    - One-click copy for Markdown embed snippet (`[![ZenithenOpen Proof of Work]...]`) for GitHub profile READMEs.
+    - One-click copy for HTML embed code for personal websites.
+    - Direct share link copy.
+- **Cross-Platform Integration**:
+  - Integrated into `/resume` interactive resume editor toolbar (`Shareable Badge` button).
+  - Integrated into `/resume/share/[token]` public shared candidate dossier (`Export Badge Card` button).
+- **Automated Backend Test Coverage**:
+  - Added `tests/backend/resume-badge.test.ts` verifying JSON schema, Markdown embed snippets, HTML markup, SVG vector structure, and fallback generation.
+
+---
+
 ## [1.30.0] - 2026-10-14
 
 ### 🚀 GitHub Repository Metadata Auto-Sync for Campus Projects
