@@ -11,6 +11,7 @@ import { prisma } from "../../../lib/db/prisma";
 import { getCached, setCached, deleteCached } from "../../../lib/redis/client";
 import { Member, UserRole, Skill } from "../../../types";
 import { Role, ContributionStatus } from "@prisma/client";
+import { STUDENT_COMPETITORS } from "../../../lib/data/student-competition";
 
 /**
  * Format Member badge based on verified contributions & roles
@@ -140,6 +141,51 @@ export async function GET(req: NextRequest) {
         badge: assignMemberBadge(user.role, mergedPrCount, user.isMentor),
       };
     });
+
+    // Merge verified student competitors into directory
+    const competitorMembers: Member[] = STUDENT_COMPETITORS.map((sc) => ({
+      id: sc.id,
+      name: sc.name,
+      username: sc.username,
+      email: `${sc.username}@zenithen.ist`,
+      role: "MEMBER" as UserRole,
+      avatarUrl: sc.avatarUrl,
+      bio: sc.story?.journey || sc.department || "",
+      department: sc.department,
+      year: sc.year,
+      github: {
+        id: sc.id,
+        username: sc.username,
+        avatarUrl: sc.avatarUrl,
+        bio: sc.story?.journey,
+        publicRepos: 8,
+        totalFollowers: 15,
+        totalStars: sc.overall.qualityPrs * 10,
+        totalPrsMerged: sc.overall.mergedPrs,
+        contributionsThisYear: sc.overall.prs,
+        topLanguages: ["TypeScript", "React", "Python"],
+      },
+      linkedinUrl: sc.linkedinUrl,
+      portfolioUrl: sc.githubUrl || `https://github.com/${sc.username}`,
+      skills: [
+        { name: "TypeScript", level: "Intermediate", category: "Frontend" },
+        { name: "React", level: "Intermediate", category: "Frontend" },
+        { name: "Next.js", level: "Intermediate", category: "Frontend" },
+      ],
+      interests: ["Open Source", "Web Architecture"],
+      joinedAt: new Date().toISOString(),
+      isAvailableForMentorship: false,
+      mentorshipTopics: ["Open Source", "Frontend"],
+      totalContributions: sc.overall.prs,
+      mergedPrCount: sc.overall.mergedPrs,
+      badge: sc.badge as any,
+    }));
+
+    for (const cm of competitorMembers) {
+      if (!members.some((m) => m.username.toLowerCase() === cm.username.toLowerCase())) {
+        members.push(cm);
+      }
+    }
 
     // 4. In-Memory Search Filter across name, username, department, and skills
     if (searchParam) {

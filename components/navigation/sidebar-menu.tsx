@@ -12,6 +12,8 @@ import {
   X,
   Code2,
   ChevronRight,
+  Trophy,
+  FolderGit2,
 } from "lucide-react";
 import { useNavigation } from "./navigation-context";
 import { cn } from "@/lib/utils";
@@ -30,6 +32,28 @@ interface NavSection {
 
 const SIDEBAR_SECTIONS: NavSection[] = [
   {
+    sectionTitle: "LEADERBOARD",
+    items: [
+      {
+        title: "Hall of Fame",
+        description: "Student rankings & verified PR merges",
+        href: "/leaderboard",
+        icon: Trophy,
+      },
+    ],
+  },
+  {
+    sectionTitle: "PROJECTS",
+    items: [
+      {
+        title: "Campus Repositories",
+        description: "Explore open-source repos & contribute",
+        href: "/projects",
+        icon: FolderGit2,
+      },
+    ],
+  },
+  {
     sectionTitle: "PROGRAMS",
     items: [
       {
@@ -45,8 +69,14 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     items: [
       {
         title: "Community",
-        description: "our community :))",
+        description: "Our community stories & updates",
         href: "/community",
+        icon: Users2,
+      },
+      {
+        title: "Members Directory",
+        description: "Student developer profiles & portfolios",
+        href: "/members",
         icon: Users2,
       },
     ],
@@ -56,7 +86,7 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     items: [
       {
         title: "Events",
-        description: "upcoming events",
+        description: "Upcoming hackathons & workshops",
         href: "/events",
         icon: Calendar,
       },
@@ -67,7 +97,7 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     items: [
       {
         title: "Resources",
-        description: "Learn to make first PR",
+        description: "Learn Git and make your first PR",
         href: "/resources",
         icon: GraduationCap,
       },

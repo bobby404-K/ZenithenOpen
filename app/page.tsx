@@ -521,19 +521,24 @@ export default function HomePage() {
                     .map((student) => (
                       <div
                         key={`hof-${student.id}`}
-                        className="p-4 rounded-xl border border-accent/30 bg-card/60 flex items-center justify-between"
+                        className="p-4 rounded-xl border border-accent/30 bg-card/60 flex items-center justify-between hover:border-accent/60 transition-all group"
                       >
-                        <div className="flex items-center space-x-3">
+                        <Link
+                          href={`/members/${encodeURIComponent(student.username)}`}
+                          className="flex items-center space-x-3 group"
+                        >
                           <img
                             src={student.avatarUrl}
                             alt={student.name}
-                            className="h-10 w-10 rounded-full border border-border object-cover"
+                            className="h-10 w-10 rounded-full border border-border object-cover group-hover:scale-105 transition-transform"
                           />
                           <div>
-                            <p className="font-bold text-sm text-foreground">{student.name}</p>
+                            <p className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                              {student.name}
+                            </p>
                             <p className="text-xs text-muted-foreground font-mono">@{student.username}</p>
                           </div>
-                        </div>
+                        </Link>
                         <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs font-semibold px-2.5 py-1">
                           Shipped First PR 🚀
                         </Badge>

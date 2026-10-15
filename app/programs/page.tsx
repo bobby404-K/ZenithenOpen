@@ -860,14 +860,17 @@ function StudentLeaderboardSection({
                 </div>
 
                 {/* Student Profile Info */}
-                <div className="flex items-center space-x-3">
+                <Link
+                  href={`/members/${encodeURIComponent(student.username)}`}
+                  className="flex items-center space-x-3 group hover:opacity-90 transition-opacity"
+                >
                   <img
                     src={student.avatarUrl}
                     alt={student.name}
-                    className="h-12 w-12 rounded-full border-2 border-primary/30 bg-muted/80 shrink-0 p-0.5"
+                    className="h-12 w-12 rounded-full border-2 border-primary/30 bg-muted/80 shrink-0 p-0.5 group-hover:scale-105 transition-transform"
                   />
                   <div className="min-w-0 flex-1">
-                    <CardTitle className="text-base font-bold text-foreground truncate">
+                    <CardTitle className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">
                       {student.name}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground font-mono truncate">
@@ -877,7 +880,7 @@ function StudentLeaderboardSection({
                       {student.department} • {student.year}
                     </p>
                   </div>
-                </div>
+                </Link>
               </CardHeader>
 
               <CardContent className="pt-0 space-y-3.5">
@@ -1003,21 +1006,24 @@ function StudentLeaderboardSection({
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-2.5">
+                  <Link
+                    href={`/members/${encodeURIComponent(student.username)}`}
+                    className="flex items-center space-x-2.5 group hover:opacity-90 transition-opacity"
+                  >
                     <img
                       src={student.avatarUrl}
                       alt={student.name}
-                      className="h-9 w-9 rounded-full border border-border bg-muted p-0.5"
+                      className="h-9 w-9 rounded-full border border-border bg-muted p-0.5 group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-bold text-foreground truncate">
+                      <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
                         {student.name}
                       </h4>
                       <p className="text-[11px] text-muted-foreground font-mono truncate">
                         @{student.username} • {student.department}
                       </p>
                     </div>
-                  </div>
+                  </Link>
 
                   <div className="grid grid-cols-5 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
                     <div>
