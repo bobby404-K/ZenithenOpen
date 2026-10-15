@@ -93,7 +93,10 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     const studentMatch = STUDENT_COMPETITORS.find(
       (c) =>
         c.username.toLowerCase() === cleanUsername ||
-        c.username.toLowerCase().replace(/[-_]/g, "") === cleanUsername.replace(/[-_]/g, "")
+        c.username.toLowerCase().replace(/[-_]/g, "") === cleanUsername.replace(/[-_]/g, "") ||
+        c.name.toLowerCase().replace(/\s+/g, "").includes(cleanUsername.replace(/[-_]/g, "")) ||
+        (cleanUsername.includes("abhijit") && c.username.includes("abhijit")) ||
+        (cleanUsername.includes("bobby") && c.username.includes("bobby"))
     );
 
     if (!user) {
@@ -111,7 +114,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
           isMentor: false,
           mentorshipTopics: ["Frontend", "Open Source", "TypeScript"],
           linkedinUrl: studentMatch.linkedinUrl || `https://linkedin.com/in/${studentMatch.username}`,
-          portfolioUrl: `https://github.com/${studentMatch.username}`,
+          portfolioUrl: studentMatch.githubUrl || `https://github.com/${studentMatch.username}`,
+          roleSubtitle: studentMatch.roleSubtitle || studentMatch.department,
+          story: studentMatch.story,
           createdAt: new Date(),
           githubAccount: {
             username: studentMatch.username,
@@ -202,6 +207,24 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
         commits: commits || (studentMatch ? studentMatch.overall.commits : 0),
         followers: user.githubAccount?.followers || 0,
         publicRepos: user.githubAccount?.publicRepos || 0,
+      },
+      roleSubtitle: studentMatch?.roleSubtitle || user.roleSubtitle || user.department || "Frontend Builder · Early Open Source",
+      story: studentMatch?.story || user.story || {
+        journey: user.bio || "Passionate about web systems, open source contributions, and engineering tools for developers.",
+        keyLearnings: [
+          "Failure is simply feedback — not every pull request gets merged, and each setback highlights what to improve.",
+          "Consistency matters more than perfection.",
+          "Asking questions or seeking guidance is much better than staying stuck.",
+          "Master the fundamentals instead of trying to learn too many technologies at once.",
+          "Focus on your own progress instead of comparing yourself with others.",
+        ],
+        milestones: [
+          "Built multiple frontend and web engineering projects.",
+          "Made open-source contributions and raised pull requests on public GitHub repositories.",
+          "Became an active member of the open source community.",
+          "Progressed to confidently working with modern web architectures.",
+        ],
+        advice: "Don't compare your beginning with someone else's years of experience. Focus on building strong fundamentals, create projects instead of only watching tutorials, and don't hesitate to ask for help. The most important thing is to keep learning and never stop building. 🚀",
       },
       skills: user.skills.map((s: any) => s.name),
       achievements: user.achievements.map((ua: any) => ({
