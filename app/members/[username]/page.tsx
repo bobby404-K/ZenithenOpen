@@ -18,11 +18,13 @@ import {
   Trophy,
   Quote,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProofOfWorkBadgeModal } from "@/components/resume/proof-of-work-badge-card";
 
 interface MemberStats {
   totalContributions: number;
@@ -101,6 +103,7 @@ export default function MemberProfilePage({
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
   const [copiedShare, setCopiedShare] = React.useState<boolean>(false);
+  const [badgeModalOpen, setBadgeModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -232,6 +235,17 @@ export default function MemberProfilePage({
           </Link>
 
           <div className="flex items-center gap-2.5">
+            <Button
+              id="open-badge-modal-nav-btn"
+              variant="outline"
+              size="sm"
+              onClick={() => setBadgeModalOpen(true)}
+              className="rounded-full border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">Contributor</span> Badge
+            </Button>
+
             <Link href={`/resume?username=${encodeURIComponent(profile.username)}`}>
               <Button
                 variant="outline"
@@ -246,8 +260,11 @@ export default function MemberProfilePage({
             <Button
               variant="outline"
               size="sm"
-              onClick={handleCopyShare}
-              className="rounded-full border-white/10 bg-white/5 hover:bg-white/15 text-neutral-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all"
+              onClick={() => {
+                handleCopyShare();
+                setBadgeModalOpen(true);
+              }}
+              className="rounded-full border-white/10 bg-white/5 hover:bg-white/15 text-neutral-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all cursor-pointer"
             >
               {copiedShare ? (
                 <>
@@ -273,12 +290,25 @@ export default function MemberProfilePage({
 
         <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
           {/* Avatar with cyan border glow */}
-          <div className="w-32 h-32 mx-auto mb-8 rounded-full overflow-hidden border-4 border-cyan-400/30 shadow-[0_0_40px_rgba(34,211,238,0.25)] ring-4 ring-cyan-500/10">
+          <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-cyan-400/30 shadow-[0_0_40px_rgba(34,211,238,0.25)] ring-4 ring-cyan-500/10">
             <img
               src={profile.avatarUrl || `https://github.com/${profile.username}.png`}
               alt={profile.name}
               className="w-full h-full object-cover"
             />
+          </div>
+
+          {/* Clickable Verified Contributor Badge Pill */}
+          <div className="flex justify-center mb-4">
+            <button
+              id="open-badge-hero-pill"
+              onClick={() => setBadgeModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white transition-all text-xs font-mono cursor-pointer shadow-[0_0_20px_rgba(6,182,212,0.15)] hover:scale-105 group"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <span className="font-semibold tracking-wider">VERIFIED CONTRIBUTOR CARD</span>
+              <Sparkles className="w-3 h-3 text-cyan-300 opacity-80" />
+            </button>
           </div>
 
           {/* Big Typography Name */}
@@ -554,6 +584,23 @@ export default function MemberProfilePage({
           </div>
         </div>
       </footer>
+
+      {/* Holographic Contributor Badge & Social Proof-of-Work Modal */}
+      <ProofOfWorkBadgeModal
+        isOpen={badgeModalOpen}
+        onClose={() => setBadgeModalOpen(false)}
+        data={{
+          username: profile.username,
+          name: profile.name,
+          department: profile.department,
+          year: profile.yearOfStudy,
+          qualityPrs: profile.stats.qualityPrs,
+          campusMerges: profile.stats.mergedPrs,
+          totalPrs: profile.stats.totalPrs,
+          roleSubtitle: profile.roleSubtitle,
+          verificationUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        }}
+      />
     </div>
   );
 }

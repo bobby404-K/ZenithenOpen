@@ -31,6 +31,7 @@ export interface BadgeCardPayload {
     html: string;
     shareUrl: string;
     linkedInShareUrl: string;
+    xShareUrl: string;
   };
 }
 
@@ -244,6 +245,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
           html: `<a href="${verificationUrl}" target="_blank" rel="noopener noreferrer"><img src="${badgeImageUrl}" alt="Verified Open-Source Engineer - ZenithenOpen IST" /></a>`,
           shareUrl: verificationUrl,
           linkedInShareUrl: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(verificationUrl)}`,
+          xShareUrl: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Verified Open-Source Contributor on @ZenithenOpen: ${cleanUsername} (${qualityPrs} Quality Merges, ${campusMerges} Campus Merges)!`)}&url=${encodeURIComponent(verificationUrl)}&hashtags=OpenSource,BuildInPublic,ISTBengaluru`,
         },
       };
 

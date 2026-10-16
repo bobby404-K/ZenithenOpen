@@ -3,6 +3,30 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.0] - 2026-10-16
+
+### 💎 Holographic Contributor Badge Card & Social Proof-of-Work Export
+
+- **Interactive 3D Holographic Contributor Pass**:
+  - Implemented 3D perspective tilt physics (`perspective: 1000px`, dynamic `rotateX`/`rotateY`) with pointer-tracking iridescent chromatic sheen reflection on `/components/resume/proof-of-work-badge-card.tsx`.
+  - Displayed student contributor avatar, verified checkmark badge, academic department, and 3 key metrics:
+    - **Quality Merges** (&ge;100&star; and &ge;100 forks)
+    - **Campus Merges** (IST campus repositories)
+    - **Total Merged PRs** (across all verified open-source repositories).
+- **Client-Side High-Res PNG & Vector SVG Export**:
+  - Engineered client-side HTML5 `<canvas>` high-DPI rasterizer generating downloadable 1200x630 social preview PNG images for LinkedIn and X (Twitter).
+  - Added vector SVG download action fetching crisp scalable badges directly from `/api/resume/badge/[username]`.
+- **Social Sharing & Profile README Embeds**:
+  - Integrated one-click LinkedIn offsite sharing and X / Twitter intent pre-filled with verified contribution stats and verification link.
+  - Added one-click copy buttons for GitHub profile `README.md` Markdown badges, HTML website embed snippets, and direct verification URLs.
+- **Member Profile Seamless Connectivity**:
+  - Added prominent **Contributor Badge** action in the floating navigation header on `/members/[username]`.
+  - Added clickable **VERIFIED CONTRIBUTOR CARD** badge chip in the hero section to instantly trigger the holographic pass.
+  - Connected the **Share** button to simultaneously copy the link and launch the badge modal.
+- **Backend Quality Verification & Seed Alignment**:
+  - Aligned database seeder blueprint in `scripts/seed-production.ts` to satisfy all project star/fork thresholds and foundational campus repositories.
+  - Verified 100% pass across all 30 backend test suites (786 tests).
+
 ## [1.34.0] - 2026-10-15
 
 ### 🌟 Bespoke Student Contributor Profiles & Platform-Wide Navigation Connectivity

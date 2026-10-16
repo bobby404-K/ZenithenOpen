@@ -49,6 +49,10 @@ export async function runResumeBadgeTests(): Promise<SuiteResult> {
     badge.embedCodes.linkedInShareUrl.includes("linkedin.com/sharing/share-offsite"),
     "LinkedIn share URL points to offsite share endpoint"
   );
+  suite.assert(
+    typeof badge.embedCodes.xShareUrl === "string" && badge.embedCodes.xShareUrl.includes("twitter.com/intent/tweet"),
+    "X/Twitter share URL points to tweet intent endpoint"
+  );
 
   // --- 3. Query SVG format (default) ---
   const svgReq = new NextRequest(
@@ -82,3 +86,10 @@ export async function runResumeBadgeTests(): Promise<SuiteResult> {
 
   return suite.summary();
 }
+
+if (process.argv[1]?.endsWith("resume-badge.test.ts")) {
+  runResumeBadgeTests().then((res) => {
+    if (res.failed > 0) process.exit(1);
+  });
+}
+

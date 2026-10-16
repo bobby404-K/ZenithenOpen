@@ -163,7 +163,11 @@ export async function GET(req: NextRequest) {
         totalStars: sc.overall.qualityPrs * 10,
         totalPrsMerged: sc.overall.mergedPrs,
         contributionsThisYear: sc.overall.prs,
-        topLanguages: ["TypeScript", "React", "Python"],
+        topLanguages: [
+          { name: "TypeScript", percentage: 70, color: "#3178c6" },
+          { name: "React", percentage: 20, color: "#61dafb" },
+          { name: "Python", percentage: 10, color: "#3572A5" },
+        ],
       },
       linkedinUrl: sc.linkedinUrl,
       portfolioUrl: sc.githubUrl || `https://github.com/${sc.username}`,
