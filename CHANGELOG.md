@@ -3,6 +3,23 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0] - 2026-10-16
+
+### 🔍 Unified Global Command Palette & Instant Search Engine
+
+- **Global Quick Jump & Command Palette (`Cmd+K` / `Ctrl+K`)**:
+  - Implemented keyboard-driven command palette modal (`components/navigation/command-palette.tsx`) with instant fuzzy filtering across contributors, campus repositories, good first issues, and navigation hubs.
+  - Added global keyboard shortcut listeners for `Cmd+K` (macOS), `Ctrl+K` (Windows/Linux), and `Escape` for dismissal.
+  - Added full keyboard accessibility with arrow key navigation (`↑`/`↓`), `Enter` to jump, category filters ("All", "Contributors", "Repositories", "Pages"), and responsive mobile triggers.
+- **Top Navigation Integration**:
+  - Integrated high-speed search trigger in the sticky header (`components/navigation/navbar.tsx`) displaying search icon, responsive text, and `⌘K` keyboard badge.
+- **Unified Search API Endpoint (`/api/search`)**:
+  - Created high-performance search API endpoint indexing verified student contributors, core campus repositories, starter opportunities, and platform routes.
+  - Supports query parameter `q`, category filtering (`category=contributor|project|opportunity|page`), and custom result limits with resilient edge caching.
+- **Automated Backend Test Verification**:
+  - Added comprehensive test suite `tests/backend/command-search.test.ts` (50 assertions) verifying keyword matching, category filtering, limit constraints, and edge fallbacks.
+  - Full backend test suite passing with 31 / 31 test suites.
+
 ## [1.35.0] - 2026-10-16
 
 ### 💎 Holographic Contributor Badge Card & Social Proof-of-Work Export

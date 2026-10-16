@@ -6,12 +6,14 @@ import { usePathname } from "next/navigation";
 import {
   Code2,
   LogOut,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth/auth-context";
 import { useTheme } from "@/components/theme/theme-provider";
 import { useNavigation } from "@/components/navigation/navigation-context";
+import { CommandPalette } from "@/components/navigation/command-palette";
 
 const PAGE_TOP_NAV: Record<string, { label: string; id: string }[]> = {
   "/programs": [
@@ -46,6 +48,7 @@ export function Navbar() {
   const { toggleMenu, isMenuOpen, menuAnchor, theme } = useTheme();
   const { isSidebarOpen, toggleSidebar, activeSection, setActiveSection } = useNavigation();
   const [scrolled, setScrolled] = React.useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = React.useState(false);
 
   React.useEffect(() => {
     let lastScrolled = window.scrollY > 20;
@@ -58,6 +61,18 @@ export function Navbar() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Global Cmd+K / Ctrl+K keyboard shortcut listener
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const isThemeActiveOnNavbar = isMenuOpen && menuAnchor === "navbar";
@@ -179,7 +194,26 @@ export function Navbar() {
         )}
 
         {/* Right Action buttons */}
-        <div className="flex items-center space-x-3 shrink-0 z-10">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0 z-10">
+          {/* Quick Search & Command Palette Trigger */}
+          <button
+            id="open-command-palette-btn"
+            type="button"
+            onClick={() => setIsCommandPaletteOpen(true)}
+            aria-label="Search platform (Cmd+K)"
+            title="Search contributors, repositories, and pages (⌘K or Ctrl+K)"
+            className={cn(
+              "flex items-center gap-2 h-9 px-2.5 sm:px-3 rounded-xl border border-border/80 bg-card/80 text-muted-foreground",
+              "hover:text-foreground hover:bg-muted hover:border-primary/40 active:scale-95 transition-all cursor-pointer"
+            )}
+          >
+            <Search className="h-4 w-4 text-primary shrink-0" />
+            <span className="hidden xl:inline text-xs font-medium text-muted-foreground">Search...</span>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-muted/80 border border-border text-[10px] font-mono font-semibold text-muted-foreground">
+              <span>⌘K</span>
+            </kbd>
+          </button>
+
           {user ? (
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-2 rounded-xl border border-border bg-card px-2.5 py-1 text-xs">
@@ -226,6 +260,12 @@ export function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Global Command Palette Modal */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+      />
     </header>
   );
 }
