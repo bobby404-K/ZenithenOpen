@@ -3,6 +3,25 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.0] - 2026-10-18
+
+### 🗓️ Dynamic Campus Events & Interactive Workshop RSVP Hub
+
+- **Campus Events Discovery & Scheduling Engine (`/api/events`)**:
+  - Engineered dynamic events API serving real-time campus workshops, weekly Open Source Saturday PR review office hours, hackathons, and GSoC fellowship talks.
+  - Added query filtering by category (`workshop`, `office-hours`, `fellowship`, `hackathon`), status (`upcoming`, `live`, `completed`), and search keywords.
+  - Integrated Upstash Redis caching with fallback to in-memory store.
+- **Interactive One-Click RSVP Registration (`/api/events/rsvp` & `components/events/event-rsvp-modal.tsx`)**:
+  - Implemented sleek dark-glass RSVP modal with auto-detection of authenticated student handles, department capture, and live capacity enforcement.
+  - Added robust duplicate registration prevention returning `409 Conflict` if already registered.
+  - Rendered live attendee avatars preview, real-time seat reservation progress counters, and instant confirmation notifications.
+- **Standard iCalendar (.ics) & Google Calendar Integration (`/api/events/[id]/calendar`)**:
+  - Added RFC 5545 standard `.ics` generation allowing direct calendar imports into Apple Calendar, Outlook, and mobile calendar apps.
+  - Implemented direct 1-click Google Calendar web event rendering with pre-formatted titles, dates, session agendas, and campus location links.
+- **Automated Backend Test Verification**:
+  - Added comprehensive test suite `tests/backend/events-hub.test.ts` (50 assertions) verifying events discovery, category filtering, search queries, RSVP registration, capacity constraints, duplicate handling, and calendar generation.
+  - Integrated into test runner `tests/backend/run-all.ts` (Suite #32).
+
 ## [1.36.0] - 2026-10-16
 
 ### 🔍 Unified Global Command Palette & Instant Search Engine

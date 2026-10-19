@@ -208,3 +208,39 @@ export interface ResumeProfileData {
   };
   achievements: string[];
 }
+
+export interface EventAttendee {
+  username: string;
+  name: string;
+  email?: string;
+  department?: string;
+  avatarUrl?: string;
+  rsvpAt: string;
+}
+
+export interface CampusEvent {
+  id: string;
+  title: string;
+  category: "workshop" | "office-hours" | "fellowship" | "hackathon";
+  categoryLabel: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  tags: string[];
+  rsvpLink: string;
+  capacity: number;
+  rsvpCount: number;
+  attendees: EventAttendee[];
+  status: "upcoming" | "live" | "completed";
+  speakers: {
+    name: string;
+    role: string;
+    avatarUrl?: string;
+    github?: string;
+  }[];
+  calendarLinks?: {
+    google: string;
+    ics: string;
+  };
+}
