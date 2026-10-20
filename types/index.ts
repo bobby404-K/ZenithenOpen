@@ -267,3 +267,27 @@ export interface SwagClaimVoucher {
   status: "CONFIRMED" | "FULFILLED";
   claimedAt: string;
 }
+
+export interface ActivityEvent {
+  id: string;
+  type: "pr_merged" | "quality_pr" | "swag_claimed" | "event_rsvp" | "first_pr" | "member_joined";
+  typeLabel: string;
+  title: string;
+  description: string;
+  username: string;
+  userAvatarUrl?: string;
+  projectSlug?: string;
+  projectName?: string;
+  url?: string;
+  timestamp: string;
+  relativeTime: string;
+  badgeColor?: string;
+  isQuality?: boolean;
+}
+
+export interface ActivityPulseResponse {
+  success: boolean;
+  activeCountLast24h: number;
+  recentMergesCount: number;
+  events: ActivityEvent[];
+}

@@ -3,6 +3,23 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.39.0] - 2026-10-20
+
+### ⚡ Live Campus Activity Pulse & Real-Time Contribution Stream
+
+- **Real-Time Campus Contribution Pulse API (`/api/activity`)**:
+  - Engineered event aggregation pipeline synthesizing verified campus engineering activity in real-time.
+  - Indexes 6 core activity categories: `quality_pr`, `pr_merged`, `swag_claimed`, `first_pr`, `event_rsvp`, and `member_joined`.
+  - Added query filtering (`?type=all|pr|quality|swag|event|first_pr`) and pagination limit controls with Upstash Redis edge caching.
+  - Computes telemetry metrics including active contributors in the last 24 hours and total recent campus merges.
+- **Interactive Live Activity Stream Component (`components/dashboard/live-activity-stream.tsx`)**:
+  - Integrated dynamic real-time contribution feed within the Live Metrics Dashboard on the homepage (`app/page.tsx`).
+  - Added animated green liveness pulse indicator, category filter chips, contributor avatars, and relative time stamps.
+  - Linked directly to student member profiles and GitHub pull requests.
+- **Automated Backend Test Verification**:
+  - Added comprehensive test suite `tests/backend/activity-pulse.test.ts` (30 assertions) validating default stream hydration, schema integrity, category filtering, and telemetry metrics.
+  - Integrated into test runner `tests/backend/run-all.ts` (Suite #34).
+
 ## [1.38.0] - 2026-10-19
 
 ### 🎁 Community Contributor Swag & Physical/Digital Rewards Engine
