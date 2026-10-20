@@ -63,20 +63,44 @@ export async function runProjectsRouteTests(): Promise<SuiteResult> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      name: "ZenithenCore",
-      tagline: "Core systems utilities for student projects",
-      description: "Low-level algorithms and runtime utilities",
-      repositoryUrl: "https://github.com/IST-ZenithenLab/ZenithenCore",
+      name: "TemporaryTestSandbox",
+      tagline: "Sandbox for automated test execution",
+      description: "Ephemeral testing repository",
+      repositoryUrl: "https://github.com/IST-ZenithenLab/TemporaryTestSandbox",
       primaryLanguage: "Rust",
-      tags: ["Rust", "Systems", "Utilities"],
-      isFeatured: true,
+      tags: ["Rust", "Testing", "Sandbox"],
+      isFeatured: false,
     }),
   });
-  const validRes = await POST(validPost);
-  suite.assertEqual(validRes.status, 201, "POST valid project returns 201 Created");
-  const validData = await validRes.json();
-  suite.assertEqual(validData.success, true, "Project registration succeeds");
-  suite.assertEqual(validData.project.primaryLanguage, "Rust", "Primary language recorded accurately");
+  try {
+    const validRes = await POST(validPost);
+    suite.assertEqual(validRes.status, 201, "POST valid project returns 201 Created");
+    const validData = await validRes.json();
+    suite.assertEqual(validData.success, true, "Project registration succeeds");
+    suite.assertEqual(validData.project.primaryLanguage, "Rust", "Primary language recorded accurately");
+  } finally {
+    // Clean up temporary test project from database so only official repositories remain
+    try {
+      const { prisma } = await import("../../lib/db/prisma");
+      const { deleteCached } = await import("../../lib/redis/client");
+      await prisma.project.deleteMany({
+        where: {
+          slug: {
+            in: [
+              "temporarytestsandbox",
+              "temporary-test-sandbox",
+              "zenithencore",
+              "campus-connect",
+            ],
+          },
+        },
+      });
+      await deleteCached("projects:*");
+      await deleteCached("projects:v2:*");
+    } catch {
+      // Ignore test cleanup errors
+    }
+  }
 
   return suite.summary();
 }

@@ -124,15 +124,6 @@ const FOUNDATIONAL_PROJECTS: SearchResultItem[] = [
     badge: "Beginner Friendly",
     badgeColor: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
   },
-  {
-    id: "proj-campus-connect",
-    title: "CampusConnect",
-    subtitle: "Real-time collaborative developer network for campus teams • WebSockets",
-    category: "project",
-    url: "/projects/campus-connect",
-    badge: "Active",
-    badgeColor: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30",
-  },
 ];
 
 export async function GET(req: NextRequest) {

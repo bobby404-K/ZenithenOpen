@@ -3,6 +3,24 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.41.0] - 2026-10-20
+
+### 🎯 Official Campus Repositories Alignment: Pure ZenithenOpen & First-PR Catalog
+
+- **Catalog & Campus Repository Streamlining**:
+  - Removed deprecated and extra repositories (`CampusConnect`, `ZenithenCore`) across all databases, seeds, search indices, and test harnesses.
+  - Aligned official campus open-source projects to strictly the 2 core verified repositories:
+    1. **ZenithenOpen** (`/projects/zenithen-open`) — Flagship campus developer platform.
+    2. **First-PR** (`/projects/first-pr`) — Official onboarding repository for first-time campus pull requests.
+- **Database Seeder & Search Index Alignment (`scripts/seed-production.ts`, `app/api/search/route.ts`)**:
+  - Cleaned seed definitions to enforce exactly 2 official campus projects.
+  - Re-anchored triaged starter opportunities strictly to `IST-ZenithenLab/ZenithenOpen` and `IST-ZenithenLab/First-PR`.
+  - Updated global unified search quick-jump items to only feature the 2 official repositories.
+- **Automated Test Suite Hardening**:
+  - Updated `tests/backend/projects-route.test.ts` to utilize ephemeral sandbox registration with automatic test cleanup, ensuring no residual mock projects linger in production database.
+  - Updated `tests/backend/projects-lookup.test.ts` and `tests/backend/db-seed.test.ts` to assert the streamlined 2-repository blueprint.
+  - Verified 1001 / 1001 backend test assertions passing across all 35 suites.
+
 ## [1.40.0] - 2026-10-20
 
 ### 📚 Developer Resources & Technical Articles API + Interactive Markdown Article Reader

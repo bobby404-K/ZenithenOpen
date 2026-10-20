@@ -20,9 +20,9 @@ export async function runProjectsLookupTests(): Promise<SuiteResult> {
   suite.assertEqual(valid1?.owner, "IST-ZenithenLab", "Extracted owner matches IST-ZenithenLab");
   suite.assertEqual(valid1?.repo, "ZenithenOpen", "Extracted repo matches ZenithenOpen");
 
-  const valid2 = parseGitHubRepo("http://github.com/IST-ZenithenLab/ZenithenCore.git");
+  const valid2 = parseGitHubRepo("http://github.com/IST-ZenithenLab/First-PR.git");
   suite.assert(valid2 !== null, "Parses HTTP URL with .git extension");
-  suite.assertEqual(valid2?.repo, "ZenithenCore", "Strips .git extension");
+  suite.assertEqual(valid2?.repo, "First-PR", "Strips .git extension");
 
   const valid3 = parseGitHubRepo("github.com/IST-ZenithenLab/ZenithenVault/");
   suite.assert(valid3 !== null, "Parses URL with trailing slash and without protocol");

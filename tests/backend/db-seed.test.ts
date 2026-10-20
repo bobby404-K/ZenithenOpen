@@ -23,7 +23,7 @@ export async function runDbSeedTests(): Promise<SuiteResult> {
 
   // --- 2. Blueprint Projects Data Integrity ---
   suite.assert(Array.isArray(SEED_DATA.projects), "Projects blueprint is an array");
-  suite.assert(SEED_DATA.projects.length >= 3, "Includes at least 3 foundational campus projects");
+  suite.assert(SEED_DATA.projects.length >= 2, "Includes official verified campus projects (ZenithenOpen and First-PR)");
 
   const zenithenProj = SEED_DATA.projects.find((p) => p.slug === "zenithen-open");
   suite.assert(Boolean(zenithenProj), "Includes 'zenithen-open' foundational project");
