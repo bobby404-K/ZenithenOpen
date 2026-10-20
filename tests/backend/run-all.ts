@@ -53,6 +53,7 @@ import { runCommandSearchTests } from "./command-search.test";
 import { runEventsHubTests } from "./events-hub.test";
 import { runCommunitySwagTests } from "./community-swag.test";
 import { runActivityPulseTests } from "./activity-pulse.test";
+import { runResourcesArticlesTests } from "./resources-articles.test";
 import { SuiteResult } from "./test-utils";
 
 async function main() {
@@ -99,6 +100,7 @@ async function main() {
     results.push(await runEventsHubTests());
     results.push(await runCommunitySwagTests());
     results.push(await runActivityPulseTests());
+    results.push(await runResourcesArticlesTests());
   } catch (error) {
     console.error("\n[FATAL ERROR IN TEST RUNNER]:", error);
     process.exit(1);
