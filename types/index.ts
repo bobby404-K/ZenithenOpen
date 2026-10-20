@@ -291,3 +291,29 @@ export interface ActivityPulseResponse {
   recentMergesCount: number;
   events: ActivityEvent[];
 }
+
+export interface ResourceArticle {
+  slug: string;
+  title: string;
+  category: "Career & Fellowships" | "Engineering Deep Dive" | "Web Architecture" | "Community Insights" | "Git Architecture";
+  categorySlug: "career" | "git" | "architecture" | "community";
+  author: string;
+  authorRole: string;
+  authorAvatar?: string;
+  date: string;
+  readTime: string;
+  readTimeMinutes: number;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  excerpt: string;
+  keyTakeaways: string[];
+  markdownContent: string;
+  tags: string[];
+  featured?: boolean;
+}
+
+export interface ResourceArticlesResponse {
+  success: boolean;
+  count: number;
+  categories: { slug: string; label: string; count: number }[];
+  articles: ResourceArticle[];
+}

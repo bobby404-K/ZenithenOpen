@@ -3,6 +3,29 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.40.0] - 2026-10-20
+
+### 📚 Developer Resources & Technical Articles API + Interactive Markdown Article Reader
+
+- **Developer Resources & Technical Articles API (`/api/resources/articles`)**:
+  - Implemented RESTful article retrieval endpoint supporting single article slug lookup (`?slug=...`), multi-category filtering (`?category=career|git|architecture|community`), keyword search across titles/tags/excerpts, difficulty filtering, and featured flags.
+  - Curated high-impact campus engineering articles:
+    - *How I Cracked My First GSoC as a Sophomore Developer* (proposal timeline, escalation ladder, mentorship blueprint).
+    - *Understanding Git Under the Hood: Blobs, Trees, and Commits* (internals, DAG architecture, objects database, rebase mechanics).
+    - *Building Real-Time Multi-Theme Engines with CSS Variables* (zero-rerender token mapping, FOUC elimination, HSL color system).
+    - *Why Campus Open-Source Matters for Your Engineering Career* (verifiable proof-of-work, technical interview leverage).
+    - *Mastering Merge Conflicts and Interactive Git Rebase* (conflict markers, squashing commits, linear histories).
+  - Integrated Upstash Redis edge caching (`resources:articles:...`) with resilient in-memory fallback.
+- **Interactive Markdown Article Reader Modal (`components/resources/article-reader-modal.tsx`)**:
+  - Engineered modal reader with markdown rendering, syntax-styled copyable code snippets with visual copy feedback, key takeaways callout, reading time badge, and tag pills.
+  - Added URL query parameter deep-linking (`?slug=...`) and instant link sharing.
+- **Developer Resources UI Elevation (`app/resources/page.tsx`)**:
+  - Enhanced Technical Blog section with real-time keyword search and category filter tabs (`All Topics`, `Career & Fellowships`, `Git Architecture`, `Web Architecture`, `Community Insights`).
+  - Seamlessly bound "Read Article" to launch the interactive modal reader while preserving layout skeleton.
+- **Backend Test Suite #35**:
+  - Created `tests/backend/resources-articles.test.ts` (47 assertions) validating article retrieval, schema integrity, category queries, search, difficulty filters, and 404 responses.
+  - Integrated into `tests/backend/run-all.ts` (Suite #35).
+
 ## [1.39.0] - 2026-10-20
 
 ### ⚡ Live Campus Activity Pulse & Real-Time Contribution Stream
