@@ -244,3 +244,26 @@ export interface CampusEvent {
     ics: string;
   };
 }
+
+export interface SwagTier {
+  id: string;
+  name: string;
+  badge: string;
+  minPrs: number;
+  rewards: string[];
+  itemTitle: string;
+  hasPhysicalSwag: boolean;
+}
+
+export interface SwagClaimVoucher {
+  voucherCode: string;
+  username: string;
+  name: string;
+  tierId: string;
+  tierName: string;
+  swagItem: string;
+  size?: string;
+  pickupLocation: string;
+  status: "CONFIRMED" | "FULFILLED";
+  claimedAt: string;
+}

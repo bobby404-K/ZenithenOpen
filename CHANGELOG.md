@@ -3,6 +3,28 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.0] - 2026-10-19
+
+### 🎁 Community Contributor Swag & Physical/Digital Rewards Engine
+
+- **Contributor Tier Qualification & Swag API (`/api/community/swag`)**:
+  - Engineered tier evaluation engine assessing verified student pull requests across 4 standardized recognition levels:
+    - **Tier 1 (1 PR)**: First PR Digital Verification Badge & Directory Listing
+    - **Tier 2 (5+ PRs)**: Holographic Contributor Sticker Pack & Certificate
+    - **Tier 3 (15+ PRs)**: Developer Performance T-Shirt & Priority Code Reviews
+    - **Tier 4 (30+ PRs)**: Heavyweight Embroidered Community Hoodie & Leadership Grant
+  - Built student eligibility checker evaluating real merged PR counts, unlock status, and past claim records.
+  - Implemented secure claim processing with physical apparel size verification (`S` to `2XL`), collection point validation, and duplicate claim rejection (`409 Conflict`).
+- **Interactive Swag Claim Modal (`components/community/swag-claim-modal.tsx`)**:
+  - Implemented modal with auto-detection of authenticated student handle, real-time metrics inspection, and tier status badges (Locked / Eligible / Claimed).
+  - Integrated holographic voucher generator creating verifiable vouchers with format `SWAG-2026-IST-XXXX` and instant one-click code copy.
+- **Community Rewards Tab Upgrade (`app/community/page.tsx`)**:
+  - Added interactive "Check Swag Eligibility & Claim Voucher" callout banner with ambient glow lighting.
+  - Preserved 100% of community page structure and navigation context across all 5 community sections.
+- **Automated Backend Test Verification**:
+  - Created test suite `tests/backend/community-swag.test.ts` (38 assertions) verifying tier definitions, top contributor unlocks, claim submissions, duplicate blocks, and size validations.
+  - Integrated into test runner `tests/backend/run-all.ts` (Suite #33).
+
 ## [1.37.0] - 2026-10-18
 
 ### 🗓️ Dynamic Campus Events & Interactive Workshop RSVP Hub
