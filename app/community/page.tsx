@@ -16,7 +16,9 @@ import {
   Star,
   ShieldCheck,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/components/navigation/navigation-context";
+import { SwagClaimModal } from "@/components/community/swag-claim-modal";
 
 const VALID_COMMUNITY_TABS = ["about", "journey", "members", "rewards", "featured"] as const;
 type CommunityTab = (typeof VALID_COMMUNITY_TABS)[number];
@@ -29,6 +31,8 @@ export default function CommunityPage() {
   const currentTab: CommunityTab = VALID_COMMUNITY_TABS.includes(activeSection as CommunityTab)
     ? (activeSection as CommunityTab)
     : defaultTab;
+
+  const [isSwagModalOpen, setIsSwagModalOpen] = React.useState(false);
 
   const milestones = [
     {
@@ -345,6 +349,27 @@ export default function CommunityPage() {
                     <h2 className="text-2xl font-bold text-foreground mt-1">Contributor Rewards & Swag</h2>
                   </div>
                 </div>
+
+                {/* Swag Eligibility & Claim Banner */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-primary/30 bg-primary/5">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-bold text-foreground">Have Merged Pull Requests?</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Verify your student handle to unlock exclusive community stickers, performance tees, and hoodies.
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => setIsSwagModalOpen(true)}
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shrink-0 cursor-pointer shadow-xs"
+                  >
+                    <Gift className="mr-1.5 h-3.5 w-3.5" />
+                    <span>Check Eligibility & Claim</span>
+                  </Button>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                   {rewardTiers.map((tier, idx) => {
                     const Icon = tier.icon;
@@ -434,6 +459,12 @@ export default function CommunityPage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Swag Claim & Eligibility Modal */}
+      <SwagClaimModal
+        isOpen={isSwagModalOpen}
+        onClose={() => setIsSwagModalOpen(false)}
+      />
     </div>
   );
 }

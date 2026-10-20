@@ -51,6 +51,7 @@ import { runResumeBadgeTests } from "./resume-badge.test";
 import { runInteractivePrGuideTests } from "./resources-interactive-guide.test";
 import { runCommandSearchTests } from "./command-search.test";
 import { runEventsHubTests } from "./events-hub.test";
+import { runCommunitySwagTests } from "./community-swag.test";
 import { SuiteResult } from "./test-utils";
 
 async function main() {
@@ -95,6 +96,7 @@ async function main() {
     results.push(await runInteractivePrGuideTests());
     results.push(await runCommandSearchTests());
     results.push(await runEventsHubTests());
+    results.push(await runCommunitySwagTests());
   } catch (error) {
     console.error("\n[FATAL ERROR IN TEST RUNNER]:", error);
     process.exit(1);
