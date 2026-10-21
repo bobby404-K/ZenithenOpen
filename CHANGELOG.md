@@ -3,6 +3,26 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.42.0] - 2026-10-21
+
+### 🔐 Student Authentication & Persistent Contributor Session Management
+
+- **Interactive 2-Step Campus Authentication Portal (`app/login/page.tsx`)**:
+  - Implemented a dedicated in-page student login portal replacing modal dependency with a streamlined 2-step verification workflow:
+    - **Step 1: USN Verification**: Instant validation of university enrollment serial numbers (`1SV...` / `SV...`) against `/api/auth/verify-usn` with quick-fill presets for CS and AI departments.
+    - **Step 2: GitHub Authorization**: Links verified student identity to authentic GitHub profiles with real-time PR ingestion via `/api/auth/login`.
+- **Authenticated Contributor Dashboard & Session View**:
+  - Displays rich student identity badge (name, verified USN, department, year of study, college).
+  - Synchronizes verified PR metrics (Merged PRs, Quality PRs, Open PRs, Total Contributions).
+  - Provides quick platform navigation to Campus Repositories (`/projects`), Hall of Fame (`/leaderboard`), and Contributor Profiles (`/members/[username]`).
+  - Added "Switch Contributor Account" action with clean session reset.
+- **Cross-Tab & LocalStorage Session Persistence (`components/auth/auth-context.tsx`)**:
+  - Extended `AuthenticatedStudentUser` model with optional synced contribution stats.
+  - Added real-time cross-tab synchronization via `window.addEventListener("storage", ...)` ensuring multi-window session consistency.
+  - Enhanced `LoginModal` to propagate synchronized PR metrics directly to global auth state.
+- **Automated Test Suite Verification**:
+  - All 1000/1000 backend test assertions across 35 test suites verified passing with zero regressions.
+
 ## [1.41.0] - 2026-10-20
 
 ### 🎯 Official Campus Repositories Alignment: Pure ZenithenOpen & First-PR Catalog

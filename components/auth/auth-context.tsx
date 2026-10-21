@@ -13,6 +13,13 @@ export interface AuthenticatedStudentUser {
   avatarUrl: string;
   role: "MEMBER" | "MENTOR" | "ADMIN";
   loggedInAt: string;
+  stats?: {
+    totalPrs: number;
+    openPrs: number;
+    mergedPrs: number;
+    closedPrs: number;
+    qualityPrs: number;
+  };
 }
 
 interface AuthContextType {
@@ -20,7 +27,11 @@ interface AuthContextType {
   isLoginModalOpen: boolean;
   openLoginModal: () => void;
   closeLoginModal: () => void;
-  loginUser: (student: VerifiedStudent, githubUsername: string) => void;
+  loginUser: (
+    student: VerifiedStudent,
+    githubUsername: string,
+    stats?: AuthenticatedStudentUser["stats"]
+  ) => void;
   logout: () => void;
 }
 
@@ -42,12 +53,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore
     }
+
+    // Cross-tab synchronization
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY) {
+        if (e.newValue) {
+          try {
+            setUser(JSON.parse(e.newValue));
+          } catch {
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
 
-  const loginUser = (student: VerifiedStudent, githubUsername: string) => {
+  const loginUser = (
+    student: VerifiedStudent,
+    githubUsername: string,
+    stats?: AuthenticatedStudentUser["stats"]
+  ) => {
     const cleanUsername = githubUsername.replace("@", "").trim();
     const newUser: AuthenticatedStudentUser = {
       usn: student.usn,
@@ -59,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       avatarUrl: `https://github.com/${cleanUsername}.png`,
       role: "MEMBER",
       loggedInAt: new Date().toISOString(),
+      stats,
     };
 
     setUser(newUser);

@@ -108,7 +108,7 @@ export function LoginModal() {
         return;
       }
 
-      loginUser(verifiedStudent, cleanUsername);
+      loginUser(verifiedStudent, cleanUsername, data.user?.stats);
       closeLoginModal();
     } catch {
       setErrorMessage("Unable to connect to authentication server. Please try again.");
