@@ -780,7 +780,7 @@ function StudentLeaderboardSection({
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
             {isCampusReposOnly
-              ? "Only student developers actively contributing to official IST campus repositories (ZenithenOpen & ZenithenLab) are featured on this page."
+              ? "Only student developers actively contributing to official IST campus repositories (ZenithenOpen & First-PR) are featured on this page."
               : "Tracking top student developers across weekly sprints, monthly rankings, and all-time achievements."}
           </p>
         </div>
