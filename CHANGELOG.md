@@ -3,6 +3,17 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.43.0] - 2026-10-21
+
+### 🏛️ Official Campus Repositories Copy & Placeholder Harmonization
+
+- **Campus Programs & Leaderboards Copy (`app/programs/page.tsx`)**:
+  - Aligned campus repositories leaderboard notice to explicitly highlight the official campus repositories: `(ZenithenOpen & First-PR)`.
+- **Campus Repository Registration Modal (`app/projects/page.tsx`)**:
+  - Updated registration placeholder to `e.g. ZenithenOpen`, removing obsolete placeholder references.
+- **Continuous Quality & Test Integrity**:
+  - Verified TypeScript compilation (`tsc --noEmit`) and full test suite passing across all 1000/1000 backend assertions.
+
 ## [1.42.0] - 2026-10-21
 
 ### 🔐 Student Authentication & Persistent Contributor Session Management

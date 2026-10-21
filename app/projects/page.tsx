@@ -807,7 +807,7 @@ export default function ProjectsPage() {
                     </label>
                     <Input
                       required
-                      placeholder="e.g. ZenithenCore"
+                      placeholder="e.g. ZenithenOpen"
                       value={projName}
                       onChange={(e) => setProjName(e.target.value)}
                       className="bg-background border-border text-foreground text-xs"
