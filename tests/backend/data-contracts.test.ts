@@ -67,9 +67,13 @@ export async function runDataContractsTests(): Promise<SuiteResult> {
     "ZenithenOpen points to authentic IST-ZenithenLab GitHub repository"
   );
 
-  const zenithenLab = MOCK_PROJECTS.find((p) => p.slug === "zenithen-lab");
-  suite.assert(Boolean(zenithenLab), "Project 'zenithen-lab' exists in catalog");
-  suite.assertEqual(zenithenLab?.primaryLanguage, "C++", "ZenithenLab primary language is C++");
+  const firstPr = MOCK_PROJECTS.find((p) => p.slug === "first-pr");
+  suite.assert(Boolean(firstPr), "Project 'first-pr' exists in catalog");
+  suite.assertEqual(firstPr?.name, "First-PR", "First-PR has correct name");
+  suite.assert(
+    Boolean(firstPr?.repositoryUrl.startsWith("https://github.com/IST-ZenithenLab/First-PR")),
+    "First-PR points to authentic IST-ZenithenLab GitHub repository"
+  );
 
   for (const proj of MOCK_PROJECTS) {
     suite.assert(
@@ -108,7 +112,8 @@ export async function runDataContractsTests(): Promise<SuiteResult> {
         student.githubUrl &&
         student.githubUrl.startsWith("https://github.com/") &&
         student.linkedinUrl &&
-        student.linkedinUrl.startsWith("https://www.linkedin.com/in/")
+        (student.linkedinUrl.startsWith("https://www.linkedin.com/in/") ||
+         student.linkedinUrl.startsWith("https://linkedin.com/in/"))
       ),
       `Competitor '${student.username}' has valid GitHub and LinkedIn profile URLs`
     );
@@ -117,8 +122,8 @@ export async function runDataContractsTests(): Promise<SuiteResult> {
     for (const tf of ["week", "month", "overall"] as const) {
       const stats = student[tf];
       suite.assert(
-        stats.rank >= 1 && stats.points >= 0 && stats.prs >= 0,
-        `Competitor '${student.username}' ${tf} stats are valid (Rank: ${stats.rank}, Pts: ${stats.points})`
+        stats.rank >= 1 && (stats.points ?? 0) >= 0 && stats.prs >= 0,
+        `Competitor '${student.username}' ${tf} stats are valid (Rank: ${stats.rank}, PRs: ${stats.prs})`
       );
       suite.assert(
         stats.qualityPrs <= stats.prs,

@@ -105,9 +105,9 @@ export async function runAuthVerificationTests(): Promise<SuiteResult> {
   const nullResult = await verifyStudentUSN(null as unknown as string);
   suite.assertEqual(nullResult.valid, false, "verifyStudentUSN fails safely on null");
 
-  // --- 10. Database Hook in Unconfigured State ---
-  const dbRecord = await queryStudentDatabase("1SV23CS042");
-  suite.assertEqual(dbRecord, null, "queryStudentDatabase returns null when database is unconfigured (open-source standalone mode)");
+  // --- 10. Database Hook for Non-Existent Record ---
+  const dbRecord = await queryStudentDatabase("1SV99ZZ999");
+  suite.assertEqual(dbRecord, null, "queryStudentDatabase returns null for non-existent student USN");
 
   return suite.summary();
 }

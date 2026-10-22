@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { THEMES, ThemeId } from "@/lib/themes";
+import { THEMES } from "@/lib/themes";
 import { useTheme } from "./theme-provider";
 import { Check, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";

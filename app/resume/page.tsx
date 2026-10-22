@@ -10,17 +10,70 @@ import {
   Globe,
   Sparkles,
   Edit3,
+  Share2,
+  ShieldCheck,
 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ProofOfWorkBadgeModal } from "@/components/resume/proof-of-work-badge-card";
 import { MOCK_RESUME_DATA } from "@/lib/data/mock-data";
 import { ResumeProfileData } from "@/types";
 
 export default function ResumeBuilderPage() {
   const [copied, setCopied] = React.useState(false);
+  const [shareCopied, setShareCopied] = React.useState(false);
+  const [sharing, setSharing] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
+  const [badgeModalOpen, setBadgeModalOpen] = React.useState(false);
   const [data, setData] = React.useState<ResumeProfileData>(MOCK_RESUME_DATA);
+  const [handleInput, setHandleInput] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+
+  const handleShareLink = async () => {
+    try {
+      setSharing(true);
+      const res = await fetch("/api/resume/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: data.githubUsername,
+          customHeadline: data.headline,
+          customSummary: data.summary,
+        }),
+      });
+      const json = await res.json();
+      if (res.ok && json.shareUrl) {
+        const fullUrl = `${window.location.origin}${json.shareUrl}`;
+        await navigator.clipboard.writeText(fullUrl);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 3000);
+      }
+    } catch (err) {
+      console.warn("[Resume Page] Failed to generate share token:", err);
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const handleFetchProfile = async (targetUsername?: string) => {
+    const userToFetch = (targetUsername || handleInput).trim();
+    if (!userToFetch) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/resume/${encodeURIComponent(userToFetch)}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.profile) {
+          setData(json.profile);
+        }
+      }
+    } catch (err) {
+      console.warn("[Resume Page] Failed to fetch verified resume profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePrint = () => {
     window.print();
@@ -67,6 +120,25 @@ ${data.education.degree} in ${data.education.field} — ${data.education.institu
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <Input
+                placeholder="GitHub handle..."
+                value={handleInput}
+                onChange={(e) => setHandleInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleFetchProfile()}
+                className="h-8 w-36 text-xs bg-muted/40 border-border"
+              />
+              <Button
+                onClick={() => handleFetchProfile()}
+                disabled={loading || !handleInput.trim()}
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs border-border cursor-pointer"
+              >
+                {loading ? "Loading..." : "Sync Profile"}
+              </Button>
+            </div>
+
             <Button
               onClick={() => setEditMode(!editMode)}
               variant="outline"
@@ -88,9 +160,34 @@ ${data.education.degree} in ${data.education.field} — ${data.education.institu
             </Button>
 
             <Button
+              onClick={handleShareLink}
+              disabled={sharing}
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs border-border cursor-pointer text-primary hover:bg-primary/10"
+            >
+              {shareCopied ? (
+                <Check className="h-3.5 w-3.5 text-accent" />
+              ) : (
+                <Share2 className="h-3.5 w-3.5" />
+              )}
+              <span>{sharing ? "Generating..." : shareCopied ? "Link Copied!" : "Share Link"}</span>
+            </Button>
+
+            <Button
+              onClick={() => setBadgeModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs border-cyan-500/30 bg-cyan-500/10 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 cursor-pointer shadow-xs"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+              <span>Shareable Badge</span>
+            </Button>
+
+            <Button
               onClick={handlePrint}
               size="sm"
-              className="gap-1.5 text-xs bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs"
+              className="gap-1.5 text-xs bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
             >
               <Printer className="h-3.5 w-3.5" />
               <span>Print / Save PDF</span>
@@ -248,6 +345,21 @@ ${data.education.degree} in ${data.education.field} — ${data.education.institu
             </div>
           </div>
         </div>
+
+        {/* Shareable Proof-of-Work Badge Card Modal */}
+        <ProofOfWorkBadgeModal
+          isOpen={badgeModalOpen}
+          onClose={() => setBadgeModalOpen(false)}
+          data={{
+            username: data.githubUsername,
+            name: data.fullName,
+            department: data.education?.field || "Computer Science",
+            year: data.education?.graduationYear || "Class of 2026",
+            qualityPrs: data.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 3,
+            campusMerges: data.highlightedRepos?.length || 2,
+            totalPrs: data.highlightedRepos?.reduce((acc, r) => acc + (r.prsAuthored || 1), 0) || 5,
+          }}
+        />
       </div>
     </div>
   );

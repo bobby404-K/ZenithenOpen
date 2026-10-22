@@ -1,48 +1,123 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Users2,
   Search,
   Filter,
-  Sparkles,
+  GitPullRequest,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  GraduationCap,
 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MOCK_MEMBERS } from "@/lib/data/mock-data";
+import { Member } from "@/types";
 
 export default function MembersPage() {
+  const [members, setMembers] = React.useState<Member[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [roleFilter, setRoleFilter] = React.useState<string>("All");
+
+  // Modal State
   const [connectModalOpen, setConnectModalOpen] = React.useState(false);
-  const [inputHandle, setInputHandle] = React.useState("");
-  const [registered, setRegistered] = React.useState(false);
+  const [usnInput, setUsnInput] = React.useState("");
+  const [githubInput, setGithubInput] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
+  const [successResult, setSuccessResult] = React.useState<string | null>(null);
 
   const roles = ["All", "ADMIN", "MENTOR", "MEMBER"];
 
-  const filteredMembers = MOCK_MEMBERS.filter((m) => {
-    const matchesSearch =
-      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      m.skills.some((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      m.department.toLowerCase().includes(searchQuery.toLowerCase());
+  // Fetch real members from backend API
+  const fetchMembers = React.useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (roleFilter !== "All") params.append("role", roleFilter);
+      if (searchQuery.trim()) params.append("search", searchQuery.trim());
 
-    const matchesRole = roleFilter === "All" || m.role === roleFilter;
+      const res = await fetch(`/api/members?${params.toString()}`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.members)) {
+        setMembers(data.members);
+      } else {
+        setMembers([]);
+      }
+    } catch (err) {
+      console.error("[MembersPage] Failed to fetch members:", err);
+      setMembers([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [roleFilter, searchQuery]);
 
-    return matchesSearch && matchesRole;
-  });
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchMembers();
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [fetchMembers]);
 
-  const handleSimulateJoin = (e: React.FormEvent) => {
+  // Handle student login & profile linkage
+  const handleLinkAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputHandle.trim()) return;
-    setRegistered(true);
-    setTimeout(() => {
-      setConnectModalOpen(false);
-      setRegistered(false);
-      setInputHandle("");
-    }, 1500);
+    setFormError(null);
+    setSuccessResult(null);
+
+    const cleanUsn = usnInput.trim();
+    const cleanGithub = githubInput.trim().replace(/^@/, "");
+
+    if (!cleanUsn) {
+      setFormError("Please enter your University Serial Number (USN).");
+      return;
+    }
+    if (!cleanGithub) {
+      setFormError("Please enter your GitHub username.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usn: cleanUsn,
+          githubUsername: cleanGithub,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setFormError(data.error || "Verification failed. Only students of IST are eligible.");
+        return;
+      }
+
+      setSuccessResult(
+        `Welcome @${cleanGithub}! Your student profile (${data.user?.department || "IST Bengaluru"}) has been verified and linked.`
+      );
+
+      // Refresh directory
+      await fetchMembers();
+
+      // Reset form after short delay
+      setTimeout(() => {
+        setConnectModalOpen(false);
+        setSuccessResult(null);
+        setUsnInput("");
+        setGithubInput("");
+      }, 2000);
+    } catch (err: any) {
+      setFormError("Network error connecting to verification service. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -64,7 +139,11 @@ export default function MembersPage() {
               </p>
             </div>
             <Button
-              onClick={() => setConnectModalOpen(true)}
+              onClick={() => {
+                setFormError(null);
+                setSuccessResult(null);
+                setConnectModalOpen(true);
+              }}
               className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-md text-xs shrink-0 self-start md:self-auto cursor-pointer"
             >
               <GithubIcon className="h-4 w-4" />
@@ -106,7 +185,12 @@ export default function MembersPage() {
         </div>
 
         {/* Member Grid or Clean Empty State */}
-        {filteredMembers.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-16 flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
+            <p className="text-sm font-medium">Loading verified student contributors...</p>
+          </div>
+        ) : members.length === 0 ? (
           <div className="mt-12 rounded-2xl border border-border bg-card p-16 text-center shadow-xs">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-4">
               <Users2 className="h-8 w-8" />
@@ -127,18 +211,120 @@ export default function MembersPage() {
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredMembers.map((member) => (
+            {members.map((member) => (
               <Card
                 key={member.id}
-                className="p-6 flex flex-col justify-between border-border bg-card hover:border-primary/40 hover:shadow-md transition-all"
+                className="p-6 flex flex-col justify-between border-border bg-card hover:border-primary/40 hover:shadow-md transition-all group"
               >
-                <div className="flex items-center space-x-3.5">
-                  <div className="h-12 w-12 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold">
-                    {member.name.charAt(0)}
+                <div>
+                  {/* Top Bar: Avatar & Role */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center space-x-3.5">
+                      <Link href={`/members/${member.username}`} className="shrink-0">
+                        {member.avatarUrl ? (
+                          <img
+                            src={member.avatarUrl}
+                            alt={member.name}
+                            className="h-12 w-12 rounded-full border border-border object-cover hover:scale-105 transition-transform"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-base hover:scale-105 transition-transform">
+                            {member.name.charAt(0)}
+                          </div>
+                        )}
+                      </Link>
+                      <div>
+                        <Link href={`/members/${member.username}`}>
+                          <h3 className="font-bold text-foreground text-base hover:text-primary transition-colors">
+                            {member.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xs text-muted-foreground font-mono">@{member.username}</p>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border ${
+                        member.role === "ADMIN"
+                          ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
+                          : member.role === "MENTOR"
+                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                          : "bg-primary/10 text-primary border-primary/20"
+                      }`}
+                    >
+                      {member.role}
+                    </span>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-foreground text-base">{member.name}</h3>
-                    <p className="text-xs text-muted-foreground font-mono">@{member.username}</p>
+
+                  {/* Academic Department & Year */}
+                  <div className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <GraduationCap className="h-3.5 w-3.5 text-primary/70 shrink-0" />
+                    <span className="truncate">{member.department}</span>
+                    <span className="text-border">•</span>
+                    <span className="shrink-0">{member.year}</span>
+                  </div>
+
+                  {/* Bio */}
+                  {member.bio && (
+                    <p className="mt-2.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {member.bio}
+                    </p>
+                  )}
+
+                  {/* Skills Chips */}
+                  {member.skills && member.skills.length > 0 && (
+                    <div className="mt-3.5 flex flex-wrap gap-1.5">
+                      {member.skills.slice(0, 4).map((s, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 rounded-md bg-muted/60 text-[11px] font-mono text-muted-foreground border border-border/50"
+                        >
+                          {s.name}
+                        </span>
+                      ))}
+                      {member.skills.length > 4 && (
+                        <span className="px-1.5 py-0.5 rounded-md bg-muted/40 text-[10px] text-muted-foreground">
+                          +{member.skills.length - 4}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Card Footer: Metrics & GitHub Link */}
+                <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <div className="flex items-center gap-1" title="Merged Pull Requests">
+                      <GitPullRequest className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="font-semibold text-foreground">{member.mergedPrCount}</span>
+                      <span className="text-[11px]">merged</span>
+                    </div>
+                    {member.badge && (
+                      <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">
+                        {member.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={`/members/${member.username}`}
+                      className="inline-flex items-center gap-1 text-primary hover:underline font-semibold text-xs"
+                    >
+                      <span>Profile</span>
+                    </Link>
+                    <a
+                      href={`https://github.com/${member.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground p-1 transition-colors"
+                      title="GitHub Profile"
+                    >
+                      <GithubIcon className="h-3.5 w-3.5" />
+                    </a>
                   </div>
                 </div>
               </Card>
@@ -157,7 +343,7 @@ export default function MembersPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-foreground">Connect GitHub Profile</h3>
-                    <p className="text-xs text-muted-foreground">Link your account to ZenithenOpen</p>
+                    <p className="text-xs text-muted-foreground">Link your IST student account to ZenithenOpen</p>
                   </div>
                 </div>
                 <button
@@ -168,14 +354,37 @@ export default function MembersPage() {
                 </button>
               </div>
 
-              {registered ? (
-                <div className="mt-6 py-6 text-center space-y-2">
-                  <Sparkles className="h-8 w-8 text-accent mx-auto animate-bounce" />
-                  <p className="text-sm font-semibold text-foreground">OAuth Redirecting to GitHub...</p>
-                  <p className="text-xs text-muted-foreground">Syncing public repositories and contributions</p>
+              {successResult ? (
+                <div className="mt-6 py-6 text-center space-y-3">
+                  <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto" />
+                  <p className="text-sm font-semibold text-foreground">Verification Successful</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed px-4">{successResult}</p>
                 </div>
               ) : (
-                <form onSubmit={handleSimulateJoin} className="mt-6 space-y-4">
+                <form onSubmit={handleLinkAccount} className="mt-6 space-y-4">
+                  {formError && (
+                    <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-600 flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                      <span>{formError}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="text-xs font-semibold text-foreground block mb-1.5">
+                      University Serial Number (USN)
+                    </label>
+                    <Input
+                      required
+                      placeholder="e.g. 1SV23CS042"
+                      value={usnInput}
+                      onChange={(e) => setUsnInput(e.target.value)}
+                      className="bg-background border-border text-foreground text-xs font-mono uppercase"
+                    />
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      Must be an authentic IST USN (prefix 1SV... or SV...)
+                    </p>
+                  </div>
+
                   <div>
                     <label className="text-xs font-semibold text-foreground block mb-1.5">
                       Your GitHub Username
@@ -186,16 +395,16 @@ export default function MembersPage() {
                       </span>
                       <Input
                         required
-                        placeholder="your-github-username"
-                        value={inputHandle}
-                        onChange={(e) => setInputHandle(e.target.value)}
+                        placeholder="your-github-handle"
+                        value={githubInput}
+                        onChange={(e) => setGithubInput(e.target.value)}
                         className="pl-8 bg-background border-border text-foreground text-xs font-mono"
                       />
                     </div>
                   </div>
 
                   <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 text-[11px] text-foreground leading-relaxed">
-                    Connecting your GitHub account automatically verifies pull requests, assigns student role badges, and tracks leaderboard points.
+                    Connecting your GitHub account automatically verifies pull requests, assigns student role badges, and tracks leaderboard rankings.
                   </div>
 
                   <div className="pt-2 flex justify-end space-x-2">
@@ -203,15 +412,24 @@ export default function MembersPage() {
                       type="button"
                       variant="ghost"
                       onClick={() => setConnectModalOpen(false)}
+                      disabled={submitting}
                       className="text-xs text-muted-foreground hover:text-foreground"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs cursor-pointer"
+                      disabled={submitting}
+                      className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs cursor-pointer gap-2"
                     >
-                      Verify with GitHub OAuth
+                      {submitting ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <span>Verifying with Database...</span>
+                        </>
+                      ) : (
+                        <span>Verify & Connect Profile</span>
+                      )}
                     </Button>
                   </div>
                 </form>

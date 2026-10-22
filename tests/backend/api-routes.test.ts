@@ -17,6 +17,7 @@
 
 import { NextRequest } from "next/server";
 import { POST as verifyUsnHandler } from "../../app/api/auth/verify-usn/route";
+import { POST as loginHandler } from "../../app/api/auth/login/route";
 import { GET as metricsHandler } from "../../app/api/metrics/route";
 import { TestSuite, SuiteResult } from "./test-utils";
 
@@ -83,7 +84,86 @@ export async function runApiRoutesTests(): Promise<SuiteResult> {
   suite.assertEqual(malformedJson.error, "Internal server error during verification", "Returns appropriate internal error message");
 
   // ========================================================
-  // 2. GET /api/metrics
+  // 2. POST /api/auth/login
+  // ========================================================
+
+  // Case A: Missing USN field in body
+  const loginMissingUsn = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ githubUsername: "adityasharma-dev" }),
+  });
+  const loginMissingUsnRes = await loginHandler(loginMissingUsn);
+  suite.assertEqual(loginMissingUsnRes.status, 400, "POST /api/auth/login returns 400 when USN is missing");
+  const loginMissingUsnJson = await loginMissingUsnRes.json();
+  suite.assertEqual(loginMissingUsnJson.success, false, "Response contains success: false for missing USN");
+  suite.assertEqual(loginMissingUsnJson.error, "USN is required", "Error explains USN is required");
+
+  // Case B: Missing GitHub username in body
+  const loginMissingGh = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usn: "1SV23CS042" }),
+  });
+  const loginMissingGhRes = await loginHandler(loginMissingGh);
+  suite.assertEqual(loginMissingGhRes.status, 400, "POST /api/auth/login returns 400 when GitHub username is missing");
+  const loginMissingGhJson = await loginMissingGhRes.json();
+  suite.assertEqual(loginMissingGhJson.success, false, "Response contains success: false for missing GitHub username");
+  suite.assertEqual(loginMissingGhJson.error, "GitHub username is required", "Error explains GitHub username is required");
+
+  // Case C: Invalid GitHub username format
+  const loginInvalidGh = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usn: "1SV23CS042", githubUsername: "bad@username!" }),
+  });
+  const loginInvalidGhRes = await loginHandler(loginInvalidGh);
+  suite.assertEqual(loginInvalidGhRes.status, 400, "POST /api/auth/login returns 400 for invalid GitHub username characters");
+  const loginInvalidGhJson = await loginInvalidGhRes.json();
+  suite.assertEqual(loginInvalidGhJson.success, false, "Response contains success: false for invalid username");
+  suite.assertEqual(loginInvalidGhJson.error, "Invalid GitHub username format", "Error explains format is invalid");
+
+  // Case D: Non-IST USN
+  const loginNonIst = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usn: "1RV23CS999", githubUsername: "adityasharma-dev" }),
+  });
+  const loginNonIstRes = await loginHandler(loginNonIst);
+  suite.assertEqual(loginNonIstRes.status, 404, "POST /api/auth/login returns 404 for non-IST USN");
+  const loginNonIstJson = await loginNonIstRes.json();
+  suite.assertEqual(loginNonIstJson.success, false, "Response contains success: false for non-IST student");
+
+  // Case E: Authentic IST Student Login (200 OK)
+  const loginValid = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usn: "1SV23CS042", githubUsername: "@adityasharma-dev" }),
+  });
+  const loginValidRes = await loginHandler(loginValid);
+  suite.assertEqual(loginValidRes.status, 200, "POST /api/auth/login returns 200 for valid authentic student credentials");
+  const loginValidJson = await loginValidRes.json();
+  suite.assertEqual(loginValidJson.success, true, "Payload contains success: true");
+  suite.assertEqual(loginValidJson.user?.usn, "1SV23CS042", "Authenticated user USN matches requested USN");
+  suite.assertEqual(loginValidJson.user?.githubUsername, "adityasharma-dev", "Strips leading @ symbol from GitHub username");
+  suite.assertEqual(loginValidJson.user?.department, "Computer Science & Engineering", "Department assigned correctly");
+  suite.assertEqual(loginValidJson.user?.role, "MEMBER", "Role defaults to MEMBER");
+  suite.assertEqual(loginValidJson.user?.avatarUrl, "https://github.com/adityasharma-dev.png", "Avatar URL formatted correctly");
+  suite.assert(Boolean(loginValidJson.user?.loggedInAt), "Includes loggedInAt timestamp");
+
+  // Case F: Malformed JSON payload
+  const loginMalformedReq = {
+    json: async () => {
+      throw new Error("SyntaxError: Unexpected token in JSON");
+    },
+  } as unknown as NextRequest;
+  const loginMalformedRes = await loginHandler(loginMalformedReq);
+  suite.assertEqual(loginMalformedRes.status, 500, "POST /api/auth/login catches exception and returns 500");
+  const loginMalformedJson = await loginMalformedRes.json();
+  suite.assertEqual(loginMalformedJson.success, false, "Malformed response contains success: false");
+
+  // ========================================================
+  // 3. GET /api/metrics
   // ========================================================
   const metricsRes = await metricsHandler();
   suite.assertEqual(metricsRes.status, 200, "GET /api/metrics returns 200 OK status");

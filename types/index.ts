@@ -153,6 +153,8 @@ export interface CommunityMetrics {
   totalMembers: number;
   totalContributors: number;
   prsMerged: number;
+  openPrs?: number;
+  closedPrs?: number;
   qualityPrsMerged?: number;
   activeRepositories: number;
   openSourceProjects: number;
@@ -205,4 +207,113 @@ export interface ResumeProfileData {
     gpa?: string;
   };
   achievements: string[];
+}
+
+export interface EventAttendee {
+  username: string;
+  name: string;
+  email?: string;
+  department?: string;
+  avatarUrl?: string;
+  rsvpAt: string;
+}
+
+export interface CampusEvent {
+  id: string;
+  title: string;
+  category: "workshop" | "office-hours" | "fellowship" | "hackathon";
+  categoryLabel: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  tags: string[];
+  rsvpLink: string;
+  capacity: number;
+  rsvpCount: number;
+  attendees: EventAttendee[];
+  status: "upcoming" | "live" | "completed";
+  speakers: {
+    name: string;
+    role: string;
+    avatarUrl?: string;
+    github?: string;
+  }[];
+  calendarLinks?: {
+    google: string;
+    ics: string;
+  };
+}
+
+export interface SwagTier {
+  id: string;
+  name: string;
+  badge: string;
+  minPrs: number;
+  rewards: string[];
+  itemTitle: string;
+  hasPhysicalSwag: boolean;
+}
+
+export interface SwagClaimVoucher {
+  voucherCode: string;
+  username: string;
+  name: string;
+  tierId: string;
+  tierName: string;
+  swagItem: string;
+  size?: string;
+  pickupLocation: string;
+  status: "CONFIRMED" | "FULFILLED";
+  claimedAt: string;
+}
+
+export interface ActivityEvent {
+  id: string;
+  type: "pr_merged" | "quality_pr" | "swag_claimed" | "event_rsvp" | "first_pr" | "member_joined";
+  typeLabel: string;
+  title: string;
+  description: string;
+  username: string;
+  userAvatarUrl?: string;
+  projectSlug?: string;
+  projectName?: string;
+  url?: string;
+  timestamp: string;
+  relativeTime: string;
+  badgeColor?: string;
+  isQuality?: boolean;
+}
+
+export interface ActivityPulseResponse {
+  success: boolean;
+  activeCountLast24h: number;
+  recentMergesCount: number;
+  events: ActivityEvent[];
+}
+
+export interface ResourceArticle {
+  slug: string;
+  title: string;
+  category: "Career & Fellowships" | "Engineering Deep Dive" | "Web Architecture" | "Community Insights" | "Git Architecture";
+  categorySlug: "career" | "git" | "architecture" | "community";
+  author: string;
+  authorRole: string;
+  authorAvatar?: string;
+  date: string;
+  readTime: string;
+  readTimeMinutes: number;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  excerpt: string;
+  keyTakeaways: string[];
+  markdownContent: string;
+  tags: string[];
+  featured?: boolean;
+}
+
+export interface ResourceArticlesResponse {
+  success: boolean;
+  count: number;
+  categories: { slug: string; label: string; count: number }[];
+  articles: ResourceArticle[];
 }

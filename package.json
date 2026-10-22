@@ -1,29 +1,38 @@
 {
   "name": "zenithen-open",
-  "version": "0.1.0",
+  "version": "1.43.0",
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "preflight": "tsx scripts/preflight.ts",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx scripts/seed-production.ts",
     "test": "tsx tests/backend/run-all.ts",
     "test:backend": "tsx tests/backend/run-all.ts",
     "test:themes": "tsx tests/theme-system.test.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
     "@types/canvas-confetti": "^1.9.0",
+    "@upstash/redis": "^1.39.0",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^14.0.0",
-    "lucide-react": "^1.50.0",
+    "lucide-react": "^1.55.0",
     "next": "16.3.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "simple-icons": "^16.33.0",
+    "simple-icons": "^16.34.0",
     "tailwind-merge": "^3.7.0",
-    "three": "^0.186.1"
+    "three": "^0.186.1",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -32,9 +41,15 @@
     "@types/react-dom": "^19",
     "@types/three": "^0.186.0",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.4.0",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
+  },
+  "overrides": {
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8",
+    "deepmerge-ts": "^8.0.0"
   }
 }

@@ -31,6 +31,12 @@ enum ContributionType {
   DOCUMENTATION
 }
 
+enum ContributionStatus {
+  OPEN
+  MERGED
+  CLOSED
+}
+
 enum MentorshipStatus {
   PENDING
   ACCEPTED
@@ -68,6 +74,7 @@ model User {
 
   @@index([role])
   @@index([email])
+  @@index([department])
 }
 
 model GitHubAccount {
@@ -140,23 +147,30 @@ model ProjectMaintainer {
 }
 
 model Contribution {
-  id           String           @id @default(cuid())
+  id           String             @id @default(cuid())
   userId       String
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectId    String?
-  project      Project?         @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  project      Project?           @relation(fields: [projectId], references: [id], onDelete: SetNull)
   type         ContributionType
   title        String
   url          String
   prNumber     Int?
-  linesAdded   Int              @default(0)
-  linesRemoved Int              @default(0)
+  status       ContributionStatus @default(MERGED)
+  isQualityPr  Boolean            @default(false)
+  linesAdded   Int                @default(0)
+  linesRemoved Int                @default(0)
   mergedAt     DateTime?
-  createdAt    DateTime         @default(now())
+  closedAt     DateTime?
+  createdAt    DateTime           @default(now())
 
   @@index([userId])
   @@index([projectId])
   @@index([type])
+  @@index([status])
+  @@index([isQualityPr])
+  @@index([userId, status])
+  @@index([status, mergedAt])
 }
 
 model Opportunity {
@@ -264,6 +278,7 @@ model UserAchievement {
   unlockedAt    DateTime    @default(now())
 
   @@unique([userId, achievementId])
+  @@index([achievementId])
 }
 
 model CommunityMetricSnapshot {

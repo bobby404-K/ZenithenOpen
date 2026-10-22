@@ -61,12 +61,12 @@ export async function runDbLayerTests(): Promise<SuiteResult> {
   suite.assert(typeof db.students.findByUsn === "function", "db.students.findByUsn is a function");
   suite.assert(typeof db.students.linkGithub === "function", "db.students.linkGithub is a function");
 
-  // In standalone mode (without active DB client connected), default queries resolve safely:
-  const studentResult = await db.students.findByUsn("1SV23CS001");
+  // Check querying non-existent student record:
+  const studentResult = await db.students.findByUsn("1SV99ZZ999");
   suite.assertEqual(
     studentResult,
     null,
-    "db.students.findByUsn resolves safely to null in open-source standalone mode"
+    "db.students.findByUsn resolves safely to null for non-existent record"
   );
 
   const linkResult = await db.students.linkGithub("1SV23CS001", "dev-octocat");

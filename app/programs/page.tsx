@@ -14,17 +14,15 @@ import {
   Coins,
   ExternalLink,
   CheckCircle2,
-  Compass,
   ChevronDown,
   Flame,
-  Medal,
   Award,
   Sparkles,
-  GitPullRequest,
-  GitCommit,
   Plus,
   X,
   AlertCircle,
+  BookOpen,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,12 +35,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Project } from "@/types";
+import { Project, LearningPath } from "@/types";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
-import { MOCK_PROJECTS } from "@/lib/data/mock-data";
 import {
   STUDENT_COMPETITORS,
   CompetitionTimeframe,
+  StudentContributor,
 } from "@/lib/data/student-competition";
 import { useNavigation } from "@/components/navigation/navigation-context";
 import { cn } from "@/lib/utils";
@@ -145,12 +143,52 @@ const PROGRAMS: ProgramItem[] = [
     actionHref: "/resources",
     icon: Coins,
   },
+  {
+    id: "learning-paths",
+    category: "Learning Roadmaps",
+    title: "Engineering Curriculums & Roadmaps",
+    badge: "Structured Tracks",
+    description:
+      "Curated, step-by-step engineering tracks designed for IST students. Master full-stack Next.js, applied AI systems, cloud containerization, and open-source fellowship playbooks.",
+    details: [
+      "Full-Stack Web with Next.js & TypeScript (6 Weeks)",
+      "Applied AI & Open Data Science (8 Weeks)",
+      "DevOps, Containers & Cloud Engineering (6 Weeks)",
+      "Google Summer of Code (GSoC) Playbook (8 Weeks)",
+    ],
+    actionLabel: "Explore Learning Paths",
+    actionHref: "#learning-paths-catalog",
+    icon: Rocket,
+  },
 ];
 
 export default function ProgramsPage() {
   const { activeSection } = useNavigation();
   const [isCompetitionOpen, setIsCompetitionOpen] = React.useState(true);
   const [competitionTimeframe, setCompetitionTimeframe] = React.useState<CompetitionTimeframe>("week");
+  const [competitors, setCompetitors] = React.useState<StudentContributor[]>(STUDENT_COMPETITORS);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadLeaderboard() {
+      try {
+        const res = await fetch(`/api/students/leaderboard?timeframe=${competitionTimeframe}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.success && Array.isArray(data.competitors) && data.competitors.length > 0) {
+            setCompetitors(data.competitors);
+          }
+        }
+      } catch (err) {
+        console.warn("[Competition Arena] Live leaderboard fetch notice:", err);
+      }
+    }
+
+    loadLeaderboard();
+    return () => {
+      isMounted = false;
+    };
+  }, [competitionTimeframe]);
 
   // Default to Open Source
   const defaultProgramId = "open-source";
@@ -158,7 +196,7 @@ export default function ProgramsPage() {
   const currentProgram = PROGRAMS.find((p) => p.id === currentSelectedId) || PROGRAMS[0];
 
   const CurrentIcon = currentProgram.icon;
-  const [campusProjects, setCampusProjects] = React.useState<Project[]>(() => MOCK_PROJECTS.slice(0, 2));
+  const [campusProjects, setCampusProjects] = React.useState<Project[]>([]);
   const [isAddProjectOpen, setIsAddProjectOpen] = React.useState(false);
   const [newProjectName, setNewProjectName] = React.useState("");
   const [newProjectRepo, setNewProjectRepo] = React.useState("");
@@ -169,7 +207,24 @@ export default function ProgramsPage() {
   const [repoError, setRepoError] = React.useState("");
   const [submitSuccess, setSubmitSuccess] = React.useState(false);
 
-  const handleAddProjectSubmit = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    async function loadProjects() {
+      try {
+        const res = await fetch("/api/projects", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.projects) && data.projects.length > 0) {
+            setCampusProjects(data.projects);
+          }
+        }
+      } catch (err) {
+        console.warn("[Programs] Live projects fetch error:", err);
+      }
+    }
+    loadProjects();
+  }, []);
+
+  const handleAddProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedRepo = newProjectRepo.trim().toLowerCase();
     const trimmedId = newProjectStudentId.trim().toLowerCase();
@@ -225,6 +280,24 @@ export default function ProgramsPage() {
       updatedAt: new Date().toISOString(),
     };
 
+    try {
+      await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: newProject.slug,
+          name: newProject.name,
+          tagline: newProject.tagline,
+          description: newProject.description,
+          repositoryUrl: newProject.repositoryUrl,
+          primaryLanguage: newProject.primaryLanguage,
+          tags: newProject.tags,
+        }),
+      });
+    } catch (err) {
+      console.warn("[Programs] Project registration notice:", err);
+    }
+
     setCampusProjects((prev) => [newProject, ...prev]);
     setSubmitSuccess(true);
     setRepoError("");
@@ -241,7 +314,7 @@ export default function ProgramsPage() {
   };
 
   // Sorted students for competition arena based on active timeframe
-  const sortedStudents = [...STUDENT_COMPETITORS].sort(
+  const sortedStudents = [...competitors].sort(
     (a, b) => a[competitionTimeframe].rank - b[competitionTimeframe].rank
   );
   const podiumStudents = sortedStudents.slice(0, 3);
@@ -646,6 +719,11 @@ export default function ProgramsPage() {
                   remainingStudents={remainingStudents}
                 />
               )}
+
+              {/* Engineering Learning Paths & Roadmaps */}
+              {currentProgram.id === "learning-paths" && (
+                <LearningPathsSection />
+              )}
             </div>
           )}
         </div>
@@ -657,8 +735,8 @@ export default function ProgramsPage() {
 interface StudentLeaderboardSectionProps {
   timeframe: CompetitionTimeframe;
   setTimeframe: (timeframe: CompetitionTimeframe) => void;
-  podiumStudents: typeof STUDENT_COMPETITORS;
-  remainingStudents: typeof STUDENT_COMPETITORS;
+  podiumStudents: StudentContributor[];
+  remainingStudents: StudentContributor[];
   isCampusReposOnly?: boolean;
 }
 
@@ -670,7 +748,7 @@ function StudentLeaderboardSection({
   isCampusReposOnly = false,
 }: StudentLeaderboardSectionProps) {
   // Only students contributing to official campus repos are shown when on campus repos view
-  const campusRepoFilter = (student: (typeof STUDENT_COMPETITORS)[number]) => {
+  const campusRepoFilter = (student: StudentContributor) => {
     const repo = student[timeframe].topContribution.repo.toLowerCase();
     return repo.startsWith("ist-zenithenlab/") || repo.includes("zenithen");
   };
@@ -702,7 +780,7 @@ function StudentLeaderboardSection({
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-xl">
             {isCampusReposOnly
-              ? "Only student developers actively contributing to official IST campus repositories (ZenithenOpen & ZenithenLab) are featured on this page."
+              ? "Only student developers actively contributing to official IST campus repositories (ZenithenOpen & First-PR) are featured on this page."
               : "Tracking top student developers across weekly sprints, monthly rankings, and all-time achievements."}
           </p>
         </div>
@@ -779,20 +857,20 @@ function StudentLeaderboardSection({
                   >
                     {isFirst ? "🥇 1st Place Champion" : isSecond ? "🥈 2nd Place" : "🥉 3rd Place"}
                   </Badge>
-                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-muted/80 border border-border/60 text-muted-foreground">
-                    {stats.points} PTS
-                  </span>
                 </div>
 
                 {/* Student Profile Info */}
-                <div className="flex items-center space-x-3">
+                <Link
+                  href={`/members/${encodeURIComponent(student.username)}`}
+                  className="flex items-center space-x-3 group hover:opacity-90 transition-opacity"
+                >
                   <img
                     src={student.avatarUrl}
                     alt={student.name}
-                    className="h-12 w-12 rounded-full border-2 border-primary/30 bg-muted/80 shrink-0 p-0.5"
+                    className="h-12 w-12 rounded-full border-2 border-primary/30 bg-muted/80 shrink-0 p-0.5 group-hover:scale-105 transition-transform"
                   />
                   <div className="min-w-0 flex-1">
-                    <CardTitle className="text-base font-bold text-foreground truncate">
+                    <CardTitle className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">
                       {student.name}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground font-mono truncate">
@@ -802,7 +880,7 @@ function StudentLeaderboardSection({
                       {student.department} • {student.year}
                     </p>
                   </div>
-                </div>
+                </Link>
               </CardHeader>
 
               <CardContent className="pt-0 space-y-3.5">
@@ -813,38 +891,46 @@ function StudentLeaderboardSection({
                   </span>
                 </div>
 
-                {/* Competition Stats Metrics (Merged, Quality Pt, Open PR, Closed PR) */}
-                <div className="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-muted/50 border border-border/60 text-center">
+                {/* Competition Stats Metrics */}
+                <div className="grid grid-cols-5 gap-1 p-2 rounded-xl bg-muted/50 border border-border/60 text-center">
                   <div>
-                    <div className="text-base font-extrabold text-foreground">
-                      {stats.mergedPrs ?? stats.prs}
+                    <div className="text-sm font-extrabold text-amber-500">
+                      {stats.qualityPrs ?? 0}
                     </div>
-                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      Merged
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Quality Merge">
+                      Quality
                     </div>
                   </div>
                   <div>
-                    <div className="text-base font-extrabold text-emerald-600">
-                      {stats.qualityPrs}
+                    <div className="text-sm font-extrabold text-foreground">
+                      {stats.prs ?? 0}
                     </div>
-                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
-                      Quality Pt
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Total PR">
+                      Total PR
                     </div>
                   </div>
                   <div>
-                    <div className="text-base font-extrabold text-amber-500">
-                      {stats.openPrs ?? 1}
+                    <div className="text-sm font-extrabold text-blue-500">
+                      {stats.openPrs ?? 0}
                     </div>
-                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Open PR">
                       Open PR
                     </div>
                   </div>
                   <div>
-                    <div className="text-base font-extrabold text-purple-500">
-                      {stats.closedPrs ?? (stats.prs + 1)}
+                    <div className="text-sm font-extrabold text-rose-500">
+                      {stats.closedPrs ?? 0}
                     </div>
-                    <div className="text-[10px] uppercase font-mono text-muted-foreground font-semibold">
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Closed PR">
                       Closed PR
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-extrabold text-emerald-500">
+                      {stats.mergedPrs ?? stats.prs ?? 0}
+                    </div>
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Total Merges">
+                      Merges
                     </div>
                   </div>
                 </div>
@@ -932,51 +1018,53 @@ function StudentLeaderboardSection({
               >
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-mono text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                        #{stats.rank}
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
-                        {stats.points} PTS
-                      </span>
-                    </div>
+                    <span className="font-mono text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                      #{stats.rank}
+                    </span>
                     <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-md border", student.badgeColor)}>
                       {student.badge}
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-2.5">
+                  <Link
+                    href={`/members/${encodeURIComponent(student.username)}`}
+                    className="flex items-center space-x-2.5 group hover:opacity-90 transition-opacity"
+                  >
                     <img
                       src={student.avatarUrl}
                       alt={student.name}
-                      className="h-9 w-9 rounded-full border border-border bg-muted p-0.5"
+                      className="h-9 w-9 rounded-full border border-border bg-muted p-0.5 group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-bold text-foreground truncate">
+                      <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
                         {student.name}
                       </h4>
                       <p className="text-[11px] text-muted-foreground font-mono truncate">
                         @{student.username} • {student.department}
                       </p>
                     </div>
-                  </div>
+                  </Link>
 
-                  <div className="grid grid-cols-4 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
+                  <div className="grid grid-cols-5 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
                     <div>
-                      <div className="font-bold text-foreground">{stats.mergedPrs ?? stats.prs}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Merged</div>
+                      <div className="font-bold text-amber-500">{stats.qualityPrs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Quality Merge">Q-PR</div>
                     </div>
                     <div>
-                      <div className="font-bold text-emerald-600">{stats.qualityPrs}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Quality Pt</div>
+                      <div className="font-bold text-foreground">{stats.prs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Total PR">PRS</div>
                     </div>
                     <div>
-                      <div className="font-bold text-amber-500">{stats.openPrs ?? 1}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Open PR</div>
+                      <div className="font-bold text-blue-500">{stats.openPrs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Open PR">OPEN</div>
                     </div>
                     <div>
-                      <div className="font-bold text-purple-500">{stats.closedPrs ?? (stats.prs + 1)}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono uppercase font-semibold">Closed PR</div>
+                      <div className="font-bold text-rose-500">{stats.closedPrs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Closed PR">CLOSED</div>
+                    </div>
+                    <div>
+                      <div className="font-bold text-emerald-500">{stats.mergedPrs ?? stats.prs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Total Merges">MERGED</div>
                     </div>
                   </div>
 
@@ -1024,6 +1112,270 @@ function StudentLeaderboardSection({
           })}
         </div>
       </div>
+    </motion.div>
+  );
+}
+
+function LearningPathsSection() {
+  const [paths, setPaths] = React.useState<LearningPath[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [selectedLevel, setSelectedLevel] = React.useState<string>("all");
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [expandedSlug, setExpandedSlug] = React.useState<string | null>(null);
+  const [enrolledMap, setEnrolledMap] = React.useState<Record<string, { currentWeek: number; completedWeeks: number[] }>>({});
+
+  React.useEffect(() => {
+    let active = true;
+    async function loadPaths() {
+      try {
+        setLoading(true);
+        const query = new URLSearchParams();
+        if (selectedLevel !== "all") query.set("level", selectedLevel);
+        if (searchQuery.trim()) query.set("search", searchQuery.trim());
+        const res = await fetch(`/api/learning-paths?${query.toString()}`);
+        const data = await res.json();
+        if (active && data.success && Array.isArray(data.paths)) {
+          setPaths(data.paths);
+        }
+      } catch (err) {
+        console.warn("Failed to load learning paths:", err);
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    loadPaths();
+    return () => {
+      active = false;
+    };
+  }, [selectedLevel, searchQuery]);
+
+  const toggleExpand = (slug: string) => {
+    setExpandedSlug((prev) => (prev === slug ? null : slug));
+  };
+
+  const handleProgress = async (path: LearningPath) => {
+    const current = enrolledMap[path.slug] || { currentWeek: 1, completedWeeks: [] };
+    const nextWeek = Math.min(current.currentWeek + 1, path.estimatedWeeks);
+    const newCompleted = Array.from(new Set([...current.completedWeeks, current.currentWeek]));
+
+    setEnrolledMap((prev) => ({
+      ...prev,
+      [path.slug]: { currentWeek: nextWeek, completedWeeks: newCompleted },
+    }));
+
+    try {
+      await fetch(`/api/learning-paths/${path.slug}/progress`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "current-user",
+          currentWeek: nextWeek,
+          completedWeeks: newCompleted,
+          isCompleted: nextWeek >= path.estimatedWeeks,
+        }),
+      });
+    } catch (e) {
+      console.warn("Progress update failed:", e);
+    }
+  };
+
+  return (
+    <motion.div
+      id="learning-paths-catalog"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className="space-y-6 pt-2"
+    >
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/80 pb-6">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-primary font-mono">
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>Structured Tracks</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground mt-1">
+            Engineering Learning Roadmaps
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
+            Step-by-step engineering tracks authored for IST student contributors. Master foundational systems, applied AI, and cloud architectures.
+          </p>
+        </div>
+
+        {/* Level Filters */}
+        <div className="flex items-center gap-1.5 p-1 rounded-lg border border-border/60 bg-muted/30">
+          {(["all", "beginner", "intermediate", "advanced"] as const).map((lvl) => (
+            <button
+              key={lvl}
+              onClick={() => setSelectedLevel(lvl)}
+              className={cn(
+                "px-3 py-1 text-xs font-semibold rounded-md transition-all capitalize font-mono",
+                selectedLevel === lvl
+                  ? "bg-background text-foreground shadow-sm border border-border/80"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {lvl}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Search Input */}
+      <div className="relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Filter by skill (e.g. Next.js, PyTorch, Docker)..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-9 text-xs font-mono h-9 bg-muted/20 border-border/60"
+        />
+      </div>
+
+      {/* Roadmaps Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-48 rounded-xl border border-border/40 bg-muted/20 animate-pulse" />
+          ))}
+        </div>
+      ) : paths.length === 0 ? (
+        <div className="text-center py-12 rounded-xl border border-dashed border-border/60 text-muted-foreground text-sm font-mono">
+          No learning paths found matching your criteria.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {paths.map((path) => {
+            const isExpanded = expandedSlug === path.slug;
+            const progress = enrolledMap[path.slug];
+            const isStarted = Boolean(progress);
+
+            return (
+              <Card
+                key={path.id || path.slug}
+                className="relative overflow-hidden border border-border/60 bg-card hover:border-primary/40 transition-all shadow-sm"
+              >
+                {/* Accent line */}
+                <div
+                  className="h-1 w-full"
+                  style={{ backgroundColor: path.color || "var(--primary)" }}
+                />
+
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <Badge variant="outline" className="font-mono text-[10px] uppercase">
+                      {path.level}
+                    </Badge>
+                    <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                      <Sparkles className="h-3 w-3 text-primary" />
+                      <span>{path.estimatedWeeks} Weeks</span>
+                    </div>
+                  </div>
+                  <CardTitle className="text-lg font-bold text-foreground mt-2">
+                    {path.title}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground line-clamp-2">
+                    {path.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="space-y-4 pb-3">
+                  {/* Target Skills */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {path.targetSkills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Progress indicator if started */}
+                  {isStarted && (
+                    <div className="p-2.5 rounded-lg bg-muted/40 border border-border/50 text-xs font-mono">
+                      <div className="flex justify-between items-center text-muted-foreground mb-1">
+                        <span>Current Week</span>
+                        <span className="font-bold text-primary">
+                          Week {progress.currentWeek} of {path.estimatedWeeks}
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="bg-primary h-full transition-all duration-300"
+                          style={{
+                            width: `${Math.min(100, (progress.completedWeeks.length / path.estimatedWeeks) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Expandable Weekly Curriculum */}
+                  {isExpanded && path.curriculum && path.curriculum.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 pt-2 border-t border-border/40"
+                    >
+                      <div className="text-[11px] font-mono font-semibold text-muted-foreground uppercase">
+                        Weekly Modules
+                      </div>
+                      {path.curriculum.map((week) => (
+                        <div
+                          key={week.weekNumber}
+                          className="p-2 rounded-md bg-muted/30 border border-border/40 text-xs space-y-1"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-foreground">
+                              Week {week.weekNumber}: {week.title}
+                            </span>
+                            {progress?.completedWeeks?.includes(week.weekNumber) && (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                            )}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground leading-snug">
+                            {week.summary}
+                          </p>
+                          {week.milestoneProject && (
+                            <div className="text-[10px] font-mono text-primary flex items-center gap-1 mt-1">
+                              <Rocket className="h-2.5 w-2.5" />
+                              <span>Project: {week.milestoneProject}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </CardContent>
+
+                <CardFooter className="pt-2 border-t border-border/40 flex items-center justify-between gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => toggleExpand(path.slug)}
+                    className="text-xs h-8 text-muted-foreground hover:text-foreground font-mono gap-1"
+                  >
+                    <span>{isExpanded ? "Hide Modules" : "View Curriculum"}</span>
+                    <ChevronDown className={cn("h-3 w-3 transition-transform", isExpanded && "rotate-180")} />
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    onClick={() => handleProgress(path)}
+                    className="text-xs h-8 font-mono gap-1"
+                  >
+                    <CheckCircle2 className="h-3 w-3" />
+                    <span>{isStarted ? "Log Next Week" : "Start Roadmap"}</span>
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </motion.div>
   );
 }

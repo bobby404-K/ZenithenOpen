@@ -9,3 +9,5 @@ node_modules
 README.md
 docs
 tests
+*.docx
+scratch
