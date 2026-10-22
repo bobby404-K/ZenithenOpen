@@ -3,6 +3,17 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.47.0] - 2026-10-22
+
+### ⚛️ Unified React 19.3.1 & React DOM Peer Alignment
+
+- **Atomic React Ecosystem Upgrade (`package.json`, `package-lock.json`)**:
+  - Upgraded `react` and `react-dom` from `19.2.8` to `19.3.1` concurrently.
+  - Automatically resolved peer dependency constraints with `scheduler@^0.28.0`.
+  - Harmonizes conflicting split Dependabot updates (#117 and #118) into a unified, reproducible build lockfile.
+- **Continuous Quality & Test Integrity**:
+  - Full backend test suite passing across all 1,038 assertions with 0 TypeScript compilation errors.
+
 ## [1.46.0] - 2026-10-22
 
 ### 🔄 Campus GitHub Sync & Good First Issues Automation
