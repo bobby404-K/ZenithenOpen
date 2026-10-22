@@ -36,7 +36,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Project, LearningPath } from "@/types";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import {
   STUDENT_COMPETITORS,
   CompetitionTimeframe,
@@ -955,17 +955,37 @@ function StudentLeaderboardSection({
                 </div>
               </CardContent>
 
-              <CardFooter className="pt-3 border-t border-border/60 mt-auto">
+              <CardFooter className="pt-3 border-t border-border/60 mt-auto grid grid-cols-2 gap-2">
                 <a
-                  href={`https://github.com/${student.username}`}
+                  href={student.githubUrl || `https://github.com/${student.username}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full"
                 >
-                  <Button size="sm" variant="outline" className="w-full text-xs gap-1.5 cursor-pointer shadow-xs">
-                    <GithubIcon className="h-3.5 w-3.5" />
-                    <span>View GitHub Profile</span>
-                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs gap-1.5 cursor-pointer shadow-xs hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  >
+                    <GithubIcon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">GitHub</span>
+                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground shrink-0" />
+                  </Button>
+                </a>
+                <a
+                  href={student.linkedinUrl || `https://www.linkedin.com/in/${student.username}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs gap-1.5 cursor-pointer shadow-xs hover:border-blue-500/50 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-all"
+                  >
+                    <LinkedinIcon className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">LinkedIn</span>
+                    <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground shrink-0" />
                   </Button>
                 </a>
               </CardFooter>
@@ -1053,17 +1073,37 @@ function StudentLeaderboardSection({
                   </p>
                 </div>
 
-                <div className="pt-3 mt-3 border-t border-border/50">
+                <div className="pt-3 mt-3 border-t border-border/50 grid grid-cols-2 gap-2">
                   <a
-                    href={`https://github.com/${student.username}`}
+                    href={student.githubUrl || `https://github.com/${student.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full"
                   >
-                    <Button size="sm" variant="ghost" className="w-full text-xs h-7 gap-1 text-muted-foreground hover:text-foreground">
-                      <GithubIcon className="h-3 w-3" />
-                      <span>GitHub</span>
-                      <ExternalLink className="h-2.5 w-2.5 ml-auto" />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs h-7 gap-1 text-muted-foreground hover:text-foreground border border-border/40 hover:border-border cursor-pointer shadow-xs"
+                    >
+                      <GithubIcon className="h-3 w-3 shrink-0" />
+                      <span className="truncate">GitHub</span>
+                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
+                    </Button>
+                  </a>
+                  <a
+                    href={student.linkedinUrl || `https://www.linkedin.com/in/${student.username}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full"
+                  >
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs h-7 gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-500 border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5 cursor-pointer shadow-xs"
+                    >
+                      <LinkedinIcon className="h-3 w-3 shrink-0" />
+                      <span className="truncate">LinkedIn</span>
+                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
                     </Button>
                   </a>
                 </div>
