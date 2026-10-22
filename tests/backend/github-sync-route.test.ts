@@ -22,6 +22,7 @@ export async function runGitHubSyncRouteTests(): Promise<SuiteResult> {
   suite.assert(getData.availableScopes.includes("all"), "Available scopes includes 'all'");
   suite.assert(getData.availableScopes.includes("members"), "Available scopes includes 'members'");
   suite.assert(getData.availableScopes.includes("projects"), "Available scopes includes 'projects'");
+  suite.assert(getData.availableScopes.includes("issues"), "Available scopes includes 'issues'");
   suite.assert(getData.recentStats && typeof getData.recentStats.syncedAt === "string", "Includes recentStats telemetry");
 
   // --- 2. POST Validation Failure (Invalid Scope) ---
@@ -83,6 +84,20 @@ export async function runGitHubSyncRouteTests(): Promise<SuiteResult> {
   suite.assert(allData.stats.syncedMembersCount > 0, "Batch synced members count is positive");
   suite.assert(allData.stats.totalPrsSynced >= 0, "Total synced PRs count is non-negative");
   suite.assert(typeof allData.stats.durationMs === "number", "Includes sync execution duration in ms");
+
+  // --- 6. POST Scope: Issues Sync ---
+  const issuesReq = new NextRequest("http://localhost:3000/api/github/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      scope: "issues",
+    }),
+  });
+  const issuesRes = await POST(issuesReq);
+  suite.assertEqual(issuesRes.status, 200, "POST scope: issues returns 200 OK");
+  const issuesData = await issuesRes.json();
+  suite.assertEqual(issuesData.success, true, "Response reports success: true for issues scope");
+  suite.assert(issuesData.stats.issuesSyncedCount >= 0, "issuesSyncedCount is non-negative number");
 
   return suite.summary();
 }

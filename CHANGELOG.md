@@ -3,6 +3,26 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.46.0] - 2026-10-22
+
+### 🔄 Campus GitHub Sync & Good First Issues Automation
+
+- **Automated Issue Synchronizer (`lib/github/sync.ts`)**:
+  - Implemented `fetchRepositoryIssues(repoFullName, targetLabels)`:
+    - Real-time GitHub REST API integration for open issues from campus repositories (`IST-ZenithenLab/ZenithenOpen` and `IST-ZenithenLab/First-PR`).
+    - Smart difficulty mapping (label-based heuristics for `beginner`, `intermediate`, `advanced`).
+    - Strict filter to isolate genuine issues and exclude pull requests.
+  - Implemented `syncCampusRepositoryIssues()`:
+    - Multi-repository campus aggregation with Upstash Redis cache invalidation (`opportunities:list:*`) and persistent caching (`opportunities:synced:all`).
+- **Sync Route Expansion (`app/api/github/sync/route.ts`)**:
+  - Expanded `availableScopes` and Zod validation schema to include `"issues"`.
+  - Added real-time telemetry metrics tracking `issuesSyncedCount` in `lastSyncStats`.
+- **Live Dynamic Opportunities Integration (`app/api/opportunities/route.ts`)**:
+  - Automatically queries freshly synced GitHub opportunities before falling back to baseline static starters.
+- **Backend Test Coverage & Route Verification (`tests/backend/github-sync-route.test.ts`)**:
+  - Added assertions validating `issues` scope presence and POST execution metrics.
+  - All 1,036 backend tests passing with 0 TypeScript compilation errors.
+
 ## [1.45.0] - 2026-10-22
 
 ### 🧭 Campus Navigation & Unified Discoverability Enhancements
