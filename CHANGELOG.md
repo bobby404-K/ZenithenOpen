@@ -3,6 +3,21 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.44.0] - 2026-10-22
+
+### 📇 Social-Media Style Student Profile Cards with Dual GitHub & LinkedIn Actions
+
+- **Dual Social Profile Actions (`app/programs/page.tsx`)**:
+  - Enhanced student competitor profile cards (Top 3 Podium and Ranks 4+) with dual dedicated action buttons:
+    - **GitHub Profile**: External link with official GitHub brand icon.
+    - **LinkedIn Profile**: External link with official LinkedIn brand icon and styled theme hover state.
+  - Added external target attributes (`target='_blank' rel='noopener noreferrer'`) for safe navigation.
+- **Backend Data Contracts Verification (`tests/backend/data-contracts.test.ts`)**:
+  - Added assertions validating `githubUrl` and `linkedinUrl` format for student competitors.
+  - Enforced valid non-negative metrics for Merged, Open, and Closed PR breakdowns across all timeframes.
+- **Quality & Test Integrity**:
+  - Full backend test suite passing with 1000/1000 assertions and 0 TypeScript compilation errors.
+
 ## [1.43.0] - 2026-10-21
 
 ### 🏛️ Official Campus Repositories Copy & Placeholder Harmonization
