@@ -14,6 +14,9 @@ import {
   ChevronRight,
   Trophy,
   FolderGit2,
+  Briefcase,
+  HeartHandshake,
+  FileText,
 } from "lucide-react";
 import { useNavigation } from "./navigation-context";
 import { cn } from "@/lib/utils";
@@ -43,13 +46,19 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     ],
   },
   {
-    sectionTitle: "PROJECTS",
+    sectionTitle: "PROJECTS & OPPORTUNITIES",
     items: [
       {
         title: "Campus Repositories",
         description: "Explore open-source repos & contribute",
         href: "/projects",
         icon: FolderGit2,
+      },
+      {
+        title: "Good First Issues",
+        description: "Curated beginner-friendly campus issues",
+        href: "/opportunities",
+        icon: Briefcase,
       },
     ],
   },
@@ -65,11 +74,11 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     ],
   },
   {
-    sectionTitle: "COMMUNITY",
+    sectionTitle: "COMMUNITY & MENTORSHIP",
     items: [
       {
-        title: "Community",
-        description: "Our community stories & updates",
+        title: "Community & Rewards",
+        description: "Stories, updates & contributor merchandise",
         href: "/community",
         icon: Users2,
       },
@@ -78,6 +87,23 @@ const SIDEBAR_SECTIONS: NavSection[] = [
         description: "Student developer profiles & portfolios",
         href: "/members",
         icon: Users2,
+      },
+      {
+        title: "Peer Mentorship",
+        description: "Connect with senior mentors & alumni leads",
+        href: "/mentorship",
+        icon: HeartHandshake,
+      },
+    ],
+  },
+  {
+    sectionTitle: "CREDENTIALS & RESUME",
+    items: [
+      {
+        title: "Proof-of-Work Resume",
+        description: "Verified contribution resume & recruiter badge",
+        href: "/resume",
+        icon: FileText,
       },
     ],
   },
