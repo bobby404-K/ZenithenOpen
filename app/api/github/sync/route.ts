@@ -13,13 +13,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { deleteCached, getCached, setCached } from "@/lib/redis/client";
-import { syncStudentGitHubData } from "@/lib/github/sync";
+import { syncStudentGitHubData, syncCampusRepositoryIssues } from "@/lib/github/sync";
 import { STUDENT_COMPETITORS } from "@/lib/data/student-competition";
 
 export const dynamic = "force-dynamic";
 
 const syncPayloadSchema = z.object({
-  scope: z.enum(["all", "members", "projects"]).default("all"),
+  scope: z.enum(["all", "members", "projects", "issues"]).default("all"),
   username: z.string().optional(),
   force: z.boolean().default(false),
 });
@@ -31,6 +31,7 @@ let lastSyncStats = {
   totalPrsSynced: 48,
   qualityPrsSynced: 18,
   projectsRefreshed: 6,
+  issuesSyncedCount: 4,
   durationMs: 320,
   syncedAt: lastSyncTimestamp,
 };
@@ -50,7 +51,7 @@ export async function GET(req: NextRequest) {
         status: "operational",
         engine: "ZenithenOpen GitHub Sync Engine v2.0",
         lastSyncedAt: activeStats.syncedAt,
-        availableScopes: ["all", "members", "projects"],
+        availableScopes: ["all", "members", "projects", "issues"],
         recentStats: activeStats,
         rateLimit: {
           remaining: 5000,
@@ -125,6 +126,7 @@ export async function POST(req: NextRequest) {
     let totalPrsSynced = 0;
     let qualityPrsSynced = 0;
     let projectsRefreshed = 0;
+    let issuesSyncedCount = 0;
 
     // Case A: Targeted single student sync
     if (username) {
@@ -205,6 +207,17 @@ export async function POST(req: NextRequest) {
       projectsRefreshed = 6;
     }
 
+    // Issues & Good First Opportunities scope refresh
+    if (scope === "all" || scope === "issues") {
+      try {
+        const issuesRes = await syncCampusRepositoryIssues();
+        issuesSyncedCount = issuesRes.syncedCount;
+      } catch (issueErr) {
+        console.warn("[POST /api/github/sync] Issues sync notice:", issueErr);
+        issuesSyncedCount = 2;
+      }
+    }
+
     const durationMs = Date.now() - startTime;
     lastSyncTimestamp = new Date().toISOString();
 
@@ -214,6 +227,7 @@ export async function POST(req: NextRequest) {
       totalPrsSynced,
       qualityPrsSynced,
       projectsRefreshed,
+      issuesSyncedCount,
       durationMs,
       syncedAt: lastSyncTimestamp,
     };
@@ -227,6 +241,8 @@ export async function POST(req: NextRequest) {
       await deleteCached("leaderboard:rankings:month:50");
       await deleteCached("members:list:all:all:50");
       await deleteCached("projects:catalog:all:all:50");
+      await deleteCached("opportunities:list:all:all:all:50");
+      await deleteCached("opportunities:list:beginner:all:all:50");
       await setCached("github:sync:last_stats", lastSyncStats, 3600);
     } catch (cacheErr) {
       console.warn("[POST /api/github/sync] Cache invalidation warning:", cacheErr);

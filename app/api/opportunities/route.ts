@@ -123,7 +123,8 @@ export async function GET(req: NextRequest) {
         };
       });
     } else {
-      opportunities = [...MOCK_OPPORTUNITIES];
+      const syncedIssues = await getCached<Opportunity[]>("opportunities:synced:all");
+      opportunities = syncedIssues && syncedIssues.length > 0 ? [...syncedIssues] : [...MOCK_OPPORTUNITIES];
       if (difficultyParam !== "all") {
         opportunities = opportunities.filter((o) => o.difficulty === difficultyParam);
       }
