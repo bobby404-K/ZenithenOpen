@@ -3,6 +3,23 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.45.0] - 2026-10-22
+
+### 🧭 Campus Navigation & Unified Discoverability Enhancements
+
+- **Comprehensive Sidebar Navigation (`components/navigation/sidebar-menu.tsx`)**:
+  - Expanded drawer menu to index key platform destinations:
+    - **Good First Issues (`/opportunities`)**: Direct access to curated beginner-friendly campus issues with `Briefcase` icon.
+    - **Peer Mentorship (`/mentorship`)**: Connect with senior student mentors & alumni leads with `HeartHandshake` icon.
+    - **Proof-of-Work Resume (`/resume`)**: Recruiter-ready verified contributor snapshot & badge with `FileText` icon.
+    - Grouped into organized, accessible sections: `PROJECTS & OPPORTUNITIES`, `COMMUNITY & MENTORSHIP`, and `CREDENTIALS & RESUME`.
+- **Global Command Search Index (`app/api/search/route.ts`)**:
+  - Added dedicated search index entries for `/community` (Community Stories & Contributor Swag) and `/mentorship` (Peer Mentorship & Senior Guidance).
+  - Enhanced command palette search category filtering to effortlessly surface both pages.
+- **Backend Test Coverage & Contract Verification (`tests/backend/command-search.test.ts`)**:
+  - Added explicit test assertions validating that both `/community` and `/mentorship` are indexed and discoverable under `category=page`.
+  - All 1,034 test assertions passing with 0 TypeScript compilation errors.
+
 ## [1.44.0] - 2026-10-22
 
 ### 📇 Social-Media Style Student Profile Cards with Dual GitHub & LinkedIn Actions
