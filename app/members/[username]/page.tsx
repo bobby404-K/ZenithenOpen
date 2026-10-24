@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   Copy,
   Check,
-  FileText,
   AlertCircle,
   CodeXml,
   BookOpen,
@@ -24,7 +23,6 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProofOfWorkBadgeModal } from "@/components/resume/proof-of-work-badge-card";
 
 interface MemberStats {
   totalContributions: number;
@@ -103,7 +101,6 @@ export default function MemberProfilePage({
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
   const [copiedShare, setCopiedShare] = React.useState<boolean>(false);
-  const [badgeModalOpen, setBadgeModalOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -236,45 +233,20 @@ export default function MemberProfilePage({
 
           <div className="flex items-center gap-2.5">
             <Button
-              id="open-badge-modal-nav-btn"
               variant="outline"
               size="sm"
-              onClick={() => setBadgeModalOpen(true)}
-              className="rounded-full border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Contributor</span> Badge
-            </Button>
-
-            <Link href={`/resume?username=${encodeURIComponent(profile.username)}`}>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full border-white/10 bg-white/5 hover:bg-white/15 text-neutral-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all"
-              >
-                <FileText className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">Proof-of-Work</span> Resume
-              </Button>
-            </Link>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                handleCopyShare();
-                setBadgeModalOpen(true);
-              }}
+              onClick={handleCopyShare}
               className="rounded-full border-white/10 bg-white/5 hover:bg-white/15 text-neutral-300 hover:text-white text-xs h-9 px-4 gap-1.5 transition-all cursor-pointer"
             >
               {copiedShare ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Copied</span>
+                  <span>Copied Profile</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Share</span>
+                  <span>Share Profile</span>
                 </>
               )}
             </Button>
@@ -298,17 +270,13 @@ export default function MemberProfilePage({
             />
           </div>
 
-          {/* Clickable Verified Contributor Badge Pill */}
+          {/* Verified Contributor Badge Pill */}
           <div className="flex justify-center mb-4">
-            <button
-              id="open-badge-hero-pill"
-              onClick={() => setBadgeModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-white transition-all text-xs font-mono cursor-pointer shadow-[0_0_20px_rgba(6,182,212,0.15)] hover:scale-105 group"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold tracking-wider">VERIFIED CONTRIBUTOR CARD</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-mono shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="font-semibold tracking-wider">VERIFIED CONTRIBUTOR</span>
               <Sparkles className="w-3 h-3 text-cyan-300 opacity-80" />
-            </button>
+            </div>
           </div>
 
           {/* Big Typography Name */}
@@ -585,22 +553,6 @@ export default function MemberProfilePage({
         </div>
       </footer>
 
-      {/* Holographic Contributor Badge & Social Proof-of-Work Modal */}
-      <ProofOfWorkBadgeModal
-        isOpen={badgeModalOpen}
-        onClose={() => setBadgeModalOpen(false)}
-        data={{
-          username: profile.username,
-          name: profile.name,
-          department: profile.department,
-          year: profile.yearOfStudy,
-          qualityPrs: profile.stats.qualityPrs,
-          campusMerges: profile.stats.mergedPrs,
-          totalPrs: profile.stats.totalPrs,
-          roleSubtitle: profile.roleSubtitle,
-          verificationUrl: typeof window !== "undefined" ? window.location.href : undefined,
-        }}
-      />
     </div>
   );
 }

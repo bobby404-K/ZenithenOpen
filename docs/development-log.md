@@ -235,6 +235,108 @@ Animated Sidebar Navigation with Coordinated Hero Shift and Ambient Badge Concea
 * Browser subagent verified across desktop & mobile viewports:
   - Normal state -> Hamburger click -> Sidebar open + Hero shifted left + badges hidden -> Close button / Escape -> Normal state restored.
 
+---
+
+## Entry: 2026-10-14 — Milestone 9: Unified Search Engine & Global Command Palette
+
+### Feature Name
+Global Omnipresent Command Palette (`Cmd+K` / `Ctrl+K`) with Live Multi-Index Search API
+
+### Files Changed
+* `app/api/search/route.ts` — Built multi-category fuzzy search endpoint querying campus contributors, repository catalog, and platform routing index with configurable limits and query sanitization.
+* `components/navigation/command-search.tsx` — Keyboard-driven modal dialog with responsive search input, category filters (`All`, `Pages`, `Projects`, `Contributors`), and keyboard navigation.
+* `tests/backend/command-search.test.ts` — 53 backend automated test assertions verifying category filtering, partial matches, and 404/empty edge cases.
+
+---
+
+## Entry: 2026-10-15 — Milestone 10: Contributor Swag & Rewards Engine
+
+### Feature Name
+Tier-Based Contributor Merchandise Rewards Engine with Cryptographic Voucher Generation
+
+### Files Changed
+* `app/api/community/swag/route.ts` — Implemented tier evaluation engine (`Tier 1` @ 1 PR, `Tier 2` @ 5 PRs, `Tier 3` @ 15 PRs, `Tier 4` @ 30 PRs) with double-claim prevention, apparel sizing validation, and voucher generator (`SWAG-2026-IST-XXXX`).
+* `app/community/page.tsx` — Interactive contributor showcase displaying claimable swag items, milestone progress bars, and voucher claim modal with celebration animations.
+* `tests/backend/community-swag.test.ts` — 38 backend assertions testing eligibility barriers, voucher uniqueness, and status codes.
+
+---
+
+## Entry: 2026-10-18 — Milestone 11: Interactive First Campus PR Guide & Technical Documentation Hub
+
+### Feature Name
+Interactive Terminal Walkthrough for Campus First-Time Contributors & Technical Guides
+
+### Files Changed
+* `app/resources/page.tsx` — Built interactive 7-step terminal guide personalizing upstream repo URLs (`IST-ZenithenLab/ZenithenOpen`), student branch names, git configurations, and pre-flight checks. Added technical documentation hub with 5 curated articles.
+* `lib/data/resource-articles.ts` — Created technical deep-dives covering Git internals, Next.js architecture, open-source portfolio engineering, and GSoC preparation.
+* `tests/backend/resources-interactive-guide.test.ts` & `tests/backend/resources-articles.test.ts` — 54 assertions validating step structures, markdown content, and difficulty filters.
+
+---
+
+## Entry: 2026-10-20 — Milestone 12: Real-Time GitHub Webhooks & Campus Ingestion Engine
+
+### Feature Name
+Real-Time GitHub Webhook Consumer & Automated Campus Repository Issue Synchronizer
+
+### Files Changed
+* `app/api/github/webhook/route.ts` — Implemented webhook receiver processing `pull_request`, `push`, and `issues` events from `IST-ZenithenLab` repositories with SHA256 HMAC signature validation.
+* `lib/github/sync.ts` — Added `syncCampusRepositoryIssues()` and `fetchRepositoryIssues()` with smart difficulty label heuristics (`beginner`, `intermediate`, `advanced`).
+* `tests/backend/github-webhook.test.ts` & `tests/backend/github-sync-route.test.ts` — Verified webhook payloads, signature validation, and telemetry metrics.
+
+---
+
+## Entry: 2026-10-21 — Milestone 13: Campus Projects Merges Leaderboard & Student Quick-Preview Modal
+
+### Feature Name
+Campus Repositories Merge Ranking Algorithm & Accessible Student Profile Quick-Preview Modal
+
+### Files Changed
+* `app/api/projects/leaderboard/route.ts` — Added algorithmic ranking evaluating student merges specifically on campus repositories under `IST-ZenithenLab`.
+* `components/members/student-preview-modal.tsx` — Built reusable preview modal displaying student avatar, USN department, badges, merge statistics, and direct profile navigation.
+* `tests/backend/campus-projects-leaderboard.test.ts` & `tests/backend/student-preview-modal.test.ts` — 57 assertions testing rank sequences, tie-breaking heuristics, and preview contracts.
+
+---
+
+## Entry: 2026-10-22 — Milestone 14: Unified React 19.3.1 Ecosystem Upgrade (v1.47.0)
+
+### Feature Name
+Atomic React 19.3.1 & React DOM Peer Dependency Harmonization
+
+### Files Changed
+* `package.json` & `package-lock.json` — Upgraded `react` and `react-dom` from `19.2.8` to `19.3.1` concurrently, resolving split peer dependency locks.
+* All 32 backend test suites passed cleanly with 0 TypeScript compilation errors.
+
+---
+
+## Entry: 2026-10-23 — Milestone 15: Complete Removal of Resume Module & Architecture Streamlining (v1.48.0)
+
+### Feature Name
+Complete Deprecation and Purge of Resume Builder, Proof-of-Work Badge Cards, and Associated Routes
+
+### Branch
+`feature/remove-resume-functionality`
+
+### Files Changed
+* `app/resume/` — Deleted all frontend resume pages (`page.tsx`, `share/[token]/page.tsx`).
+* `app/api/resume/` — Deleted all backend resume API routes (`route.ts`, `[username]/route.ts`, `share/route.ts`, `share/[token]/route.ts`, `badge/[username]/route.ts`).
+* `components/resume/` — Deleted `proof-of-work-badge-card.tsx`.
+* `tests/backend/` — Deleted `resume-route.test.ts`, `resume-share.test.ts`, `resume-badge.test.ts`.
+* `components/navigation/sidebar-menu.tsx` — Removed `CREDENTIALS & RESUME` section and `FileText` icon import.
+* `components/navigation/footer.tsx` — Removed "GitHub Resume Builder" link.
+* `app/api/search/route.ts` — Removed `page-resume` search index item.
+* `components/members/student-preview-modal.tsx` — Expanded Full Profile button across modal footer.
+* `app/members/[username]/page.tsx` — Removed resume link buttons, badge modal state, and non-existent modal component import.
+* `types/index.ts` & `lib/data/mock-data.ts` — Removed `ResumeProfileData` interface and `MOCK_RESUME_DATA`.
+* `tests/backend/run-all.ts` — Removed deleted resume test runner invocations.
+* `app/api/students/leaderboard/route.ts` — Aligned 5-tier sorting hierarchy (Quality Merges $\to$ Total PRs $\to$ Open PRs $\to$ Closed PRs $\to$ Campus Merges).
+* `package.json` — Bumped version to `1.48.0`.
+* `CHANGELOG.md` — Documented all v1.48.0 deprecations and architectural improvements.
+
+### Verification
+* `tsc --noEmit` — 0 TypeScript compilation errors across entire project.
+* 32 backend test suites with 962+ assertions executed via automated runner.
+
+
 
 
 

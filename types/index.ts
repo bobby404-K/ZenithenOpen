@@ -175,39 +175,6 @@ export interface ContributorLeaderboardEntry {
   streakDays: number;
 }
 
-export interface ResumeProfileData {
-  fullName: string;
-  headline: string;
-  email: string;
-  phone?: string;
-  location: string;
-  githubUsername: string;
-  linkedinUrl?: string;
-  portfolioUrl?: string;
-  summary: string;
-  skills: {
-    languages: string[];
-    frameworks: string[];
-    tools: string[];
-    databases: string[];
-  };
-  highlightedRepos: {
-    name: string;
-    description: string;
-    stars: number;
-    language: string;
-    prsAuthored: number;
-    impactDescription: string;
-  }[];
-  education: {
-    institution: string;
-    degree: string;
-    field: string;
-    graduationYear: string;
-    gpa?: string;
-  };
-  achievements: string[];
-}
 
 export interface EventAttendee {
   username: string;

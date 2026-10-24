@@ -8,7 +8,6 @@ import {
   CircleSlash,
   GitMerge,
   ArrowRight,
-  FileText,
   X,
   CheckCircle2,
 } from "lucide-react";
@@ -193,32 +192,17 @@ export function StudentPreviewModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between gap-3 mt-6 pt-4 border-t border-slate-800/80">
-          <Link
-            href={`/resume?username=${encodeURIComponent(student.username)}`}
-            className="flex-1"
-            onClick={onClose}
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs h-9 border-slate-700 bg-slate-900/60 text-slate-300 hover:text-white hover:bg-slate-800 gap-1.5 cursor-pointer"
-            >
-              <FileText className="h-3.5 w-3.5 text-primary" />
-              <span>Resume</span>
-            </Button>
-          </Link>
-
+        <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-slate-800/80">
           <Link
             href={`/members/${encodeURIComponent(student.username)}`}
-            className="flex-1"
+            className="w-full"
             onClick={onClose}
           >
             <Button
               size="sm"
               className="w-full text-xs h-9 bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 font-semibold shadow-md cursor-pointer"
             >
-              <span>Full Profile</span>
+              <span>View Full Profile</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </Link>

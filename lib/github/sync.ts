@@ -749,10 +749,12 @@ export async function fetchRepositoryIssues(
           }))
         : [{ name: "good-first-issue", color: "#7057ff" }];
 
-      const isBeginner = issueLabels.some((l) =>
+      const isBeginner = issueLabels.some((l: { name: string; color: string }) =>
         /good[- ]first[- ]issue|beginner|starter|easy/i.test(l.name)
       );
-      const isAdvanced = issueLabels.some((l) => /advanced|complex|expert/i.test(l.name));
+      const isAdvanced = issueLabels.some((l: { name: string; color: string }) =>
+        /advanced|complex|expert/i.test(l.name)
+      );
       const difficulty: "beginner" | "intermediate" | "advanced" = isBeginner
         ? "beginner"
         : isAdvanced
