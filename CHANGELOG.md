@@ -3,6 +3,25 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.48.0] - 2026-10-23
+
+### 🧹 Streamlined Platform Architecture & Resume Module Deprecation
+
+- **Complete Resume & Credentials Module Removal**:
+  - Removed frontend resume builder and recruiter candidate pages (`app/resume/page.tsx`, `app/resume/share/[token]/page.tsx`).
+  - Removed backend resume API endpoints (`app/api/resume/route.ts`, `app/api/resume/[username]/route.ts`, `app/api/resume/share/route.ts`, `app/api/resume/share/[token]/route.ts`, `app/api/resume/badge/[username]/route.ts`).
+  - Removed proof-of-work badge component modal (`components/resume/proof-of-work-badge-card.tsx`).
+  - Removed obsolete resume backend test suites (`tests/backend/resume-route.test.ts`, `tests/backend/resume-share.test.ts`, `tests/backend/resume-badge.test.ts`).
+- **Navigation & Contributor Profile Cleanups**:
+  - `components/navigation/sidebar-menu.tsx`: Removed `CREDENTIALS & RESUME` section and `FileText` icon import.
+  - `components/navigation/footer.tsx`: Removed the "GitHub Resume Builder" link (`/resume`).
+  - `app/api/search/route.ts`: Removed `page-resume` search index item from `PLATFORM_PAGES`.
+  - `components/members/student-preview-modal.tsx`: Expanded "Full Profile" CTA button across modal footer.
+  - `app/members/[username]/page.tsx`: Removed modal triggers and resume links, streamlining member profile actions to direct profile sharing and verified contributor status.
+- **Type Definitions & Data Integrity**:
+  - Cleaned unreferenced `ResumeProfileData` and `MOCK_RESUME_DATA` from `types/index.ts` and `lib/data/mock-data.ts`.
+  - Typecheck passing with 0 errors across entire workspace.
+
 ## [1.47.0] - 2026-10-22
 
 ### ⚛️ Unified React 19.3.1 & React DOM Peer Alignment

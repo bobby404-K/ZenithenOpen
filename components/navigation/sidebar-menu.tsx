@@ -16,7 +16,6 @@ import {
   FolderGit2,
   Briefcase,
   HeartHandshake,
-  FileText,
 } from "lucide-react";
 import { useNavigation } from "./navigation-context";
 import { cn } from "@/lib/utils";
@@ -93,17 +92,6 @@ const SIDEBAR_SECTIONS: NavSection[] = [
         description: "Connect with senior mentors & alumni leads",
         href: "/mentorship",
         icon: HeartHandshake,
-      },
-    ],
-  },
-  {
-    sectionTitle: "CREDENTIALS & RESUME",
-    items: [
-      {
-        title: "Proof-of-Work Resume",
-        description: "Verified contribution resume & recruiter badge",
-        href: "/resume",
-        icon: FileText,
       },
     ],
   },

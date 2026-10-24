@@ -198,19 +198,19 @@ export async function GET(request: NextRequest) {
       const qualityDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
       if (qualityDiff !== 0) return qualityDiff;
 
-      // Tier 2: Quality Open PRs (only for >=100 stars && >=100 forks)
-      const qOpenB = statsB.qualityOpenPrs ?? statsB.openPrs ?? 0;
-      const qOpenA = statsA.qualityOpenPrs ?? statsA.openPrs ?? 0;
-      const openDiff = qOpenB - qOpenA;
+      // Tier 2: Total PRs
+      const totalDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      if (totalDiff !== 0) return totalDiff;
+
+      // Tier 3: Open PRs
+      const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
       if (openDiff !== 0) return openDiff;
 
-      // Tier 3: Quality Closed PRs (only for >=100 stars && >=100 forks)
-      const qClosedB = statsB.qualityClosedPrs ?? statsB.closedPrs ?? 0;
-      const qClosedA = statsA.qualityClosedPrs ?? statsA.closedPrs ?? 0;
-      const closedDiff = qClosedB - qClosedA;
+      // Tier 4: Closed PRs
+      const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
       if (closedDiff !== 0) return closedDiff;
 
-      // Tier 4: Total Merges (all merged PRs on user's account, not just quality)
+      // Tier 5: Total Merges
       const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
       if (mergeDiff !== 0) return mergeDiff;
 

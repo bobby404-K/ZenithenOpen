@@ -85,7 +85,7 @@ const PROGRAMS: ProgramItem[] = [
     details: [
       "ZenithenOpen Platform (Next.js, TypeScript, Tailwind CSS, Theme Engine)",
       "Campus LMS Automation Bot (Python, FastAPI, Telegram API)",
-      "Developer Portfolio & Resume Generator (React, GitHub REST API)",
+      "Developer Portfolio & Proof-of-Work Showcase (React, GitHub REST API)",
       "Campus Transit & Resource Tracker (Go, PostgreSQL, Docker)",
     ],
     actionLabel: "View Project Directory",

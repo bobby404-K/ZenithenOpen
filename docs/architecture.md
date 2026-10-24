@@ -1,7 +1,7 @@
 # ZenithenOpen Architecture Specification
 
-**Version:** 1.0.0 (October 2026)  
-**Organization:** IST-ZenithenLab / IST  
+**Version:** 1.48.0 (October 2026)  
+**Organization:** IST-ZenithenLab / IST Bengaluru  
 **Target Scale:** 2,000+ active students, contributors, and alumni
 
 ---
@@ -27,6 +27,8 @@ Business Domain Modules (/modules/*)
  ├── Opportunities & Good-First-Issues
  ├── Learning Paths & Roadmaps
  ├── Mentorship Matching
+ ├── Campus Events & Workshops
+ ├── Contributor Swag Rewards
  └── Achievements & Hall of Fame
        │
  ┌─────┴──────────────────┐
@@ -47,36 +49,36 @@ ZenithenOpen/
 │   ├── (public)/         # Public discovery pages
 │   ├── achievements/     # Hall of Fame and badges
 │   ├── admin/            # Administrative management dashboard
-│   ├── api/metrics/      # Metrics and analytics endpoints
-│   ├── leaderboard/      # Monthly and all-time contributor rankings
-│   ├── learning/         # Structured curriculum and roadmaps
+│   ├── api/              # Full-stack API Route Handlers (32 test-covered endpoints)
+│   ├── community/        # Community stories and swag rewards
+│   ├── events/           # Campus workshops, office hours, and calendar feeds
+│   ├── leaderboard/      # 5-tier ranked contributor competition arena
+│   ├── learning-paths/   # Structured curriculum and roadmaps
 │   ├── members/          # Member directory and profiles
 │   ├── mentorship/       # Student-to-mentor matchmaking
 │   ├── opportunities/    # Filterable good-first-issue board
 │   ├── projects/         # Featured open-source project showcases
-│   └── resume/           # GitHub-powered resume builder
+│   └── resources/        # Interactive First Campus PR Guide and articles
 ├── components/           # Reusable UI & Layout Components
+│   ├── 3d/               # 3D interactive floating canvas & physics
 │   ├── dashboard/        # Hero section, live counters, metric cards
-│   ├── navigation/       # Navbar and footer
+│   ├── navigation/       # Navbar, sliding sidebar drawer, and footer
 │   └── ui/               # Design primitives (button, badge, card, input, icons)
 ├── docs/                 # Engineering Documentation & Logs
 │   ├── architecture.md   # Architectural blueprint
-│   └── development-log.md # Living milestone log
+│   ├── development-log.md # Living milestone log
+│   ├── open-source-and-database-guide.md # University USN & DB guide
+│   └── roadmap-next-steps.md # Engineering roadmap & future phases
 ├── lib/                  # Shared Utilities, Database & Clients
-│   ├── data/mock-data.ts # Seed and mock datasets
+│   ├── auth/             # USN validation and role authorization
+│   ├── data/             # Seed and mock datasets
 │   ├── db/               # Prisma client singleton
-│   ├── github/           # Octokit client and sync helpers
-│   └── utils.ts          # Styling and formatting helpers
-├── modules/              # Domain Logic & Business Rules
-│   ├── achievements/     # Badge awards and milestones
-│   ├── contributions/    # PR tracking and leaderboard calculation
-│   ├── learning/         # Curriculum progression
-│   ├── members/          # Profile enrichment and role management
-│   ├── mentorship/       # Request routing and acceptance
-│   ├── opportunities/    # Issue ingestion and curation
-│   └── projects/         # Repository indexing
+│   ├── github/           # Octokit client, sync helpers, and webhook handler
+│   └── redis/            # Upstash Redis client with resilient in-memory fallback
 ├── prisma/               # Database Schema and Migrations
-│   └── schema.prisma     # 12 relational models
+│   └── schema.prisma     # 16 relational models & enums
+├── tests/                # Automated Quality Assurance
+│   └── backend/          # 32 backend test suites (962+ assertions)
 └── types/                # Strict TypeScript Contracts
     └── index.ts          # Core domain models
 ```

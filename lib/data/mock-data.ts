@@ -6,7 +6,6 @@ import {
   FirstPrStory,
   LearningPath,
   ContributorLeaderboardEntry,
-  ResumeProfileData,
 } from "@/types";
 
 /**
@@ -298,44 +297,4 @@ export const MOCK_LEARNING_PATHS: LearningPath[] = [
   },
 ];
 
-/**
- * Starter template for the interactive resume generator.
- */
-export const MOCK_RESUME_DATA: ResumeProfileData = {
-  fullName: "Your Name",
-  headline: "Open-Source Software Engineer",
-  email: "your.email@ist.edu.in",
-  location: "Bengaluru, India",
-  githubUsername: "yourusername",
-  linkedinUrl: "https://linkedin.com",
-  portfolioUrl: "https://yourportfolio.dev",
-  summary:
-    "Passionate student developer contributing to production open-source systems. Specializing in scalable web architecture, systems programming, and modern cloud deployment.",
-  skills: {
-    languages: ["TypeScript", "Python", "Go", "SQL"],
-    frameworks: ["Next.js", "React 19", "Node.js", "Tailwind CSS"],
-    tools: ["Docker", "Git / GitHub", "Linux", "GitHub Actions"],
-    databases: ["PostgreSQL", "Redis", "Prisma ORM"],
-  },
-  highlightedRepos: [
-    {
-      name: "ZenithenOpen",
-      description: "Open-source community engineering platform for IST.",
-      stars: 0,
-      language: "TypeScript",
-      prsAuthored: 1,
-      impactDescription: "Engineered responsive full-stack modules and Docker containerization pipeline.",
-    },
-  ],
-  education: {
-    institution: "IST Bengaluru",
-    degree: "Bachelor of Technology",
-    field: "Computer Science & Engineering",
-    graduationYear: "2027",
-    gpa: "8.8 / 10",
-  },
-  achievements: [
-    "Active contributor to ZenithenOpen open-source ecosystem",
-    "Completed Foundations of Modern Full-Stack Web Development",
-  ],
-};
+

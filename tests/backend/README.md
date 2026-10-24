@@ -1,46 +1,96 @@
-# ZenithenOpen Backend Test Suite
+# ZenithenOpen Backend Automated Test Suite
 
-This directory contains automated tests for all backend areas of the **ZenithenOpen** platform (IST Bengaluru).
-
-## Architecture & Coverage
-
-| Suite File | Target Backend Area | Tests | Description |
-|---|---|:---:|---|
-| [`auth-verification.test.ts`](file:///c:/Users/BITTU/.gemini/antigravity-ide/scratch/ZenithenOpen/tests/backend/auth-verification.test.ts) | `lib/auth/usn-verification.ts` | 39 | Validates IST USN formats (`1SV...`, `SV...`), case-insensitivity, 10+ branch codes, study year clamping, error states, and DB hook fallback. |
-| [`api-routes.test.ts`](file:///c:/Users/BITTU/.gemini/antigravity-ide/scratch/ZenithenOpen/tests/backend/api-routes.test.ts) | `app/api/*` | 25 | Tests Next.js App Router API handlers (`POST /api/auth/verify-usn`, `GET /api/metrics`), HTTP status codes (200, 400, 404, 500), JSON schemas, and Cache-Control headers. |
-| [`db-layer.test.ts`](file:///c:/Users/BITTU/.gemini/antigravity-ide/scratch/ZenithenOpen/tests/backend/db-layer.test.ts) | `lib/db/index.ts` | 11 | Tests database configuration detection (`DATABASE_URL`), standalone mode safety, student querying/linking hooks, and data type contracts. |
-| [`prisma-schema.test.ts`](file:///c:/Users/BITTU/.gemini/antigravity-ide/scratch/ZenithenOpen/tests/backend/prisma-schema.test.ts) | `prisma/schema.prisma` | 52 | Verifies PostgreSQL datasource, client generator, 16 relational models, 4 Enums, `onDelete: Cascade` rules, and query indexes. |
-| [`data-contracts.test.ts`](file:///c:/Users/BITTU/.gemini/antigravity-ide/scratch/ZenithenOpen/tests/backend/data-contracts.test.ts) | `lib/data/*` | 91 | Verifies community metrics non-negative bounds, zero fake member profiles policy, repository URLs, opportunities, and multi-timeframe student competition contracts. |
-
-**Total:** 218 automated backend test cases.
+**Location:** `tests/backend/`  
+**Test Runner:** `tests/backend/run-all.ts`  
+**Total Active Suites:** 32 Suites  
+**Total Assertions:** 962+ Automated Checks  
+**TypeScript Typecheck Status:** 0 Compilation Errors (`tsc --noEmit`)
 
 ---
 
-## How to Run
+## 🏗️ Architecture & Philosophy
 
-### Run All Backend Suites
+The ZenithenOpen test architecture is engineered to validate:
+1. **API Route Handlers**: HTTP status codes (200, 201, 400, 404, 409, 500), payload structures, caching headers, and Zod input validations.
+2. **Domain Isolation**: Resilient fallback execution when remote database or Redis instances are offline.
+3. **Data Integrity & Zero Fake Data**: Enforcing non-negative metrics, authentic zero-states, and 5-tier contributor ranking hierarchy.
+4. **Security & Deployment Configurations**: Validating Docker container files, Vercel edge headers, and environment schema constraints.
+
+---
+
+## 📋 Comprehensive Suite Coverage (32 Suites)
+
+| # | Test Suite File | Backend Target Area | Checks | Description |
+|:---:|:---|:---|:---:|:---|
+| 1 | `auth-verification.test.ts` | `lib/auth/usn-verification.ts` | 39 | IST USN formats (`1SV...`, `SV...`), department decoding, study year inference, and error handling. |
+| 2 | `api-routes.test.ts` | `app/api/*` | 46 | Core route handlers (`verify-usn`, `metrics`), HTTP status codes, JSON schemas, Cache-Control headers. |
+| 3 | `db-layer.test.ts` | `lib/db/index.ts` | 11 | DB environment detection, standalone mode safety, student querying and linking hooks. |
+| 4 | `prisma-schema.test.ts` | `prisma/schema.prisma` | 52 | Relational schema integrity: 16 models, enums, cascade delete rules, foreign keys, and indexes. |
+| 5 | `data-contracts.test.ts` | `lib/data/*` | 126 | Zero fake profile enforcement, metrics non-negative bounds, student competition data models. |
+| 6 | `redis-cache.test.ts` | `lib/redis/client.ts` | 14 | Upstash Redis KV operations, in-memory resilient fallback, and distributed rate-limiting tokens. |
+| 7 | `github-sync.test.ts` | `lib/github/sync.ts` | 15 | Quality PR rules ($\ge$ 100 stars and $\ge$ 100 forks), point calculations, and Octokit requests. |
+| 8 | `leaderboard-route.test.ts` | `app/api/students/leaderboard` | 18 | 5-tier ranking hierarchy, timeframe queries (`week`, `month`, `overall`), and rank badges. |
+| 9 | `contributions-route.test.ts` | `app/api/contributions` | 11 | Pull request querying, status filters (`OPEN`, `MERGED`, `CLOSED`), and quality PR flags. |
+| 10 | `members-route.test.ts` | `app/api/members` | 14 | Member directory querying, role filtering (`MEMBER`, `MENTOR`, `ADMIN`), search, and registration. |
+| 11 | `projects-route.test.ts` | `app/api/projects` | 17 | Repository catalog listing, language filtering, search queries, and project registration. |
+| 12 | `project-slug.test.ts` | `app/api/projects/[slug]` | 19 | Dynamic project deep-dives, computed stats, maintainers, top contributors, and PATCH updates. |
+| 13 | `opportunities-route.test.ts` | `app/api/opportunities` | 17 | Good-first-issues board, difficulty filtering (`beginner`, `intermediate`, `advanced`), and search. |
+| 14 | `achievements-route.test.ts` | `app/api/achievements` | 17 | Hall of fame badges, milestone categories, First PR stories, and unlock records. |
+| 15 | `health-route.test.ts` | `app/api/health` | 16 | Production uptime probe, version matching, latency measurements, and environment checks. |
+| 16 | `github-webhook.test.ts` | `app/api/github/webhook` | 11 | GitHub real-time webhook endpoint, HMAC SHA256 validation, and campus PR event processing. |
+| 17 | `member-profile.test.ts` | `app/api/members/[username]` | 10 | Dynamic contributor profile controller, stats resolution, achievements, and PATCH bio updates. |
+| 18 | `mentorship-route.test.ts` | `app/api/mentorship/requests` | 28 | Peer mentorship matchmaking, topic filters, status updates (`Pending`, `Accepted`), and 404s. |
+| 19 | `github-sync-route.test.ts` | `app/api/github/sync` | 28 | Sync route scopes (`all`, `members`, `projects`, `issues`), telemetry stats, and rate-limit guard. |
+| 20 | `db-seed.test.ts` | `scripts/seed-production.ts` | 38 | Database production seeder engine, student records, blueprints, and resilient DB execution. |
+| 21 | `deployment-config.test.ts` | Docker & Vercel configs | 41 | Multi-stage Dockerfile, docker-compose services/healthchecks, .dockerignore, and vercel.json headers. |
+| 22 | `learning-paths-route.test.ts` | `app/api/learning-paths` | 31 | Curriculum progression, roadmaps by slug, progress tracking (PUT/GET), and week completion. |
+| 23 | `showcase-pages.test.ts` | Showcase architectures | 32 | Dynamic project and member showcase routing, case-insensitive lookups, and 404 boundaries. |
+| 24 | `campus-projects-leaderboard.test.ts` | `app/api/projects/leaderboard` | 35 | Campus-only merge evaluation, tie-breaking heuristics, and sequence validation. |
+| 25 | `student-preview-modal.test.ts` | `components/members/preview` | 22 | Quick-preview modal data contracts across Leaderboard, Projects, and Member profile feeds. |
+| 26 | `projects-lookup.test.ts` | `app/api/projects/sync` | 29 | GitHub metadata auto-sync, URL parsing (`.git`, protocols, trailing slashes), and cache headers. |
+| 27 | `resources-interactive-guide.test.ts` | `app/resources` Guide | 7 | Interactive First PR Guide 7-step structure, personalized branch commands, and preflight steps. |
+| 28 | `command-search.test.ts` | `app/api/search` | 53 | Global Command Palette search, multi-category index (`All`, `Pages`, `Projects`, `Contributors`). |
+| 29 | `events-hub.test.ts` | `app/api/events` | 50 | Campus workshops, category filters, RSVP capacity, duplicate prevention, and .ics/Google Calendar. |
+| 30 | `community-swag.test.ts` | `app/api/community/swag` | 38 | Swag rewards engine, 4 tiers, PR eligibility thresholds, voucher generation, and double-claim guard. |
+| 31 | `activity-pulse.test.ts` | `app/api/activity` | 30 | Live campus activity feed, 24h contributor counts, event type filtering (`pr`, `quality`, `swag`). |
+| 32 | `resources-articles.test.ts` | `app/api/resources/articles` | 47 | Technical article documentation hub, slug lookups, markdown content validation, and difficulty tags. |
+
+---
+
+## 🚀 How to Execute Tests
+
+### Run All 32 Backend Suites
+```bash
+npm test
+```
+*or:*
 ```bash
 npm run test:backend
 ```
-or directly with `tsx`:
+
+### Run an Individual Suite
 ```bash
-npx tsx tests/backend/run-all.ts
+# Student Leaderboard & Competition Route
+npx tsx tests/backend/leaderboard-route.test.ts
+
+# Peer Mentorship API
+npx tsx tests/backend/mentorship-route.test.ts
+
+# Global Command Palette Search
+npx tsx tests/backend/command-search.test.ts
+
+# Contributor Swag Rewards Engine
+npx tsx tests/backend/community-swag.test.ts
 ```
 
-### Run Individual Test Suites
+### Run Theme & CSS Token Tests
 ```bash
-# Auth & USN Verification Service
-npx tsx tests/backend/auth-verification.test.ts
-
-# API Route Handlers
-npx tsx tests/backend/api-routes.test.ts
-
-# Database Layer
-npx tsx tests/backend/db-layer.test.ts
-
-# Prisma Schema Integrity
-npx tsx tests/backend/prisma-schema.test.ts
-
-# Data Contracts
-npx tsx tests/backend/data-contracts.test.ts
+npm run test:themes
 ```
+
+---
+
+<p align="center">
+  <b>ZenithenOpen Quality Assurance</b><br/>
+  <i>Engineered for zero regressions, strict type compliance, and 100% route reliability.</i>
+</p>

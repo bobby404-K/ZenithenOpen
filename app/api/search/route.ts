@@ -77,15 +77,6 @@ const PLATFORM_PAGES: SearchResultItem[] = [
     badgeColor: "text-sky-400 bg-sky-500/10 border-sky-500/30",
   },
   {
-    id: "page-resume",
-    title: "Verified Open-Source Resume",
-    subtitle: "Generate and export verified recruiter proof-of-work profiles",
-    category: "page",
-    url: "/resume",
-    badge: "Proof of Work",
-    badgeColor: "text-teal-400 bg-teal-500/10 border-teal-500/30",
-  },
-  {
     id: "page-events",
     title: "Workshops & Open Source Saturdays",
     subtitle: "Weekly live PR review office hours and hackathon tracks",

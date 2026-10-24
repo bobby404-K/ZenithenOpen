@@ -86,11 +86,6 @@ export function Footer() {
                   Member Directory
                 </Link>
               </li>
-              <li>
-                <Link href="/resume" className="hover:text-primary transition-colors">
-                  GitHub Resume Builder
-                </Link>
-              </li>
             </ul>
           </div>
 
