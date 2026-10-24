@@ -369,14 +369,90 @@ For our comprehensive, multi-phase technical roadmap, see [**`docs/roadmap-next-
 
 ---
 
+## 🌿 Feature Branching, Pull Request & Release Workflow
+
+To preserve code stability, regression safety, and transparent release tracking, **every new feature, enhancement, or architectural refactor MUST follow this strict 6-step lifecycle**:
+
+```
+[ main (stable) ]
+       │
+       ▼ git checkout -b feature/<feature-name>
+[ feature/<feature-name> ] ──► Implement, verify typecheck & run 32 test suites
+       │
+       ▼ git push -u origin feature/<feature-name> && gh pr create
+[ GitHub Pull Request ]    ──► Automated review, CI verification & signoff
+       │
+       ▼ gh pr merge --merge (DO NOT delete branch)
+[ main ]                   ──► Merged into trunk
+       │
+       ▼ git tag -a vX.Y.Z & git push origin vX.Y.Z
+[ GitHub Release Tag ]     ──► Published release & CHANGELOG update
+```
+
+### Mandatory Rules for Every Feature:
+
+1. **Dedicated Feature Branch for Every Task**:
+   - Never commit directly to `main`.
+   - Create a fresh branch off latest `main`:
+     ```bash
+     git checkout main && git pull origin main
+     git checkout -b feature/<feature-name>
+     ```
+   - Standard branch naming prefixes: `feature/`, `fix/`, `docs/`, `chore/`, `refactor/`.
+
+2. **Quality Gates & Pre-flight Verification**:
+   - Before opening a PR, ensure all quality gates pass:
+     ```bash
+     npm run typecheck    # 0 TypeScript compilation errors
+     npm test             # All 32 backend test suites passing
+     ```
+
+3. **Open a Dedicated Pull Request (PR)**:
+   - Push your branch to remote:
+     ```bash
+     git push -u origin feature/<feature-name>
+     ```
+   - Open a detailed PR targeting `main`:
+     ```bash
+     gh pr create --title "feat: <description>" --body "<summary of changes>"
+     ```
+
+4. **Merge into `main`**:
+   - Once reviewed and verified, merge the PR into `main`:
+     ```bash
+     gh pr merge <PR-NUMBER> --merge
+     ```
+
+5. **Branch Preservation Protocol**:
+   - **CRITICAL**: **Never delete feature branches**. All feature branches must remain permanently preserved both locally and on `origin` as an immutable record of campus student contributions and proof of work.
+
+6. **Semantic Version Tagging & Release**:
+   - Update `package.json` version and log changes in `CHANGELOG.md` and `docs/development-log.md`.
+   - Pull merged changes into local `main`:
+     ```bash
+     git checkout main && git pull origin main
+     ```
+   - Create an annotated Git tag and push to GitHub:
+     ```bash
+     git tag -a vX.Y.Z -m "Release vX.Y.Z: <summary of changes>"
+     git push origin vX.Y.Z
+     ```
+   - Publish the GitHub release:
+     ```bash
+     gh release create vX.Y.Z --title "vX.Y.Z — <title>" --generate-notes
+     ```
+
+---
+
 ## 🤝 Contributing & Community
 
 ZenithenOpen is built by students, for students. We welcome contributions of all sizes!
 
 1. Explore open beginner tasks on the [Good First Issues Board](https://open.zenithen.ist/opportunities).
 2. Read the interactive walkthrough on [Shipping Your First Campus PR](https://open.zenithen.ist/resources).
-3. Ensure all code passes `npm run typecheck` and `npm test` before opening a pull request.
-4. Follow conventional commit messages (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
+3. Follow the [Feature Branching & PR Protocol](#-feature-branching-pull-request--release-workflow) outlined above.
+4. Ensure all code passes `npm run typecheck` and `npm test` before opening a pull request.
+5. Follow conventional commit messages (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
 
 ---
 

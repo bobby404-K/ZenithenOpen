@@ -1,5 +1,14 @@
 # ZenithenOpen Engineering Development Log
 
+> ### 🌿 Engineering Standards & Workflow Protocol
+> For **every new feature, task, or bugfix**:
+> 1. Create a dedicated branch off `main` (`feature/<name>`, `fix/<name>`).
+> 2. Implement changes, verifying 0 TypeScript errors (`npm run typecheck`) and passing test suites (`npm test`).
+> 3. Open a Pull Request (PR) on GitHub targeting `main`.
+> 4. Review and merge the PR into `main` (using `--merge` or `--squash`).
+> 5. **Never delete feature branches**; preserve them permanently locally and remotely as historical proof-of-work.
+> 6. Pull latest `main`, create an annotated tag (`git tag -a vX.Y.Z`), push to origin (`git push origin vX.Y.Z`), and publish the GitHub Release notes.
+
 ---
 
 ## Entry: 2026-10-02 — Milestone 0: Repository Audit, Foundation & Frontend Compilation Hardening

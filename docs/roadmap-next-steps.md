@@ -136,6 +136,51 @@ As of version `v1.48.0`, the platform includes:
 
 ---
 
+## 🌿 Mandatory Feature Development & Release Protocol
+
+To maintain codebase health, full auditability, and zero production regressions, **every new feature or task must strictly follow this lifecycle**:
+
+1. **Branch Creation**:
+   - For every new feature, task, or bugfix, create a dedicated branch off the latest `main`:
+     ```bash
+     git checkout main && git pull origin main
+     git checkout -b feature/<feature-name>
+     ```
+   - Never commit unreviewed code directly into `main`.
+
+2. **Pre-Flight Quality Gates**:
+   - Verify TypeScript compilation: `npm run typecheck` (0 errors required).
+   - Execute backend test suites: `npm test` (all 32 suites must pass).
+
+3. **Pull Request (PR) Creation**:
+   - Push the feature branch to `origin`:
+     ```bash
+     git push -u origin feature/<feature-name>
+     ```
+   - Open a detailed PR on GitHub targeting `main`:
+     ```bash
+     gh pr create --title "feat: <title>" --body "<details>"
+     ```
+
+4. **Review & Merge into `main`**:
+   - Review code diffs and CI checks.
+   - Merge the pull request into `main` (using `--merge` or `--squash`).
+
+5. **Branch Preservation Protocol**:
+   - **MANDATORY**: **Never delete feature branches**. All branches must remain permanently preserved both locally and on GitHub to serve as an immutable historical record and student proof of work.
+
+6. **Semantic Version Tagging & Release**:
+   - Update version in `package.json` and document entries in `CHANGELOG.md` and `docs/development-log.md`.
+   - Pull merged `main` locally: `git checkout main && git pull origin main`.
+   - Create an annotated Git tag and push to GitHub:
+     ```bash
+     git tag -a vX.Y.Z -m "Release vX.Y.Z: <summary>"
+     git push origin vX.Y.Z
+     ```
+   - Publish GitHub Release notes via `gh release create vX.Y.Z`.
+
+---
+
 ## 📋 Engineering Task Matrix
 
 | Feature / Task | Complexity | Impact | Dependencies | Target Release |
