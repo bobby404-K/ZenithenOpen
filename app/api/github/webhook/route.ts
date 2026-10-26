@@ -12,6 +12,7 @@ import { prisma } from "@/lib/db/prisma";
 import { deleteCached } from "@/lib/redis/client";
 import { fetchRepositoryStats, evaluateQualityPr } from "@/lib/github/sync";
 import { ContributionStatus, ContributionType } from "@prisma/client";
+import { dispatchNotification } from "@/lib/notifications/dispatcher";
 
 /**
  * Verify HMAC-SHA256 signature from GitHub webhook payload
@@ -197,6 +198,38 @@ export async function POST(request: NextRequest) {
       }
 
       await Promise.all(cacheInvalidationPromises);
+
+      // Trigger real-time Discord & Telegram alerts for merged PRs
+      if (status === ContributionStatus.MERGED) {
+        const eventType = isCampusRepo
+          ? "CAMPUS_PR_MERGED"
+          : isQualityPr
+          ? "QUALITY_PR_MERGED"
+          : "CAMPUS_PR_MERGED";
+
+        const badgeLabel = isCampusRepo
+          ? "Official Campus Repository PR"
+          : isQualityPr
+          ? "Verified Quality PR"
+          : "Merged Pull Request";
+
+        dispatchNotification({
+          event: eventType,
+          title: `${badgeLabel}: ${pr.title || "Pull Request"}`,
+          description: `Student **${user.name || authorUsername}** merged Pull Request #${pr.number} into \`${repoFullName}\`!`,
+          url: prUrl,
+          studentHandle: authorUsername,
+          studentName: user.name || authorUsername,
+          studentUsn: user.usn,
+          repository: repoFullName,
+          isQualityPr,
+          isCampusRepo,
+          prNumber: Number(pr.number || 0),
+          timestamp: pr.merged_at ? new Date(pr.merged_at) : new Date(),
+        }).catch((notifErr) =>
+          console.warn("[GitHub Webhook] Notification dispatch notice:", notifErr)
+        );
+      }
 
       return NextResponse.json({
         success: true,

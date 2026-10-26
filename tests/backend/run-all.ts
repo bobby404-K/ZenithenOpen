@@ -51,6 +51,7 @@ import { runEventsHubTests } from "./events-hub.test";
 import { runCommunitySwagTests } from "./community-swag.test";
 import { runActivityPulseTests } from "./activity-pulse.test";
 import { runResourcesArticlesTests } from "./resources-articles.test";
+import { runNotificationsServiceTests } from "./notifications-service.test";
 import { SuiteResult } from "./test-utils";
 
 async function main() {
@@ -95,6 +96,7 @@ async function main() {
     results.push(await runCommunitySwagTests());
     results.push(await runActivityPulseTests());
     results.push(await runResourcesArticlesTests());
+    results.push(await runNotificationsServiceTests());
   } catch (error) {
     console.error("\n[FATAL ERROR IN TEST RUNNER]:", error);
     process.exit(1);

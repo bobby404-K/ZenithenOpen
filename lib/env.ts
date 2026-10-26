@@ -23,6 +23,10 @@ const envSchema = z.object({
   SENTRY_DSN: z.string().optional(),
   POSTHOG_KEY: z.string().optional(),
   POSTHOG_HOST: z.string().optional(),
+  DISCORD_WEBHOOK_URL: z.string().optional(),
+  TELEGRAM_BOT_TOKEN: z.string().optional(),
+  TELEGRAM_CHAT_ID: z.string().optional(),
+  NOTIFICATIONS_ENABLED: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

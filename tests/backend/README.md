@@ -2,8 +2,8 @@
 
 **Location:** `tests/backend/`  
 **Test Runner:** `tests/backend/run-all.ts`  
-**Total Active Suites:** 32 Suites  
-**Total Assertions:** 962+ Automated Checks  
+**Total Active Suites:** 33 Suites  
+**Total Assertions:** 1,013+ Automated Checks  
 **TypeScript Typecheck Status:** 0 Compilation Errors (`tsc --noEmit`)
 
 ---
@@ -18,7 +18,7 @@ The ZenithenOpen test architecture is engineered to validate:
 
 ---
 
-## 📋 Comprehensive Suite Coverage (32 Suites)
+## 📋 Comprehensive Suite Coverage (33 Suites)
 
 | # | Test Suite File | Backend Target Area | Checks | Description |
 |:---:|:---|:---|:---:|:---|
@@ -54,6 +54,7 @@ The ZenithenOpen test architecture is engineered to validate:
 | 30 | `community-swag.test.ts` | `app/api/community/swag` | 38 | Swag rewards engine, 4 tiers, PR eligibility thresholds, voucher generation, and double-claim guard. |
 | 31 | `activity-pulse.test.ts` | `app/api/activity` | 30 | Live campus activity feed, 24h contributor counts, event type filtering (`pr`, `quality`, `swag`). |
 | 32 | `resources-articles.test.ts` | `app/api/resources/articles` | 47 | Technical article documentation hub, slug lookups, markdown content validation, and difficulty tags. |
+| 33 | `notifications-service.test.ts` | `lib/notifications/*`, `app/api/notifications/broadcast` | 51 | Discord Webhook Rich Embeds, Telegram HTML messages, multi-channel dispatcher, and broadcast probe. |
 
 ---
 

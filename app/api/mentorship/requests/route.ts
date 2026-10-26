@@ -12,6 +12,7 @@ import { z } from "zod";
 import { prisma } from "../../../../lib/db/prisma";
 import { getCached, setCached, deleteCached } from "../../../../lib/redis/client";
 import { MentorshipStatus } from "@prisma/client";
+import { dispatchNotification } from "../../../../lib/notifications/dispatcher";
 
 // Input validation schema for submitting mentorship request
 const createMentorshipRequestSchema = z.object({
@@ -416,6 +417,17 @@ export async function POST(req: NextRequest) {
 
     // Invalidate mentorship request list cache
     await deleteCached("mentorship:requests:all:all:all:all:50:1");
+
+    // Trigger real-time Discord & Telegram alerts for mentorship pairing
+    dispatchNotification({
+      event: "MENTORSHIP_REQUEST",
+      title: `Mentorship Guidance Request: ${createdRecord.topic}`,
+      description: `Student **${createdRecord.menteeName}** (@${createdRecord.menteeUsername}) requested guidance from **${createdRecord.mentorName}** (@${createdRecord.mentorUsername}) on: "${createdRecord.topic}"`,
+      studentHandle: createdRecord.menteeUsername,
+      studentName: createdRecord.menteeName,
+    }).catch((notifErr) =>
+      console.warn("[Mentorship API] Notification dispatch notice:", notifErr)
+    );
 
     return NextResponse.json(
       {

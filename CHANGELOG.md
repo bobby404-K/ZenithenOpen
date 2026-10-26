@@ -3,6 +3,32 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.0] - 2026-10-26
+
+### 📢 Multi-Channel Campus Notification Engine (Discord & Telegram)
+
+- **Discord Webhook Rich Embeds (`lib/notifications/formatters.ts`)**:
+  - Implemented rich embed formatter with distinct hex brand colors per event (`CAMPUS_PR_MERGED`: 0x10B981, `QUALITY_PR_MERGED`: 0x6366F1, `MILESTONE_UNLOCKED`: 0xF59E0B, `SWAG_CLAIMED`: 0xEC4899, `MENTORSHIP_REQUEST`: 0x3B82F6, `CAMPUS_BROADCAST`: 0x8B5CF6).
+  - Embeds feature contributor name, GitHub avatar, USN badge, repository tag, pull request link, and verified badges.
+- **Telegram Bot Integration (`lib/notifications/dispatcher.ts`)**:
+  - HTML-formatted message dispatch with clean entity escaping via `escapeHtml()`.
+  - Clickable markdown/HTML links and code formatting for USN and repository names.
+- **Resilient Multi-Channel Dispatcher (`lib/notifications/dispatcher.ts`)**:
+  - Non-blocking asynchronous delivery via `Promise.allSettled`.
+  - Configurable via `DISCORD_WEBHOOK_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, and `NOTIFICATIONS_ENABLED`.
+  - Automatic graceful fallback when webhooks are unconfigured or offline (never throws unhandled exceptions to callers).
+  - 5-second timeout guard using `AbortController`.
+- **Event Dispatch Ingestion Hooks**:
+  - `app/api/github/webhook/route.ts`: Instant real-time alerts when PRs are merged into campus repos or external quality repos.
+  - `app/api/community/swag/route.ts`: Celebratory dispatch when a student claims a swag tier reward voucher.
+  - `app/api/mentorship/requests/route.ts`: Guidance alert when a student submits a mentorship pairing request.
+- **Broadcast API Endpoint (`app/api/notifications/broadcast/route.ts`)**:
+  - `GET`: Health probe returning provider statuses (`discord`, `telegram`) and supported events.
+  - `POST`: Validated broadcast endpoint for test alerts or administrative campus announcements.
+- **Automated Quality Assurance**:
+  - `tests/backend/notifications-service.test.ts`: Created 33rd backend automated test suite with 51 checks.
+  - Master test runner expanded to 33 suites and 1,013+ total checks.
+
 ## [1.48.0] - 2026-10-23
 
 ### 🧹 Streamlined Platform Architecture & Resume Module Deprecation
