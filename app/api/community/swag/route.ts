@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { SwagTier, SwagClaimVoucher } from "@/types";
 import { STUDENT_COMPETITORS } from "@/lib/data/student-competition";
 import { getCached, setCached, deleteCached } from "@/lib/redis/client";
+import { dispatchNotification } from "@/lib/notifications/dispatcher";
 
 export const SWAG_TIERS: SwagTier[] = [
   {
@@ -340,6 +341,20 @@ export async function POST(req: NextRequest) {
 
     // Invalidate Redis cache
     await deleteCached("community:swag:*");
+
+    // Trigger real-time Discord & Telegram alerts for swag redemption
+    dispatchNotification({
+      event: "SWAG_CLAIMED",
+      title: `Swag Claim: ${newClaim.tierName}`,
+      description: `Student **${newClaim.name}** (@${newClaim.username}) claimed reward **${newClaim.swagItem}**! Voucher: \`${newClaim.voucherCode}\``,
+      studentHandle: newClaim.username,
+      studentName: newClaim.name,
+      tierTitle: newClaim.tierName,
+      voucherCode: newClaim.voucherCode,
+      timestamp: newClaim.claimedAt,
+    }).catch((notifErr) =>
+      console.warn("[Swag API] Notification dispatch notice:", notifErr)
+    );
 
     return NextResponse.json({
       success: true,

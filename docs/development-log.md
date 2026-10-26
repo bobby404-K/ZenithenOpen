@@ -345,6 +345,35 @@ Complete Deprecation and Purge of Resume Builder, Proof-of-Work Badge Cards, and
 * `tsc --noEmit` — 0 TypeScript compilation errors across entire project.
 * 32 backend test suites with 962+ assertions executed via automated runner.
 
+---
+
+## Entry: 2026-10-26 — Milestone 16: Multi-Channel Campus Notification Engine (Discord & Telegram) (v1.49.0)
+
+### Feature Name
+Discord Webhook Rich Embeds & Telegram Bot Dispatch for Real-Time Campus Merges, Swag Claims, and Mentorship Alerts
+
+### Branch
+`feature/discord-telegram-webhook-notifications`
+
+### Files Changed
+* `lib/notifications/types.ts` — Defined `NotificationEventType` (`CAMPUS_PR_MERGED`, `QUALITY_PR_MERGED`, `MILESTONE_UNLOCKED`, `SWAG_CLAIMED`, `MENTORSHIP_REQUEST`, `CAMPUS_BROADCAST`), `NotificationPayload`, and delivery status interfaces.
+* `lib/notifications/formatters.ts` — Implemented `formatDiscordPayload` producing rich embeds with hex brand colors, contributor avatars, USN badges, and PR links. Implemented `formatTelegramMessage` with HTML formatting and entity escaping.
+* `lib/notifications/dispatcher.ts` — Built non-blocking, resilient multi-channel dispatcher supporting `DISCORD_WEBHOOK_URL`, `TELEGRAM_BOT_TOKEN`, and `TELEGRAM_CHAT_ID` with graceful offline fallback and 5s timeout guards.
+* `lib/env.ts` — Registered notification environment variables in `envSchema`.
+* `app/api/notifications/broadcast/route.ts` — Created health probe (`GET`) and validated administrative broadcast endpoint (`POST`).
+* `app/api/github/webhook/route.ts` — Connected real-time dispatch on pull request merge events.
+* `app/api/community/swag/route.ts` — Connected real-time dispatch on contributor swag voucher generation.
+* `app/api/mentorship/requests/route.ts` — Connected real-time dispatch on 1-on-1 mentorship pairings.
+* `tests/backend/notifications-service.test.ts` — Created 33rd backend automated test suite with 51 checks.
+* `tests/backend/run-all.ts` — Integrated notification suite into master test runner.
+* `tests/backend/README.md` — Updated coverage table to 33 suites and 1,013+ assertions.
+
+### Verification
+* `npx tsx tests/backend/notifications-service.test.ts` — 51/51 tests passing.
+* `npx tsc --noEmit` — 0 TypeScript compilation errors.
+* `npm test` — All 33 test suites passing cleanly (1,013 checks).
+
+
 
 
 
