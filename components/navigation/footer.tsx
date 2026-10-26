@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Code2, ShieldCheck } from "lucide-react";
+import { Code2 } from "lucide-react";
 import { GithubIcon } from "@/components/ui/icons";
 
 export function Footer() {
@@ -72,8 +72,8 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/mentorship" className="hover:text-primary transition-colors">
-                  Mentorship Matching
+                <Link href="/community/swag" className="hover:text-primary transition-colors">
+                  Contributor Swag Rewards
                 </Link>
               </li>
               <li>
@@ -105,12 +105,6 @@ export function Footer() {
                   <GithubIcon className="h-3.5 w-3.5" />
                   <span>GitHub Organization</span>
                 </a>
-              </li>
-              <li>
-                <Link href="/admin" className="flex items-center space-x-1.5 hover:text-primary transition-colors">
-                  <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                  <span>Admin Governance</span>
-                </Link>
               </li>
               <li>
                 <span className="text-muted-foreground hover:text-foreground">

@@ -67,7 +67,7 @@ const PROGRAMS: ProgramItem[] = [
       "The foundational open-source movement at IST Bengaluru. Designed to empower students with verified code reviews, git hygiene, and production pull requests.",
     details: [
       "Zero-barrier onboarding: No contribution is considered too big or too small",
-      "Mentored pull request reviews by senior student engineers",
+      "Detailed pull request reviews by senior student engineers",
       "Open-source software licensing, governance, and architectural discussions",
       "Direct integration with the campus contributor leaderboard",
     ],
@@ -98,7 +98,7 @@ const PROGRAMS: ProgramItem[] = [
     title: "Google Summer of Code (GSoC)",
     badge: "Global Fellowship",
     description:
-      "A prestigious global fellowship program bringing student developers into open-source software organizations with international mentorship and stipends.",
+      "A prestigious global fellowship program bringing student developers into open-source software organizations with expert guidance and stipends.",
     details: [
       "Comprehensive proposal drafting workshops and architectural templates",
       "Target organization selection strategy (Apache, Linux Foundation, CNCF, Python)",
@@ -137,7 +137,7 @@ const PROGRAMS: ProgramItem[] = [
       "Summer of Bitcoin (SOB): Cryptography, Bitcoin Core consensus, and lightning protocols",
       "Enterprise Summer of Code (ESoC): Cloud-native architecture, Kubernetes, and enterprise tooling",
       "Full application bootcamp with coding challenge preparation",
-      "Stipend guidance and international mentor networking",
+      "Stipend guidance and international developer networking",
     ],
     actionLabel: "Explore Fellowship Resources",
     actionHref: "/resources",

@@ -2,8 +2,8 @@
 
 **Location:** `tests/backend/`  
 **Test Runner:** `tests/backend/run-all.ts`  
-**Total Active Suites:** 33 Suites  
-**Total Assertions:** 1,013+ Automated Checks  
+**Total Active Suites:** 32 Suites  
+**Total Assertions:** 985+ Automated Checks  
 **TypeScript Typecheck Status:** 0 Compilation Errors (`tsc --noEmit`)
 
 ---
@@ -18,7 +18,7 @@ The ZenithenOpen test architecture is engineered to validate:
 
 ---
 
-## 📋 Comprehensive Suite Coverage (33 Suites)
+## 📋 Comprehensive Suite Coverage (32 Suites)
 
 | # | Test Suite File | Backend Target Area | Checks | Description |
 |:---:|:---|:---|:---:|:---|
@@ -39,22 +39,21 @@ The ZenithenOpen test architecture is engineered to validate:
 | 15 | `health-route.test.ts` | `app/api/health` | 16 | Production uptime probe, version matching, latency measurements, and environment checks. |
 | 16 | `github-webhook.test.ts` | `app/api/github/webhook` | 11 | GitHub real-time webhook endpoint, HMAC SHA256 validation, and campus PR event processing. |
 | 17 | `member-profile.test.ts` | `app/api/members/[username]` | 10 | Dynamic contributor profile controller, stats resolution, achievements, and PATCH bio updates. |
-| 18 | `mentorship-route.test.ts` | `app/api/mentorship/requests` | 28 | Peer mentorship matchmaking, topic filters, status updates (`Pending`, `Accepted`), and 404s. |
-| 19 | `github-sync-route.test.ts` | `app/api/github/sync` | 28 | Sync route scopes (`all`, `members`, `projects`, `issues`), telemetry stats, and rate-limit guard. |
-| 20 | `db-seed.test.ts` | `scripts/seed-production.ts` | 38 | Database production seeder engine, student records, blueprints, and resilient DB execution. |
-| 21 | `deployment-config.test.ts` | Docker & Vercel configs | 41 | Multi-stage Dockerfile, docker-compose services/healthchecks, .dockerignore, and vercel.json headers. |
-| 22 | `learning-paths-route.test.ts` | `app/api/learning-paths` | 31 | Curriculum progression, roadmaps by slug, progress tracking (PUT/GET), and week completion. |
-| 23 | `showcase-pages.test.ts` | Showcase architectures | 32 | Dynamic project and member showcase routing, case-insensitive lookups, and 404 boundaries. |
-| 24 | `campus-projects-leaderboard.test.ts` | `app/api/projects/leaderboard` | 35 | Campus-only merge evaluation, tie-breaking heuristics, and sequence validation. |
-| 25 | `student-preview-modal.test.ts` | `components/members/preview` | 22 | Quick-preview modal data contracts across Leaderboard, Projects, and Member profile feeds. |
-| 26 | `projects-lookup.test.ts` | `app/api/projects/sync` | 29 | GitHub metadata auto-sync, URL parsing (`.git`, protocols, trailing slashes), and cache headers. |
-| 27 | `resources-interactive-guide.test.ts` | `app/resources` Guide | 7 | Interactive First PR Guide 7-step structure, personalized branch commands, and preflight steps. |
-| 28 | `command-search.test.ts` | `app/api/search` | 53 | Global Command Palette search, multi-category index (`All`, `Pages`, `Projects`, `Contributors`). |
-| 29 | `events-hub.test.ts` | `app/api/events` | 50 | Campus workshops, category filters, RSVP capacity, duplicate prevention, and .ics/Google Calendar. |
-| 30 | `community-swag.test.ts` | `app/api/community/swag` | 38 | Swag rewards engine, 4 tiers, PR eligibility thresholds, voucher generation, and double-claim guard. |
-| 31 | `activity-pulse.test.ts` | `app/api/activity` | 30 | Live campus activity feed, 24h contributor counts, event type filtering (`pr`, `quality`, `swag`). |
-| 32 | `resources-articles.test.ts` | `app/api/resources/articles` | 47 | Technical article documentation hub, slug lookups, markdown content validation, and difficulty tags. |
-| 33 | `notifications-service.test.ts` | `lib/notifications/*`, `app/api/notifications/broadcast` | 51 | Discord Webhook Rich Embeds, Telegram HTML messages, multi-channel dispatcher, and broadcast probe. |
+| 18 | `github-sync-route.test.ts` | `app/api/github/sync` | 28 | Sync route scopes (`all`, `members`, `projects`, `issues`), telemetry stats, and rate-limit guard. |
+| 19 | `db-seed.test.ts` | `scripts/seed-production.ts` | 38 | Database production seeder engine, student records, blueprints, and resilient DB execution. |
+| 20 | `deployment-config.test.ts` | Docker & Vercel configs | 41 | Multi-stage Dockerfile, docker-compose services/healthchecks, .dockerignore, and vercel.json headers. |
+| 21 | `learning-paths-route.test.ts` | `app/api/learning-paths` | 31 | Curriculum progression, roadmaps by slug, progress tracking (PUT/GET), and week completion. |
+| 22 | `showcase-pages.test.ts` | Showcase architectures | 32 | Dynamic project and member showcase routing, case-insensitive lookups, and 404 boundaries. |
+| 23 | `campus-projects-leaderboard.test.ts` | `app/api/projects/leaderboard` | 35 | Campus-only merge evaluation, tie-breaking heuristics, and sequence validation. |
+| 24 | `student-preview-modal.test.ts` | `components/members/preview` | 22 | Quick-preview modal data contracts across Leaderboard, Projects, and Member profile feeds. |
+| 25 | `projects-lookup.test.ts` | `app/api/projects/sync` | 29 | GitHub metadata auto-sync, URL parsing (`.git`, protocols, trailing slashes), and cache headers. |
+| 26 | `resources-interactive-guide.test.ts` | `app/resources` Guide | 7 | Interactive First PR Guide 7-step structure, personalized branch commands, and preflight steps. |
+| 27 | `command-search.test.ts` | `app/api/search` | 53 | Global Command Palette search, multi-category index (`All`, `Pages`, `Projects`, `Contributors`). |
+| 28 | `events-hub.test.ts` | `app/api/events` | 50 | Campus workshops, category filters, RSVP capacity, duplicate prevention, and .ics/Google Calendar. |
+| 29 | `community-swag.test.ts` | `app/api/community/swag` | 38 | Swag rewards engine, 4 tiers, PR eligibility thresholds, voucher generation, and double-claim guard. |
+| 30 | `activity-pulse.test.ts` | `app/api/activity` | 30 | Live campus activity feed, 24h contributor counts, event type filtering (`pr`, `quality`, `swag`). |
+| 31 | `resources-articles.test.ts` | `app/api/resources/articles` | 47 | Technical article documentation hub, slug lookups, markdown content validation, and difficulty tags. |
+| 32 | `notifications-service.test.ts` | `lib/notifications/*`, `app/api/notifications/broadcast` | 51 | Discord Webhook Rich Embeds, Telegram HTML messages, multi-channel dispatcher, and broadcast probe. |
 
 ---
 

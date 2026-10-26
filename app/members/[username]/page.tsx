@@ -77,8 +77,6 @@ interface MemberProfile {
   department: string;
   yearOfStudy: string;
   role: string;
-  isMentor: boolean;
-  mentorshipTopics: string[];
   linkedinUrl: string;
   portfolioUrl: string;
   joinedAt: string;

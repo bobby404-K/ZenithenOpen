@@ -69,8 +69,8 @@ export async function runCommandSearchTests(): Promise<SuiteResult> {
   const pagesData = await pagesRes.json();
   suite.assertEqual(pagesData.success, true, "Pages search reports success: true");
   suite.assert(pagesData.results.length >= 4, "Includes multiple core navigation pages");
-  const mentorshipPage = pagesData.results.find((p: any) => p.url === "/mentorship");
-  suite.assert(Boolean(mentorshipPage), "Search index includes /mentorship page");
+  const leaderboardPage = pagesData.results.find((p: any) => p.url === "/leaderboard");
+  suite.assert(Boolean(leaderboardPage), "Search index includes /leaderboard page");
   const communityPage = pagesData.results.find((p: any) => p.url === "/community");
   suite.assert(Boolean(communityPage), "Search index includes /community page");
   for (const page of pagesData.results) {

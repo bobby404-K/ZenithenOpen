@@ -68,7 +68,7 @@ export async function runNotificationsServiceTests(): Promise<SuiteResult> {
   suite.assert(fields.some((f) => f.name.includes("Badges") && f.value.includes("Official Campus Project")), "Fields include Campus Project badge");
   suite.assert(fields.some((f) => f.name.includes("Badges") && f.value.includes("Verified Quality PR")), "Fields include Quality PR badge");
 
-  // --- 3. Swag & Mentorship Discord Formatting ---
+  // --- 3. Swag Reward Discord Formatting ---
   const swagPayload: NotificationPayload = {
     event: "SWAG_CLAIMED",
     title: "Swag Reward: Tier 3 T-Shirt",

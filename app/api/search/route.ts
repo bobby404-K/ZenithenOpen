@@ -103,15 +103,6 @@ const PLATFORM_PAGES: SearchResultItem[] = [
     badge: "Community",
     badgeColor: "text-pink-400 bg-pink-500/10 border-pink-500/30",
   },
-  {
-    id: "page-mentorship",
-    title: "Peer Mentorship & Senior Guidance",
-    subtitle: "1-on-1 mentorship connections, GSoC prep, and project reviews from seniors",
-    category: "page",
-    url: "/mentorship",
-    badge: "Mentorship",
-    badgeColor: "text-indigo-400 bg-indigo-500/10 border-indigo-500/30",
-  },
 ];
 
 const FOUNDATIONAL_PROJECTS: SearchResultItem[] = [

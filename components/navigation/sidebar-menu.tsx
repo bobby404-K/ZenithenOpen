@@ -15,7 +15,6 @@ import {
   Trophy,
   FolderGit2,
   Briefcase,
-  HeartHandshake,
 } from "lucide-react";
 import { useNavigation } from "./navigation-context";
 import { cn } from "@/lib/utils";
@@ -73,7 +72,7 @@ const SIDEBAR_SECTIONS: NavSection[] = [
     ],
   },
   {
-    sectionTitle: "COMMUNITY & MENTORSHIP",
+    sectionTitle: "COMMUNITY",
     items: [
       {
         title: "Community & Rewards",
@@ -86,12 +85,6 @@ const SIDEBAR_SECTIONS: NavSection[] = [
         description: "Student developer profiles & portfolios",
         href: "/members",
         icon: Users2,
-      },
-      {
-        title: "Peer Mentorship",
-        description: "Connect with senior mentors & alumni leads",
-        href: "/mentorship",
-        icon: HeartHandshake,
       },
     ],
   },

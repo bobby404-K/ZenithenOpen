@@ -74,7 +74,7 @@ const FALLBACK_EVENTS: CampusEvent[] = [
     location: "ZenithenOpen Discord #code-review",
     description:
       "Join core maintainers to review open campus pull requests, debug merge conflicts, and collaborate on production issues in real-time.",
-    tags: ["Weekly", "Code Review", "Mentorship"],
+    tags: ["Weekly", "Code Review", "Community"],
     rsvpLink: "/events?rsvp=evt-open-source-saturday",
     capacity: 100,
     rsvpCount: 68,
@@ -95,7 +95,7 @@ const FALLBACK_EVENTS: CampusEvent[] = [
   },
   {
     id: "evt-gsoc-roadmap",
-    title: "GSoC 2027 Proposal Drafting & Mentorship Session",
+    title: "GSoC 2027 Proposal Drafting & Strategy Session",
     category: "fellowship",
     categoryLabel: "Fellowship Talk",
     date: "Wednesday, Oct 28, 2026",
@@ -103,7 +103,7 @@ const FALLBACK_EVENTS: CampusEvent[] = [
     location: "IST Seminar Hall B",
     description:
       "Past Google Summer of Code scholars break down proposal templates, organization selection strategies, and timeline roadmaps.",
-    tags: ["GSoC", "Mentorship", "Global"],
+    tags: ["GSoC", "Fellowship", "Global"],
     rsvpLink: "/events?rsvp=evt-gsoc-roadmap",
     capacity: 80,
     rsvpCount: 54,
@@ -118,7 +118,7 @@ const FALLBACK_EVENTS: CampusEvent[] = [
     ],
     calendarLinks: {
       google:
-        "https://calendar.google.com/calendar/render?action=TEMPLATE&text=GSoC+2027+Proposal+Drafting+%26+Mentorship+Session&dates=20261028T123000Z/20261028T143000Z&details=Proposal+templates+and+organization+selection+strategies+from+GSoC+scholars.&location=IST+Seminar+Hall+B",
+        "https://calendar.google.com/calendar/render?action=TEMPLATE&text=GSoC+2027+Proposal+Drafting+%26+Strategy+Session&dates=20261028T123000Z/20261028T143000Z&details=Proposal+templates+and+organization+selection+strategies+from+GSoC+scholars.&location=IST+Seminar+Hall+B",
       ics: "/api/events/evt-gsoc-roadmap/calendar?format=ics",
     },
   },
@@ -182,7 +182,7 @@ export default function EventsPage() {
       duration: "36 Hours Sprint",
       focus: "Open Source for Campus & Social Impact",
       description:
-        "Our marquee student hackathon bringing together cross-disciplinary engineers to build production open-source tools with mentor support.",
+        "Our marquee student hackathon bringing together cross-disciplinary engineers to build production open-source tools with collaborative guidance.",
       prizes: "₹1,00,000+ Prize Pool + Swag & Cloud Credits",
       highlights: ["36 Hours In-Person", "Hardware & Software Tracks", "Industry Judges"],
     },
@@ -193,9 +193,9 @@ export default function EventsPage() {
       duration: "Internal Evaluation",
       focus: "Government & Enterprise Problem Statements",
       description:
-        "Rigorous campus ideation, prototype vetting, and team mentoring to represent IST at the national Smart India Hackathon.",
+        "Rigorous campus ideation, prototype vetting, and team development to represent IST at the national Smart India Hackathon.",
       prizes: "National Stage Nomination + Incubation Support",
-      highlights: ["Idea Review Panels", "Faculty Mentorship", "Prototype Staging"],
+      highlights: ["Idea Review Panels", "Faculty Advisory", "Prototype Staging"],
     },
     {
       id: "hacktoberfest",
@@ -206,7 +206,7 @@ export default function EventsPage() {
       description:
         "Month-long open-source celebration with dedicated campus issue boards, automated PR verification, and contributor swag.",
       prizes: "Official Hacktoberfest Digital Badges + ZenithenOpen Swag",
-      highlights: ["4+ Merged PRs Goal", "Dedicated Mentor Helpdesk", "Swag Tiers"],
+      highlights: ["4+ Merged PRs Goal", "Dedicated Contributor Helpdesk", "Swag Tiers"],
     },
   ];
 
