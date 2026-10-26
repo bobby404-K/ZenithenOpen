@@ -241,7 +241,7 @@ export default function HomePage() {
                 Good First Issues
               </h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-                Triaged GitHub issues curated for first-time open-source contributors with mentor assistance.
+                Triaged GitHub issues curated for first-time open-source contributors with maintainer assistance.
               </p>
             </div>
             <Link href="/opportunities">
@@ -572,7 +572,7 @@ export default function HomePage() {
           </h2>
           <p className="text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
             Join IST&apos;s open-source engineering chapter.
-            Connect with campus mentors, choose a roadmap, and see your code merged into production.
+            Connect with campus builders, choose a roadmap, and see your code merged into production.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link href="/programs">

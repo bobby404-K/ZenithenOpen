@@ -11,7 +11,7 @@ export interface AuthenticatedStudentUser {
   college: string;
   githubUsername: string;
   avatarUrl: string;
-  role: "MEMBER" | "MENTOR" | "ADMIN";
+  role: "MEMBER" | "MAINTAINER" | "LEAD";
   loggedInAt: string;
   stats?: {
     totalPrs: number;

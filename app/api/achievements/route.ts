@@ -58,7 +58,7 @@ const DEFAULT_BADGES: Omit<CommunityBadge, "unlockedCount">[] = [
   {
     code: "gsoc-scholar",
     name: "GSoC Scholar",
-    desc: "Accepted into Google Summer of Code or LFX Mentorship",
+    desc: "Accepted into Google Summer of Code or LFX Fellowship",
     icon: "🎓",
     criteria: "Fellowship accepted",
     category: "Excellence",

@@ -19,8 +19,6 @@ const UpdateProfileSchema = z.object({
   yearOfStudy: z.string().max(20).optional(),
   linkedinUrl: z.string().url("Invalid LinkedIn URL").optional().or(z.literal("")),
   portfolioUrl: z.string().url("Invalid Portfolio URL").optional().or(z.literal("")),
-  isMentor: z.boolean().optional(),
-  mentorshipTopics: z.array(z.string().max(50)).max(10).optional(),
   skills: z.array(z.string().max(50)).max(20).optional(),
 });
 
@@ -111,8 +109,6 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
           department: studentMatch.department,
           yearOfStudy: studentMatch.year,
           role: "STUDENT",
-          isMentor: false,
-          mentorshipTopics: ["Frontend", "Open Source", "TypeScript"],
           linkedinUrl: studentMatch.linkedinUrl || `https://linkedin.com/in/${studentMatch.username}`,
           portfolioUrl: studentMatch.githubUrl || `https://github.com/${studentMatch.username}`,
           roleSubtitle: studentMatch.roleSubtitle || studentMatch.department,
@@ -150,8 +146,6 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
           department: "Computer Science & Engineering",
           yearOfStudy: "3rd Year",
           role: "STUDENT",
-          isMentor: false,
-          mentorshipTopics: ["Next.js", "TypeScript", "Systems"],
           linkedinUrl: "",
           portfolioUrl: "",
           createdAt: new Date(),
@@ -191,8 +185,6 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
       department: user.department || "Computer Science & Engineering",
       yearOfStudy: user.yearOfStudy || "3rd Year",
       role: user.role,
-      isMentor: user.isMentor,
-      mentorshipTopics: user.mentorshipTopics || [],
       linkedinUrl: user.linkedinUrl || "",
       portfolioUrl: user.portfolioUrl || "",
       joinedAt: user.createdAt,
@@ -321,8 +313,6 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
           yearOfStudy: data.yearOfStudy !== undefined ? data.yearOfStudy : undefined,
           linkedinUrl: data.linkedinUrl !== undefined ? data.linkedinUrl : undefined,
           portfolioUrl: data.portfolioUrl !== undefined ? data.portfolioUrl : undefined,
-          isMentor: data.isMentor !== undefined ? data.isMentor : undefined,
-          mentorshipTopics: data.mentorshipTopics !== undefined ? data.mentorshipTopics : undefined,
         },
       });
     } catch (updateErr) {
@@ -334,8 +324,6 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
         yearOfStudy: data.yearOfStudy || "3rd Year",
         linkedinUrl: data.linkedinUrl || "",
         portfolioUrl: data.portfolioUrl || "",
-        isMentor: data.isMentor ?? false,
-        mentorshipTopics: data.mentorshipTopics || [],
       };
     }
 
@@ -379,8 +367,6 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
         yearOfStudy: updatedUser.yearOfStudy,
         linkedinUrl: updatedUser.linkedinUrl,
         portfolioUrl: updatedUser.portfolioUrl,
-        isMentor: updatedUser.isMentor,
-        mentorshipTopics: updatedUser.mentorshipTopics,
       },
     });
   } catch (error) {

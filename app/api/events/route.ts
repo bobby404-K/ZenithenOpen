@@ -77,7 +77,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
     location: "ZenithenOpen Discord #code-review",
     description:
       "Join campus maintainers to review open pull requests, debug merge conflicts, and collaborate on production issues in real-time.",
-    tags: ["Weekly", "Code Review", "Mentorship"],
+    tags: ["Weekly", "Code Review", "Collaboration"],
     rsvpLink: "/events?rsvp=evt-open-source-saturday",
     capacity: 100,
     rsvpCount: 68,
@@ -113,7 +113,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
   },
   {
     id: "evt-gsoc-roadmap",
-    title: "GSoC 2027 Proposal Drafting & Mentorship Session",
+    title: "GSoC 2027 Proposal Drafting & Architecture Session",
     category: "fellowship",
     categoryLabel: "Fellowship Talk",
     date: "Wednesday, Oct 28, 2026",
@@ -121,7 +121,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
     location: "IST Seminar Hall B",
     description:
       "Past Google Summer of Code scholars break down proposal templates, organization selection strategies, and timeline roadmaps.",
-    tags: ["GSoC", "Mentorship", "Global"],
+    tags: ["GSoC", "Fellowship", "Global"],
     rsvpLink: "/events?rsvp=evt-gsoc-roadmap",
     capacity: 80,
     rsvpCount: 54,
@@ -144,7 +144,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
     ],
     calendarLinks: {
       google:
-        "https://calendar.google.com/calendar/render?action=TEMPLATE&text=GSoC+2027+Proposal+Drafting+%26+Mentorship+Session&dates=20261028T123000Z/20261028T143000Z&details=Proposal+templates+and+organization+selection+strategies+from+GSoC+scholars.&location=IST+Seminar+Hall+B",
+        "https://calendar.google.com/calendar/render?action=TEMPLATE&text=GSoC+2027+Proposal+Drafting+%26+Architecture+Session&dates=20261028T123000Z/20261028T143000Z&details=Proposal+templates+and+organization+selection+strategies+from+GSoC+scholars.&location=IST+Seminar+Hall+B",
       ics: "/api/events/evt-gsoc-roadmap/calendar?format=ics",
     },
   },
@@ -157,7 +157,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
     time: "36 Hours Sprint (Starts 9:00 AM IST)",
     location: "IST Bengaluru Main Auditorium",
     description:
-      "Our marquee student hackathon bringing together cross-disciplinary engineers to build production open-source tools with mentor support.",
+      "Our marquee student hackathon bringing together cross-disciplinary engineers to build production open-source tools with maintainer support.",
     tags: ["36 Hours", "Hardware & Software", "₹1,00,000+ Prize Pool"],
     rsvpLink: "/events?rsvp=evt-zenithhacks-2026",
     capacity: 250,
@@ -167,7 +167,7 @@ export const INITIAL_EVENTS: CampusEvent[] = [
     speakers: [
       {
         name: "Campus Hackathon Committee",
-        role: "Organizers & Technical Mentors",
+        role: "Organizers & Technical Leads",
         github: "IST-ZenithenLab",
       },
     ],

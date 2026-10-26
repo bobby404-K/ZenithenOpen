@@ -3,7 +3,7 @@
  * Location: lib/notifications/dispatcher.ts
  *
  * Orchestrates multi-channel alert delivery for PR merges, quality contributions,
- * achievements, swag redemptions, and mentorship matching.
+ * achievements, and swag redemptions.
  */
 
 import {

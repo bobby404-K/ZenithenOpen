@@ -79,9 +79,9 @@
 - Dynamic year-of-study inference based on enrollment batch digits.
 - Resilient fallback: Operates standalone without requiring private database rosters in version control.
 
-### 🤝 6. Peer Mentorship Network (`/mentorship`)
-- Matchmaking connecting junior contributors with senior student mentors and accepted fellowship scholars.
-- Request submission, topic selection, review workflows, and status tracking (`Pending`, `Accepted`, `Completed`).
+### 📢 6. Multi-Channel Campus Alert Dispatcher (`/api/notifications`)
+- Real-time Discord and Telegram webhook broadcast engine for merged pull requests, quality contributions, and swag redemptions.
+- Rich Discord embeds and formatted Telegram alerts with non-blocking async dispatch and safety timeouts.
 
 ### 🛠️ 7. Interactive First Campus PR Guide (`/resources`)
 - Step-by-step interactive terminal walkthrough guiding students through:
