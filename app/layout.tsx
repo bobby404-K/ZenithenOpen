@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ZenithenOpen — Open-Source Community Platform | IST Bengaluru",
   description:
-    "Data-driven open-source development community at IST Bengaluru. Showcasing member achievements, GitHub contributions, live projects, learning paths, mentorship, and GSoC preparation.",
+    "Data-driven open-source development community at IST Bengaluru. Showcasing member achievements, GitHub contributions, live projects, learning paths, and GSoC preparation.",
   keywords: [
     "ZenithenOpen",
     "IST",

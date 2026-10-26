@@ -36,7 +36,6 @@ import { runHealthRouteTests } from "./health-route.test";
 import { runGitHubWebhookTests } from "./github-webhook.test";
 import { runMemberProfileTests } from "./member-profile.test";
 import { runProjectSlugTests } from "./project-slug.test";
-import { runMentorshipRouteTests } from "./mentorship-route.test";
 import { runGitHubSyncRouteTests } from "./github-sync-route.test";
 import { runDbSeedTests } from "./db-seed.test";
 import { runDeploymentConfigTests } from "./deployment-config.test";
@@ -81,7 +80,6 @@ async function main() {
     results.push(await runHealthRouteTests());
     results.push(await runGitHubWebhookTests());
     results.push(await runMemberProfileTests());
-    results.push(await runMentorshipRouteTests());
     results.push(await runGitHubSyncRouteTests());
     results.push(await runDbSeedTests());
     results.push(await runDeploymentConfigTests());

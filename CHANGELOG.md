@@ -3,6 +3,27 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.0] - 2026-10-26
+
+### 🧹 Complete Removal of Mentorship & Admin Modules
+
+- **Full Deprecation of Admin Governance Module**:
+  - Deleted frontend admin dashboard page (`app/admin/page.tsx`).
+  - Removed "Admin Governance" link from platform footer (`components/navigation/footer.tsx`).
+- **Complete Purge of Peer Mentorship System Across All Pages**:
+  - Deleted frontend mentorship hub (`app/mentorship/page.tsx`).
+  - Deleted backend mentorship API route (`app/api/mentorship/requests/route.ts`).
+  - Removed "Peer Mentorship" link from sidebar navigation drawer (`components/navigation/sidebar-menu.tsx`) and renamed section to `COMMUNITY`.
+  - Removed "Mentorship Matching" link from footer (`components/navigation/footer.tsx`) and added direct Contributor Swag Rewards navigation.
+  - Removed `page-mentorship` search indexing from Global Command Palette (`app/api/search/route.ts`).
+  - Cleaned `isMentor` and `mentorshipTopics` from member profile types and dynamic page (`app/members/[username]/page.tsx`, `types/index.ts`).
+  - Refined campus evolution, hero subtitle, and event workshop wording to focus on hands-on student engineering collaboration.
+  - Removed `MENTORSHIP_REQUEST` event from multi-channel notification engine (`lib/notifications/types.ts`, `lib/notifications/formatters.ts`, `app/api/notifications/broadcast/route.ts`).
+- **Test Suite Harmonization**:
+  - Deleted obsolete backend test suite (`tests/backend/mentorship-route.test.ts`).
+  - Updated master test runner to 32 active suites and 985+ automated assertions.
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+
 ## [1.49.0] - 2026-10-26
 
 ### 📢 Multi-Channel Campus Notification Engine (Discord & Telegram)

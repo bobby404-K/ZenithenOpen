@@ -90,7 +90,7 @@ export function CampusEvolutionSection() {
                 >
                   <span className="text-muted-foreground/60 select-none font-light shrink-0">—</span>
                   <span>
-                    First workshops run by mentors: Getting Started with Open Source, Web Development Bootcamp, and Git &amp; GitHub Workflows
+                    First hands-on campus workshops: Getting Started with Open Source, Web Development Bootcamp, and Git &amp; GitHub Workflows
                   </span>
                 </motion.li>
               </ul>
@@ -180,7 +180,7 @@ export function CampusEvolutionSection() {
                 >
                   <span className="text-muted-foreground/60 select-none font-light shrink-0">—</span>
                   <span>
-                    Direct campus repository gateways: ZenithenOpen and First-PR with curated Good First Issues and mentor pairing
+                    Direct campus repository gateways: ZenithenOpen and First-PR with curated Good First Issues and interactive guides
                   </span>
                 </motion.li>
 

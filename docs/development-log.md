@@ -373,6 +373,39 @@ Discord Webhook Rich Embeds & Telegram Bot Dispatch for Real-Time Campus Merges,
 * `npx tsc --noEmit` — 0 TypeScript compilation errors.
 * `npm test` — All 33 test suites passing cleanly (1,013 checks).
 
+---
+
+## Entry: 2026-10-26 — Milestone 17: Complete Removal of Mentorship & Admin Modules (v1.50.0)
+
+### Feature Name
+Complete Deprecation and Purge of Peer Mentorship Pages, API Handlers, and Admin Governance Dashboard
+
+### Branch
+`feature/remove-mentorship-and-admin-modules`
+
+### Files Changed
+* `app/admin/` — Deleted admin dashboard (`app/admin/page.tsx`).
+* `app/mentorship/` — Deleted mentorship directory (`app/mentorship/page.tsx`).
+* `app/api/mentorship/` — Deleted mentorship API controllers (`app/api/mentorship/requests/route.ts`).
+* `components/navigation/sidebar-menu.tsx` — Removed Peer Mentorship link and updated section title to `COMMUNITY`.
+* `components/navigation/footer.tsx` — Removed Admin Governance and Mentorship Matching links; linked Contributor Swag Rewards.
+* `app/api/search/route.ts` — Purged `page-mentorship` entry from search index.
+* `app/members/[username]/page.tsx` & `types/index.ts` — Cleaned unreferenced mentor flags and topic arrays.
+* `components/dashboard/hero-section.tsx` & `components/dashboard/campus-evolution-section.tsx` — Aligned copy to student developer collaboration.
+* `app/events/page.tsx` & `app/programs/page.tsx` — Cleaned mentorship tags and labels.
+* `lib/notifications/types.ts` & `lib/notifications/formatters.ts` & `app/api/notifications/broadcast/route.ts` — Removed `MENTORSHIP_REQUEST` notification event.
+* `tests/backend/mentorship-route.test.ts` — Deleted obsolete backend test suite.
+* `tests/backend/run-all.ts` — Updated master test runner to 32 active suites and 985+ checks.
+* `tests/backend/README.md` — Updated coverage table to 32 suites.
+* `package.json` — Bumped version to `1.50.0`.
+* `CHANGELOG.md` — Documented all deprecations.
+
+### Verification
+* `npx tsc --noEmit` — 0 TypeScript compilation errors.
+* `npx tsx tests/backend/command-search.test.ts` & `notifications-service.test.ts` — 100% passed.
+* All remaining 32 backend test suites passing cleanly.
+
+
 
 
 

@@ -22,7 +22,6 @@ const EVENT_COLORS: Record<NotificationEventType, number> = {
   QUALITY_PR_MERGED: 0x6366f1, // Indigo / Purple
   MILESTONE_UNLOCKED: 0xf59e0b, // Amber Gold
   SWAG_CLAIMED: 0xec4899, // Pink / Rose
-  MENTORSHIP_REQUEST: 0x3b82f6, // Ocean Blue
   CAMPUS_BROADCAST: 0x8b5cf6, // Violet
 };
 
@@ -34,7 +33,6 @@ const EVENT_EMOJIS: Record<NotificationEventType, string> = {
   QUALITY_PR_MERGED: "⭐",
   MILESTONE_UNLOCKED: "🏆",
   SWAG_CLAIMED: "🎁",
-  MENTORSHIP_REQUEST: "🤝",
   CAMPUS_BROADCAST: "📢",
 };
 

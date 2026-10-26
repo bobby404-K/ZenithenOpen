@@ -35,8 +35,6 @@ export interface Member {
   skills: Skill[];
   interests: string[];
   joinedAt: string;
-  isAvailableForMentorship?: boolean;
-  mentorshipTopics?: string[];
   spotlightQuote?: string;
   featured?: boolean;
   totalContributions: number;

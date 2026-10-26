@@ -11,7 +11,6 @@ export type NotificationEventType =
   | "QUALITY_PR_MERGED"
   | "MILESTONE_UNLOCKED"
   | "SWAG_CLAIMED"
-  | "MENTORSHIP_REQUEST"
   | "CAMPUS_BROADCAST";
 
 export interface NotificationPayload {

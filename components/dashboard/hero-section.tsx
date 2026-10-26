@@ -65,7 +65,7 @@ export function HeroSection() {
 
         {/* Subtitle */}
         <p className="mt-6 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
-          The collaborative open-source engineering workspace for IST students and mentors.
+          The collaborative open-source engineering workspace for IST student developers.
           Connect your GitHub account to sync real repositories, claim verified beginner issues, and master distributed development.
         </p>
 
