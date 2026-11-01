@@ -11,10 +11,18 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
   const suite = new TestSuite("Student Leaderboard & Competition Arena Route");
   suite.start();
 
-  // --- 1. Default (Week) Leaderboard Query ---
-  const defaultReq = new NextRequest("http://localhost:3000/api/students/leaderboard");
+  // --- 0. Live Leaderboard Query (Zero Mock by Default) ---
+  const liveReq = new NextRequest("http://localhost:3000/api/students/leaderboard");
+  const liveRes = await GET(liveReq);
+  suite.assertEqual(liveRes.status, 200, "GET /api/students/leaderboard (live) returns 200 OK");
+  const liveData = await liveRes.json();
+  suite.assertEqual(liveData.success, true, "Live query reports success: true");
+  suite.assert(Array.isArray(liveData.competitors), "Live competitors is an array");
+
+  // --- 1. Default (Week) Leaderboard Query with Mock Data ---
+  const defaultReq = new NextRequest("http://localhost:3000/api/students/leaderboard?mock=true");
   const defaultRes = await GET(defaultReq);
-  suite.assertEqual(defaultRes.status, 200, "GET /api/students/leaderboard returns 200 OK");
+  suite.assertEqual(defaultRes.status, 200, "GET /api/students/leaderboard?mock=true returns 200 OK");
 
   const defaultData = await defaultRes.json();
   suite.assertEqual(defaultData.success, true, "Response reports success: true");
@@ -69,7 +77,7 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
   suite.assertEqual(sortingCompliant, true, "Leaderboard satisfies strict 5-tier ranking order (Quality > Total PR > Open > Closed > Merges)");
 
   // --- 2. Month Timeframe Query ---
-  const monthReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month");
+  const monthReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month&mock=true");
   const monthRes = await GET(monthReq);
   suite.assertEqual(monthRes.status, 200, "GET ?timeframe=month returns 200 OK");
 
@@ -78,7 +86,7 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
   suite.assertEqual(monthData.competitors[0].month.rank, 1, "First student has rank 1 for month timeframe");
 
   // --- 3. Overall Timeframe Query ---
-  const overallReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=overall");
+  const overallReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=overall&mock=true");
   const overallRes = await GET(overallReq);
   suite.assertEqual(overallRes.status, 200, "GET ?timeframe=overall returns 200 OK");
 

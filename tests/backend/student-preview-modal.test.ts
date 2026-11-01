@@ -17,7 +17,7 @@ export async function runStudentPreviewModalTests(): Promise<SuiteResult> {
   suite.start();
 
   // --- 1. Verify Leaderboard API mapping into StudentPreviewData ---
-  const leadReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month");
+  const leadReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month&mock=true");
   const leadRes = await getLeaderboard(leadReq);
   suite.assertEqual(leadRes.status, 200, "GET /api/students/leaderboard returns 200 OK");
 

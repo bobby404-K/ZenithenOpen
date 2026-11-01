@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Trophy,
-  Info,
   ArrowRight,
   GitPullRequest,
   Loader2,
@@ -161,14 +160,6 @@ export default function LeaderboardPage() {
                 </Button>
               </Link>
             </div>
-          </div>
-
-          {/* Philosophy Banner */}
-          <div className="mt-6 flex items-center space-x-2.5 text-xs text-foreground bg-card border border-border p-3.5 rounded-xl max-w-3xl">
-            <Info className="h-4 w-4 text-primary shrink-0" />
-            <span>
-              <strong>Quality Merge Standard:</strong> A pull request is recognized as a Quality Merge only if the repository has at least 100 stars AND 100 forks (&ge;100 stars and &ge;100 forks).
-            </span>
           </div>
 
           {/* Controls Bar */}

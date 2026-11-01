@@ -349,7 +349,7 @@ export default function MemberProfilePage({
             <div className="mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between text-xs sm:text-sm text-amber-300">
               <div className="flex items-center gap-2">
                 <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                <span className="font-semibold">Quality Merges (≥100 Stars & ≥100 Forks):</span>
+                <span className="font-semibold">Quality Merges:</span>
               </div>
               <span className="font-bold text-white text-base bg-amber-500/20 px-3 py-0.5 rounded-full border border-amber-500/30">
                 {profile.stats.qualityPrs}
