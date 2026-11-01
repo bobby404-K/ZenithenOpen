@@ -37,28 +37,40 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
     "Top student has positive PR count"
   );
   suite.assert(
-    typeof topWeekStudent.week.qualityPrs === "number",
-    "Top student has tracked quality PRs"
+    typeof topWeekStudent.week.mergedPrs === "number",
+    "Top student has tracked merged PRs"
+  );
+  suite.assert(
+    typeof topWeekStudent.week.issuesOpened === "number",
+    "Top student has tracked issuesOpened count"
+  );
+  suite.assert(
+    typeof topWeekStudent.week.openPrs === "number",
+    "Top student has tracked open PRs"
+  );
+  suite.assert(
+    typeof topWeekStudent.week.closedPrs === "number",
+    "Top student has tracked closed PRs"
   );
   suite.assert(
     typeof topWeekStudent.week.topContribution?.title === "string",
     "Student includes structured topContribution details"
   );
 
-  // Validate strict 5-tier sorting order: Quality Merge > Total PR > Open PR > Closed PR > Total Merges
+  // Validate open-source contributions sorting order: Merged PRs > Issues Opened > Open PRs > Closed PRs
   let sortingCompliant = true;
   for (let i = 0; i < defaultData.competitors.length - 1; i++) {
     const a = defaultData.competitors[i].week;
     const b = defaultData.competitors[i + 1].week;
 
-    const qDiff = (a.qualityPrs ?? 0) - (b.qualityPrs ?? 0);
-    if (qDiff !== 0) {
-      if (qDiff < 0) sortingCompliant = false;
+    const mDiff = (a.mergedPrs ?? 0) - (b.mergedPrs ?? 0);
+    if (mDiff !== 0) {
+      if (mDiff < 0) sortingCompliant = false;
       continue;
     }
-    const tDiff = (a.prs ?? 0) - (b.prs ?? 0);
-    if (tDiff !== 0) {
-      if (tDiff < 0) sortingCompliant = false;
+    const iDiff = (a.issuesOpened ?? 0) - (b.issuesOpened ?? 0);
+    if (iDiff !== 0) {
+      if (iDiff < 0) sortingCompliant = false;
       continue;
     }
     const oDiff = (a.openPrs ?? 0) - (b.openPrs ?? 0);
@@ -71,10 +83,8 @@ export async function runLeaderboardRouteTests(): Promise<SuiteResult> {
       if (cDiff < 0) sortingCompliant = false;
       continue;
     }
-    const mDiff = (a.mergedPrs ?? 0) - (b.mergedPrs ?? 0);
-    if (mDiff < 0) sortingCompliant = false;
   }
-  suite.assertEqual(sortingCompliant, true, "Leaderboard satisfies strict 5-tier ranking order (Quality > Total PR > Open > Closed > Merges)");
+  suite.assertEqual(sortingCompliant, true, "Leaderboard satisfies open-source contribution ranking order (Merged > Issues > Open > Closed)");
 
   // --- 2. Month Timeframe Query ---
   const monthReq = new NextRequest("http://localhost:3000/api/students/leaderboard?timeframe=month&mock=true");

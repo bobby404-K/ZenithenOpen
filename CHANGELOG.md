@@ -3,6 +3,30 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.53.0] - 2026-11-01
+
+### 🏆 Open Source Contributions Leaderboard & Department Info Removal
+
+- **Open Source Contributions Metric System**:
+  - Replaced legacy metrics (Quality Merge and Total PRs) on leaderboards with 4 core open-source contribution metrics:
+    - **Merged**: Total merged pull requests
+    - **Issues Opened**: Open-source issues opened by the contributor
+    - **PR Open**: Currently active open pull requests
+    - **Closed PR**: Closed unmerged pull requests
+- **Department References Removal Across Leaderboards**:
+  - Removed all department labels and text across `app/leaderboard/page.tsx` (podium cards and rankings table).
+  - Removed department column (`<th>Department</th>` and `<td>{student.department}</td>`) from the All Contributor Rankings table.
+  - Removed department subtitles in `app/programs/page.tsx` (`StudentLeaderboardSection` podium cards and contender rankings).
+- **Sorting & Filtering Re-architecture**:
+  - Updated `/leaderboard` filter buttons to: `Merged` (default), `Issues Opened`, `PR Open`, and `Closed PR`.
+  - Re-architected sorting algorithm in `app/api/students/leaderboard/route.ts` and client-side to rank strictly by open-source contributions hierarchy: Merged PRs $\to$ Issues Opened $\to$ PR Open $\to$ Closed PR.
+- **Contract & Fixture Expansion**:
+  - Added `issuesOpened` to `ContributorTimeframeStats` in `lib/data/student-competition.ts` and computed live issue counts in `app/api/students/leaderboard/route.ts`.
+  - Updated all mock fixtures across week, month, and overall timeframes.
+- **Verification**:
+  - 100% test pass rate (989 backend tests across 32 suites passed with 0 failures).
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+
 ## [1.52.0] - 2026-11-01
 
 ### 🛡️ Removal of Algorithm Criteria Banner & Live Mock Data Isolation
