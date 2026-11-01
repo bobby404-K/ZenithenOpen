@@ -3,6 +3,27 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.55.0] - 2026-11-01
+
+### 📊 Universal Open-Source Contributor Rankings Table
+
+- **Standardized Reusable Rankings Component (`components/leaderboard/contributor-rankings-table.tsx`)**:
+  - Implemented the exact high-contrast contributor rankings table layout everywhere:
+    - Header: Title ("All Contributor Rankings"), subtitle ("Real-time verified pull requests for this month/week/all-time"), and active developers badge.
+    - Standardized Table Columns: `RANK` | `CONTRIBUTOR` (avatar + name + `@username`) | `MERGED` (Emerald bold) | `ISSUES OPENED` (Amber bold) | `PR OPEN` (Blue font-semibold) | `CLOSED PR` (Rose font-semibold).
+    - Fully eliminated department labels, department subtext, and legacy metrics ("Quality Merges", "Total PRs") across all surfaces.
+- **Applied Everywhere Across the Application**:
+  - **Contributor Leaderboard (`app/leaderboard/page.tsx`)**: Replaced inline table with `ContributorRankingsTable`.
+  - **Student Competition Arena (`app/programs/page.tsx`)**: Replaced contender cards with full `ContributorRankingsTable` beneath the top 3 podium cards.
+  - **Campus Repositories Leaderboard (`app/projects/page.tsx`)**: Replaced custom rankings list with `ContributorRankingsTable` and updated top 3 podium metric grids to 4 open-source metrics.
+  - **Homepage Monthly Leaderboard (`app/page.tsx`)**: Replaced custom contender list with `ContributorRankingsTable`.
+- **API Enhancements**:
+  - Added `issuesOpened` to `CampusContributorStanding` interface in `app/api/projects/leaderboard/route.ts` and bumped Redis cache key to `:v2`.
+- **Quality Assurance**:
+  - Verified 0 TypeScript compilation errors (`npm run typecheck`).
+  - 100% backend tests passing (989 tests across 32 suites).
+  - Verified live in browser across all 4 surfaces (`/leaderboard`, `/programs`, `/projects`, `/`).
+
 ## [1.54.0] - 2026-11-01
 
 ### 🚀 Seamless Contributor Leaderboard Population & Fallback Resilience

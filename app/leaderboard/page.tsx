@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { StudentContributor } from "@/lib/data/student-competition";
+import { ContributorRankingsTable } from "@/components/leaderboard/contributor-rankings-table";
 
 export default function LeaderboardPage() {
   const [timeframe, setTimeframe] = React.useState<"week" | "month" | "overall">("month");
@@ -114,6 +115,20 @@ export default function LeaderboardPage() {
   }, [competitors, timeframe, sortBy]);
 
   const topThree = sortedCompetitors.slice(0, 3);
+
+  const tableContributors = React.useMemo(() => {
+    return sortedCompetitors.map((student, idx) => ({
+      id: student.id,
+      name: student.name,
+      username: student.username,
+      avatarUrl: student.avatarUrl,
+      mergedPrs: student[timeframe]?.mergedPrs ?? 0,
+      issuesOpened: student[timeframe]?.issuesOpened ?? 0,
+      openPrs: student[timeframe]?.openPrs ?? 0,
+      closedPrs: student[timeframe]?.closedPrs ?? 0,
+      rank: idx + 1,
+    }));
+  }, [sortedCompetitors, timeframe]);
 
   return (
     <div className="py-16 bg-background text-foreground min-h-screen transition-colors">
@@ -375,88 +390,12 @@ export default function LeaderboardPage() {
             )}
 
             {/* Complete Rankings Table */}
-            <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xs">
-              <div className="p-5 border-b border-border flex items-center justify-between">
-                <div>
-                  <h3 className="font-bold text-foreground text-base">All Contributor Rankings</h3>
-                  <p className="text-xs text-muted-foreground">
-                    Real-time verified pull requests for {timeframe === "week" ? "this week" : timeframe === "month" ? "this month" : "all-time"}.
-                  </p>
-                </div>
-                <span className="text-xs font-mono text-muted-foreground">
-                  {sortedCompetitors.length} active developers
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-muted/40 text-muted-foreground border-b border-border uppercase font-mono text-[11px]">
-                    <tr>
-                      <th className="py-3 px-4 w-16">Rank</th>
-                      <th className="py-3 px-4">Contributor</th>
-                      <th className="py-3 px-4 text-center">Merged</th>
-                      <th className="py-3 px-4 text-center">Issues Opened</th>
-                      <th className="py-3 px-4 text-center">PR Open</th>
-                      <th className="py-3 px-4 text-center">Closed PR</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {sortedCompetitors.map((student, idx) => {
-                      const stats = student[timeframe];
-                      return (
-                        <tr
-                          key={student.id}
-                          className="hover:bg-muted/30 transition-colors group"
-                        >
-                          <td className="py-3.5 px-4 font-mono font-bold text-muted-foreground">
-                            #{idx + 1}
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <div className="flex items-center space-x-3">
-                              <Link href={`/members/${student.username}`} className="shrink-0">
-                                <img
-                                  src={student.avatarUrl}
-                                  alt={student.name}
-                                  className="h-8 w-8 rounded-full border border-border object-cover hover:scale-105 transition-transform"
-                                />
-                              </Link>
-                              <div>
-                                <div className="flex items-center gap-1.5">
-                                  <Link
-                                    href={`/members/${student.username}`}
-                                    className="font-bold text-foreground hover:text-primary transition-colors block"
-                                  >
-                                    {student.name}
-                                  </Link>
-                                </div>
-                                <Link
-                                  href={`/members/${student.username}`}
-                                  className="text-[11px] text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-1"
-                                >
-                                  @{student.username}
-                                </Link>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-emerald-600 text-sm">
-                            {stats.mergedPrs ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-amber-500 text-sm">
-                            {stats.issuesOpened ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center text-blue-500 font-semibold">
-                            {stats.openPrs ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center text-rose-500 font-semibold">
-                            {stats.closedPrs ?? 0}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <ContributorRankingsTable
+              contributors={tableContributors}
+              title="All Contributor Rankings"
+              subtitle={`Real-time verified pull requests for ${timeframe === "week" ? "this week" : timeframe === "month" ? "this month" : "all-time"}.`}
+              developerCountLabel={`${sortedCompetitors.length} active developers`}
+            />
           </div>
         )}
 
