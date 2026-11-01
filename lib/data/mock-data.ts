@@ -280,7 +280,7 @@ export const MOCK_LEARNING_PATHS: LearningPath[] = [
       {
         weekNumber: 1,
         title: "Organization Scouting & First Contact",
-        summary: "Selecting mentorship organizations, joining developer mailing lists/Slack.",
+        summary: "Selecting target open-source organizations, joining developer mailing lists/Slack.",
         milestoneProject: "Submit your first triaged bug fix to a target GSoC organization.",
         topics: [
           {

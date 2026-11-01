@@ -18,10 +18,8 @@ import { STUDENT_COMPETITORS } from "../../../lib/data/student-competition";
  */
 function assignMemberBadge(
   role: Role,
-  mergedPrCount: number,
-  isMentor: boolean
+  mergedPrCount: number
 ): Member["badge"] | undefined {
-  if (isMentor || role === "MENTOR") return "Project Maintainer";
   if (mergedPrCount >= 10) return "Consistent Contributor";
   if (mergedPrCount >= 1) return "New Contributor";
   return undefined;
@@ -30,7 +28,7 @@ function assignMemberBadge(
 /**
  * GET /api/members
  * Query parameters:
- *  - role: "All" | "ADMIN" | "MENTOR" | "MEMBER"
+ *  - role: "All" | "MEMBER" | "MAINTAINER"
  *  - search: string to search across name, username, department, and skills
  *  - limit: number of members to return (default: 50)
  */
@@ -134,11 +132,9 @@ export async function GET(req: NextRequest) {
         skills: mappedSkills,
         interests: [],
         joinedAt: user.createdAt.toISOString(),
-        isAvailableForMentorship: user.isMentor,
-        mentorshipTopics: user.mentorshipTopics || [],
         totalContributions,
         mergedPrCount,
-        badge: assignMemberBadge(user.role, mergedPrCount, user.isMentor),
+        badge: assignMemberBadge(user.role, mergedPrCount),
       };
     });
 
@@ -178,8 +174,6 @@ export async function GET(req: NextRequest) {
       ],
       interests: ["Open Source", "Web Architecture"],
       joinedAt: new Date().toISOString(),
-      isAvailableForMentorship: false,
-      mentorshipTopics: ["Open Source", "Frontend"],
       totalContributions: sc.overall.prs,
       mergedPrCount: sc.overall.mergedPrs,
       badge: sc.badge as any,

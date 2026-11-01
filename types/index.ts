@@ -135,17 +135,6 @@ export interface LearningPath {
   targetSkills: string[];
 }
 
-export interface MentorshipRequest {
-  id: string;
-  menteeName: string;
-  menteeUsername: string;
-  mentorName: string;
-  mentorUsername: string;
-  topic: string;
-  message: string;
-  status: "Pending" | "Accepted" | "Completed" | "Declined";
-  createdAt: string;
-}
 
 export interface CommunityMetrics {
   totalMembers: number;

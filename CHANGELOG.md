@@ -3,6 +3,34 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.51.0] - 2026-10-26
+
+### 🧹 Comprehensive Cleansing of Mentorship & Admin References Across Entire Website
+
+- **Members Directory Cleansing (`app/members/page.tsx`)**:
+  - Removed "ADMIN" and "MENTOR" role filter buttons; streamlined directory filtering to "All" and "Contributors".
+  - Replaced member card role badges (`ADMIN`, `MENTOR`) with verified contributor badges (`member.badge || "Contributor"`).
+  - Updated directory headline and subtitle to "Student developers and open-source maintainers building across IST Bengaluru".
+- **Community Hub Cleansing (`app/community/page.tsx`)**:
+  - Transformed "Alumni Mentors" community cohort into "Alumni Advisors".
+  - Renamed header badge from "Student Developers & Mentors" to "Student Developers & Contributors".
+- **Homepage Copy Refinement (`app/page.tsx`)**:
+  - Updated Good First Issues beginner gateway description from "mentor assistance" to "maintainer assistance".
+  - Refined bottom call to action from "Connect with campus mentors" to "Connect with campus builders".
+- **Search & Navigation Purification (`app/api/search/route.ts`)**:
+  - Updated members directory search subtitle to "Directory of IST student engineers and contributors".
+  - Normalized seeded member search results from "Campus Mentor" to "Core Engineer".
+- **API Endpoints & Schemas (`app/api/members`, `app/api/members/[username]`, `types/index.ts`)**:
+  - Purged `isMentor`, `mentorshipTopics`, and `isAvailableForMentorship` from API route handlers, mocks, and response serializers.
+  - Removed `MentorshipRequest` interface from TypeScript contracts.
+  - Updated `AuthenticatedStudentUser` role union in `components/auth/auth-context.tsx`.
+- **Events, Achievements & Technical Resources**:
+  - Sanitized event tags, titles, and calendar descriptions in `app/api/events/route.ts` and `app/api/activity/route.ts`.
+  - Replaced "LFX Mentorship" with "LFX Fellowship" in `app/api/achievements/route.ts`.
+  - Cleansed article guides in `lib/data/resource-articles.ts` to focus on maintainers and fellowship scholars.
+  - Updated README.md to replace Peer Mentorship section with Multi-Channel Alert Dispatcher.
+  - All 32 backend test suites passed (983 checks), 0 TypeScript compilation errors.
+
 ## [1.50.0] - 2026-10-26
 
 ### 🧹 Complete Removal of Mentorship & Admin Modules

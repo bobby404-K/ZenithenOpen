@@ -83,11 +83,11 @@ export default function CommunityPage() {
       badge: "Contributors",
     },
     {
-      name: "Alumni Mentors",
+      name: "Alumni Advisors",
       role: "Industry Advisors",
-      count: "12 Mentors",
-      description: "Senior engineers and past fellowship scholars providing 1-on-1 code reviews.",
-      badge: "Mentors",
+      count: "12 Advisors",
+      description: "Senior engineers and past fellowship scholars sharing architectural insights and career guidance.",
+      badge: "Advisors",
     },
     {
       name: "First-Time PR Authors",
@@ -188,7 +188,7 @@ export default function CommunityPage() {
         <div className="space-y-3">
           <div className="inline-flex items-center space-x-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary font-mono">
             <Users2 className="h-3.5 w-3.5" />
-            <span>Student Developers & Mentors</span>
+            <span>Student Developers & Contributors</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">

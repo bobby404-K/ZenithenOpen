@@ -31,7 +31,7 @@ The ZenithenOpen test architecture is engineered to validate:
 | 7 | `github-sync.test.ts` | `lib/github/sync.ts` | 15 | Quality PR rules ($\ge$ 100 stars and $\ge$ 100 forks), point calculations, and Octokit requests. |
 | 8 | `leaderboard-route.test.ts` | `app/api/students/leaderboard` | 18 | 5-tier ranking hierarchy, timeframe queries (`week`, `month`, `overall`), and rank badges. |
 | 9 | `contributions-route.test.ts` | `app/api/contributions` | 11 | Pull request querying, status filters (`OPEN`, `MERGED`, `CLOSED`), and quality PR flags. |
-| 10 | `members-route.test.ts` | `app/api/members` | 14 | Member directory querying, role filtering (`MEMBER`, `MENTOR`, `ADMIN`), search, and registration. |
+| 10 | `members-route.test.ts` | `app/api/members` | 14 | Member directory querying, contributor profile search, and registration. |
 | 11 | `projects-route.test.ts` | `app/api/projects` | 17 | Repository catalog listing, language filtering, search queries, and project registration. |
 | 12 | `project-slug.test.ts` | `app/api/projects/[slug]` | 19 | Dynamic project deep-dives, computed stats, maintainers, top contributors, and PATCH updates. |
 | 13 | `opportunities-route.test.ts` | `app/api/opportunities` | 17 | Good-first-issues board, difficulty filtering (`beginner`, `intermediate`, `advanced`), and search. |
@@ -73,8 +73,8 @@ npm run test:backend
 # Student Leaderboard & Competition Route
 npx tsx tests/backend/leaderboard-route.test.ts
 
-# Peer Mentorship API
-npx tsx tests/backend/mentorship-route.test.ts
+# Discord & Telegram Notifications Service
+npx tsx tests/backend/notifications-service.test.ts
 
 # Global Command Palette Search
 npx tsx tests/backend/command-search.test.ts

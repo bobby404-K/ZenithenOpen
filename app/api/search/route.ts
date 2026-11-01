@@ -52,7 +52,7 @@ const PLATFORM_PAGES: SearchResultItem[] = [
   {
     id: "page-members",
     title: "Members Directory",
-    subtitle: "Directory of IST student engineers, alumni mentors, and leads",
+    subtitle: "Directory of IST student engineers and contributors",
     category: "page",
     url: "/members",
     badge: "Directory",
@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
       subtitle: `@${stu.githubUsername} • ${stu.department} (IST Lead Engineer)`,
       category: "contributor" as const,
       url: `/members/${encodeURIComponent(stu.githubUsername)}`,
-      badge: stu.isMentor ? "Campus Mentor" : "Core Engineer",
+      badge: "Core Engineer",
       badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/30",
     }));
 

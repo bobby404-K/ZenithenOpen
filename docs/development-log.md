@@ -405,6 +405,37 @@ Complete Deprecation and Purge of Peer Mentorship Pages, API Handlers, and Admin
 * `npx tsx tests/backend/command-search.test.ts` & `notifications-service.test.ts` — 100% passed.
 * All remaining 32 backend test suites passing cleanly.
 
+---
+
+## Entry: 2026-10-26 — Milestone 18: Comprehensive Cleansing of Mentorship & Admin References Across Entire Website (v1.51.0)
+
+### Feature Name
+Comprehensive Cleansing of Mentorship & Admin References Across Entire Website
+
+### Branch
+`feature/purge-mentorship-and-admin-references`
+
+### Files Changed
+* `app/members/page.tsx` — Purged "ADMIN" and "MENTOR" role filter buttons; mapped member card role badges to `member.badge || "Contributor"`; sanitized directory subtitle.
+* `app/community/page.tsx` — Replaced "Alumni Mentors" community cohort with "Alumni Advisors"; updated header badge to "Student Developers & Contributors".
+* `app/page.tsx` — Refined Good First Issues and CTA descriptions to remove mentor wording.
+* `app/api/search/route.ts` — Sanitized search index subtitle and normalized seeded contributor badges to "Core Engineer".
+* `app/api/members/route.ts` & `app/api/members/[username]/route.ts` — Removed `isMentor`, `mentorshipTopics`, and `isAvailableForMentorship` from API route responses and Zod schemas.
+* `components/auth/auth-context.tsx` & `types/index.ts` — Removed `MentorshipRequest` interface and updated `UserRole` unions.
+* `app/api/events/route.ts` & `app/api/activity/route.ts` — Updated workshop, calendar, and event tags to "Collaboration", "Architecture", and "Maintainers".
+* `app/api/achievements/route.ts` — Replaced "LFX Mentorship" with "LFX Fellowship".
+* `lib/data/resource-articles.ts` & `lib/data/mock-data.ts` — Sanitized technical article guidance and mock learning paths.
+* `lib/notifications/dispatcher.ts` — Cleaned dispatcher documentation.
+* `README.md` & `tests/backend/README.md` — Replaced Peer Mentorship references with Multi-Channel Alert Dispatcher engine documentation.
+* `package.json` — Bumped version to `1.51.0`.
+* `CHANGELOG.md` — Documented all cleansings and verifications.
+
+### Verification
+* `npm run typecheck` (`tsc --noEmit`) — 0 errors.
+* `npm test` — 32 test suites, 983 tests passed, 0 failed.
+* Preserved feature branch locally and remotely.
+
+
 
 
 

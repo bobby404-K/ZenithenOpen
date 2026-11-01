@@ -7,7 +7,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
     category: "Career & Fellowships",
     categorySlug: "career",
     author: "IST Alumni Scholar",
-    authorRole: "GSoC '25 Mentor & Contributor",
+    authorRole: "GSoC '25 Scholar & Contributor",
     authorAvatar: "https://avatars.githubusercontent.com/u/142999485?v=4",
     date: "October 2026",
     readTime: "6 min read",
@@ -19,7 +19,7 @@ export const RESOURCE_ARTICLES: ResourceArticle[] = [
     keyTakeaways: [
       "Start 3-4 months early by understanding the codebase architecture before organization announcements.",
       "Make 2-3 quality merged pull requests before submitting your final proposal.",
-      "Engage authentically in public community channels rather than sending private DMs to mentors.",
+      "Engage authentically in public community channels rather than sending private DMs to maintainers.",
       "Structure your proposal with explicit milestone deliverables, risk assessments, and weekly schedules.",
     ],
     markdownContent: `
@@ -32,7 +32,7 @@ Many students mistakenly believe that GSoC is reserved exclusively for competiti
 ---
 
 ## 1. The Timeline Strategy: Start Early
-Most applicants wait until Google officially announces the accepted mentoring organizations in February or March. By then, hundreds of prospective contributors flood the issue trackers.
+Most applicants wait until Google officially announces the accepted open-source organizations in February or March. By then, hundreds of prospective contributors flood the issue trackers.
 
 To stand out:
 1. **Target Evergreen Organizations**: Look at organizations that have participated for 5+ consecutive years (e.g., Apache, CNCF, Julia, Mozilla, SymPy, Chromium).
@@ -64,10 +64,10 @@ Do not attempt to rewrite core subsystems on Day 1. Instead, follow this 3-tier 
 
 ---
 
-## 3. Proposal Blueprint that Wins Mentors
+## 3. Proposal Blueprint that Wins Maintainers
 A winning GSoC proposal is not an academic paper—it is an **executable project management document**.
 
-Mentors look for:
+Maintainers look for:
 - **Architecture Diagrams**: High-level component interactions and state flow.
 - **Weekly Milestones**: Exact breakdown across the 12-week or 22-week commitment.
 - **Risk Mitigation Plan**: What will you do if an upstream dependency introduces breaking changes?
@@ -78,7 +78,7 @@ Mentors look for:
 ## Summary
 Open source is an open playing field. Start early, listen attentively to feedback during code reviews, and treat maintainers' time with deep respect.
     `,
-    tags: ["GSoC", "Open Source", "Career", "Proposal Writing", "Mentorship"],
+    tags: ["GSoC", "Open Source", "Career", "Proposal Writing", "Fellowship"],
   },
   {
     slug: "git-internals-dag-blobs",
@@ -249,8 +249,8 @@ This inline snippet executes synchronously before the browser paints the first f
     title: "Why Campus Open-Source Matters for Your Engineering Career",
     category: "Community Insights",
     categorySlug: "community",
-    author: "Community Mentors",
-    authorRole: "Industry Advisory Board",
+    author: "Community Maintainers",
+    authorRole: "Technical Advisory Guild",
     authorAvatar: "https://avatars.githubusercontent.com/u/108932448?v=4",
     date: "July 2026",
     readTime: "4 min read",

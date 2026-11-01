@@ -32,14 +32,14 @@ export default function MembersPage() {
   const [formError, setFormError] = React.useState<string | null>(null);
   const [successResult, setSuccessResult] = React.useState<string | null>(null);
 
-  const roles = ["All", "ADMIN", "MENTOR", "MEMBER"];
+  const roles = ["All", "Contributors"];
 
   // Fetch real members from backend API
   const fetchMembers = React.useCallback(async () => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
-      if (roleFilter !== "All") params.append("role", roleFilter);
+      if (roleFilter !== "All") params.append("role", "MEMBER");
       if (searchQuery.trim()) params.append("search", searchQuery.trim());
 
       const res = await fetch(`/api/members?${params.toString()}`);
@@ -135,7 +135,7 @@ export default function MembersPage() {
                 Members & Contributors
               </h1>
               <p className="mt-1 text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                Student developers, open-source maintainers, and mentors building across IST Bengaluru.
+                Student developers and open-source maintainers building across IST Bengaluru.
               </p>
             </div>
             <Button
@@ -246,16 +246,8 @@ export default function MembersPage() {
                       </div>
                     </div>
 
-                    <span
-                      className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border ${
-                        member.role === "ADMIN"
-                          ? "bg-purple-500/10 text-purple-600 border-purple-500/20"
-                          : member.role === "MENTOR"
-                          ? "bg-amber-500/10 text-amber-600 border-amber-500/20"
-                          : "bg-primary/10 text-primary border-primary/20"
-                      }`}
-                    >
-                      {member.role}
+                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full border bg-primary/10 text-primary border-primary/20">
+                      {member.badge || "Contributor"}
                     </span>
                   </div>
 

@@ -97,7 +97,7 @@ export const INITIAL_ACTIVITY_STREAM: ActivityEvent[] = [
     type: "event_rsvp",
     typeLabel: "Session RSVP",
     title: "Registered for Git Masterclass Workshop",
-    description: "Joined live terminal workshop for hands-on branching, rebase, and code review mentorship.",
+    description: "Joined live terminal workshop for hands-on branching, rebase, and code review collaboration.",
     username: "priya-patel",
     userAvatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=Priya",
     url: "/events",
