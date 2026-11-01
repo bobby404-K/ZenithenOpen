@@ -21,6 +21,7 @@ export interface CampusContributorStanding {
   campusClosedPrs: number;
   campusTotalPrs: number;
   topCampusRepo: string;
+  issuesOpened: number;
 }
 
 /**
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
   const rawTimeframe = (searchParams.get("timeframe") || "month").toLowerCase();
   const timeframe = ["week", "month", "overall"].includes(rawTimeframe) ? rawTimeframe : "month";
 
-  const cacheKey = `projects:campus-leaderboard:timeframe:${timeframe}:limit:${limit}`;
+  const cacheKey = `projects:campus-leaderboard:timeframe:${timeframe}:limit:${limit}:v2`;
   const cachedData = await getCached<CampusContributorStanding[]>(cacheKey);
 
   if (cachedData) {
@@ -185,6 +186,7 @@ export async function GET(request: NextRequest) {
             campusClosedPrs: c.campusClosedPrs,
             campusTotalPrs: c.campusTotalPrs,
             topCampusRepo: topRepo,
+            issuesOpened: 0,
           };
         });
       }
@@ -261,6 +263,7 @@ export async function GET(request: NextRequest) {
           campusClosedPrs: stats.closedPrs,
           campusTotalPrs: studentAlloc.campusMerges + stats.openPrs + stats.closedPrs,
           topCampusRepo: studentAlloc.topRepo,
+          issuesOpened: stats.issuesOpened ?? 0,
         };
       });
     }

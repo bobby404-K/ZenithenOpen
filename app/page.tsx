@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { GithubIcon } from "@/components/ui/icons";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
+import { ContributorRankingsTable } from "@/components/leaderboard/contributor-rankings-table";
 import { Project, Opportunity } from "@/types";
 import { StudentContributor } from "@/lib/data/student-competition";
 
@@ -26,6 +27,23 @@ export default function HomePage() {
   const [featuredProjects, setFeaturedProjects] = React.useState<Project[]>([]);
   const [_featuredOpportunities, setFeaturedOpportunities] = React.useState<Opportunity[]>([]);
   const [topContributors, setTopContributors] = React.useState<StudentContributor[]>([]);
+
+  const leaderboardTableItems = React.useMemo(() => {
+    return topContributors.map((student, idx) => {
+      const stats = student.month || {};
+      return {
+        id: student.id,
+        name: student.name,
+        username: student.username,
+        avatarUrl: student.avatarUrl,
+        mergedPrs: stats.mergedPrs ?? stats.prs ?? 0,
+        issuesOpened: stats.issuesOpened ?? 0,
+        openPrs: stats.openPrs ?? 0,
+        closedPrs: stats.closedPrs ?? 0,
+        rank: idx + 1,
+      };
+    });
+  }, [topContributors]);
 
   // Quick-Preview Student Card Modal State
   const [previewStudent, setPreviewStudent] = React.useState<StudentPreviewData | null>(null);
@@ -425,74 +443,19 @@ export default function HomePage() {
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {topContributors.map((student, idx) => {
-                    const stats = (student.month as unknown as { mergedPrs?: number; qualityPrs?: number; prs?: number }) || {};
-                    const mergedCount = stats.mergedPrs ?? student.month.prs ?? 0;
-                    const qualityCount = stats.qualityPrs ?? student.month.qualityPrs ?? 0;
-
-                    return (
-                      <div
-                        key={student.id}
-                        className="p-4 rounded-xl border border-border bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-primary/40 transition-all group"
-                      >
-                        <Link
-                          href={`/members/${encodeURIComponent(student.username)}`}
-                          className="flex items-center space-x-3.5 flex-1 min-w-0"
-                        >
-                          <span className="font-mono font-bold text-xs text-muted-foreground w-6">
-                            #{idx + 1}
-                          </span>
-                          <img
-                            src={student.avatarUrl}
-                            alt={student.name}
-                            className="h-10 w-10 rounded-full border border-border object-cover group-hover:scale-105 transition-transform"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <p className="font-bold text-foreground text-sm leading-tight group-hover:text-primary transition-colors truncate">
-                              {student.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground font-mono truncate">
-                              @{student.username} • {student.department}
-                            </p>
-                          </div>
-                        </Link>
-
-                        <div className="flex items-center space-x-2.5 justify-end">
-                          {/* Direct GitHub Action Icon */}
-                          <div className="flex items-center space-x-1.5 mr-1">
-                            <a
-                              href={`https://github.com/${student.username}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title={`@${student.username} on GitHub`}
-                              className="h-8 w-8 rounded-full bg-muted/60 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
-                            >
-                              <GithubIcon className="h-4 w-4" />
-                            </a>
-                          </div>
-
-                          {/* Metric Badges */}
-                          <div className="flex items-center space-x-2 text-right">
-                            <span className="font-bold text-xs font-mono px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                              {mergedCount} Merged
-                            </span>
-                            {qualityCount > 0 && (
-                              <span className="font-semibold text-[11px] font-mono px-2 py-1 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                                {qualityCount} Quality
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="space-y-4">
+                  <ContributorRankingsTable
+                    contributors={leaderboardTableItems}
+                    title="All Contributor Rankings"
+                    subtitle="Real-time verified pull requests for this month."
+                    developerCountLabel={`${topContributors.length} active developers`}
+                  />
 
                   {/* Option at the bottom to view all students */}
                   <div className="pt-2 text-center">
-                    <Link href="/programs#student-competition">
+                    <Link href="/leaderboard">
                       <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer">
-                        <span>View All Campus Contributors in Open Source Arena</span>
+                        <span>View Dedicated Open-Source Contributor Leaderboard</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
                     </Link>

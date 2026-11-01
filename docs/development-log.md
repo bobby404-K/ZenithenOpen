@@ -507,6 +507,36 @@ Seamless Contributor Leaderboard Population & Fallback Resilience
 * Verified in browser subagent: `/leaderboard` displays Top 3 podium cards and 7 active student rankings with open-source metrics and no department info.
 * Feature branch preserved permanently locally and on origin.
 
+---
+
+## Entry: 2026-11-01 — Milestone 22: Universal Open-Source Contributor Rankings Table (v1.55.0)
+
+### Feature Name
+Universal Open-Source Contributor Rankings Table
+
+### Branch
+`feature/universal-open-source-leaderboard-table`
+
+### Files Changed
+* `components/leaderboard/contributor-rankings-table.tsx` — Created reusable client component matching the requested design with columns: `RANK`, `CONTRIBUTOR` (avatar + name + `@username`), `MERGED`, `ISSUES OPENED`, `PR OPEN`, `CLOSED PR`.
+* `app/leaderboard/page.tsx` — Replaced inline table with `ContributorRankingsTable`.
+* `app/programs/page.tsx` — Replaced contender cards with full `ContributorRankingsTable` beneath the top 3 podium cards.
+* `app/projects/page.tsx` — Replaced custom campus leaderboard standings list with `ContributorRankingsTable` and updated top 3 podium metric grids to 4 open-source metrics.
+* `app/page.tsx` — Replaced homepage monthly leaderboard contender list with `ContributorRankingsTable`.
+* `app/api/projects/leaderboard/route.ts` — Added `issuesOpened` to `CampusContributorStanding` interface, populated fallback and query data, and bumped cache key to `:v2`.
+* `package.json` — Bumped version to `1.55.0`.
+* `CHANGELOG.md` — Documented release notes.
+
+### Verification
+* `npm run typecheck` (`tsc --noEmit`) — 0 errors.
+* `npm test` — 32 test suites, 989 tests passed, 0 failed.
+* Visual verification via `browser_subagent` across:
+  - `/leaderboard`
+  - `/programs#student-competition`
+  - `/projects`
+  - `/` (homepage)
+* Preserved feature branch permanently locally and on origin.
+
 
 
 

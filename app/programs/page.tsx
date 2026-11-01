@@ -43,6 +43,7 @@ import {
   StudentContributor,
 } from "@/lib/data/student-competition";
 import { useNavigation } from "@/components/navigation/navigation-context";
+import { ContributorRankingsTable } from "@/components/leaderboard/contributor-rankings-table";
 import { cn } from "@/lib/utils";
 
 interface ProgramItem {
@@ -760,6 +761,35 @@ function StudentLeaderboardSection({
   const displayRemaining = isCampusReposOnly
     ? remainingStudents.filter(campusRepoFilter)
     : remainingStudents;
+
+  const allContributorsTableItems = React.useMemo(() => {
+    const list = [...displayPodium, ...displayRemaining];
+    list.sort((a, b) => {
+      const statsA = a[timeframe];
+      const statsB = b[timeframe];
+      const mDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      if (mDiff !== 0) return mDiff;
+      const iDiff = (statsB.issuesOpened ?? 0) - (statsA.issuesOpened ?? 0);
+      if (iDiff !== 0) return iDiff;
+      const oDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+      if (oDiff !== 0) return oDiff;
+      const cDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
+      if (cDiff !== 0) return cDiff;
+      return a.username.localeCompare(b.username);
+    });
+    return list.map((student, idx) => ({
+      id: student.id,
+      name: student.name,
+      username: student.username,
+      avatarUrl: student.avatarUrl,
+      mergedPrs: student[timeframe]?.mergedPrs ?? 0,
+      issuesOpened: student[timeframe]?.issuesOpened ?? 0,
+      openPrs: student[timeframe]?.openPrs ?? 0,
+      closedPrs: student[timeframe]?.closedPrs ?? 0,
+      rank: idx + 1,
+    }));
+  }, [displayPodium, displayRemaining, timeframe]);
+
   return (
     <motion.div
       id="student-competition"
@@ -986,119 +1016,31 @@ function StudentLeaderboardSection({
         })}
       </div>
 
-      {/* Rest of Competitors (Ranks 4+) */}
-      <div className="mt-8 space-y-3 pt-4 border-t border-border/80">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground font-mono">
-            Contender Rankings (Ranks 4 - 6)
-          </h3>
-          <Link href="/leaderboard">
+      {/* Complete Rankings Table */}
+      <div className="mt-8 space-y-4 pt-4 border-t border-border/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground font-mono">
+              Complete Open-Source Contributor Standings
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Verified ranking based strictly on open-source contributions: merged PRs, opened issues, active PRs, and closed PRs.
+            </p>
+          </div>
+          <Link href="/leaderboard" className="shrink-0">
             <Button variant="ghost" size="sm" className="text-xs text-primary hover:text-primary/90 h-7 px-2">
-              <span>See All Student Rankings</span>
+              <span>View Dedicated Leaderboard</span>
               <ArrowRight className="h-3 w-3 ml-1" />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {displayRemaining.map((student) => {
-            const stats = student[timeframe];
-            return (
-              <Card
-                key={student.id}
-                className="flex flex-col justify-between border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition-all"
-              >
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                      #{stats.rank}
-                    </span>
-                    <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-md border", student.badgeColor)}>
-                      {student.badge}
-                    </span>
-                  </div>
-
-                  <Link
-                    href={`/members/${encodeURIComponent(student.username)}`}
-                    className="flex items-center space-x-2.5 group hover:opacity-90 transition-opacity"
-                  >
-                    <img
-                      src={student.avatarUrl}
-                      alt={student.name}
-                      className="h-9 w-9 rounded-full border border-border bg-muted p-0.5 group-hover:scale-105 transition-transform"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                        {student.name}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground font-mono truncate">
-                        @{student.username}
-                      </p>
-                    </div>
-                  </Link>
-
-                  <div className="grid grid-cols-4 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
-                    <div>
-                      <div className="font-bold text-emerald-500">{stats.mergedPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Merged PRs">MERGED</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-amber-500">{stats.issuesOpened ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Issues Opened">ISSUES</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-blue-500">{stats.openPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Open PRs">PR OPEN</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-rose-500">{stats.closedPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Closed PRs">CLOSED</div>
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] text-muted-foreground line-clamp-1 italic">
-                    &ldquo;{stats.topContribution.title}&rdquo;
-                  </p>
-                </div>
-
-                <div className="pt-3 mt-3 border-t border-border/50 grid grid-cols-2 gap-2">
-                  <a
-                    href={student.githubUrl || `https://github.com/${student.username}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full text-xs h-7 gap-1 text-muted-foreground hover:text-foreground border border-border/40 hover:border-border cursor-pointer shadow-xs"
-                    >
-                      <GithubIcon className="h-3 w-3 shrink-0" />
-                      <span className="truncate">GitHub</span>
-                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
-                    </Button>
-                  </a>
-                  <a
-                    href={student.linkedinUrl || `https://www.linkedin.com/in/${student.username}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full"
-                  >
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full text-xs h-7 gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-500 border border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5 cursor-pointer shadow-xs"
-                    >
-                      <LinkedinIcon className="h-3 w-3 shrink-0" />
-                      <span className="truncate">LinkedIn</span>
-                      <ExternalLink className="h-2.5 w-2.5 ml-auto shrink-0" />
-                    </Button>
-                  </a>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+        <ContributorRankingsTable
+          contributors={allContributorsTableItems}
+          title="All Contributor Rankings"
+          subtitle={`Real-time verified pull requests for ${timeframe === "week" ? "this week" : timeframe === "month" ? "this month" : "all-time"}.`}
+          developerCountLabel={`${allContributorsTableItems.length} active developers`}
+        />
       </div>
     </motion.div>
   );
