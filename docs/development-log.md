@@ -486,6 +486,28 @@ Open Source Contributions Leaderboard & Complete Department Removal
 * Verified `http://localhost:3000/leaderboard` and `http://localhost:3000/programs` return HTTP 200 OK.
 * Feature branch preserved permanently locally and on origin.
 
+---
+
+## Entry: 2026-11-01 — Milestone 21: Seamless Contributor Leaderboard Population & Fallback Resilience (v1.54.0)
+
+### Feature Name
+Seamless Contributor Leaderboard Population & Fallback Resilience
+
+### Branch
+`feature/leaderboard-active-contributors-view`
+
+### Files Changed
+* `app/api/students/leaderboard/route.ts` — Ensured default fallback to `STUDENT_COMPETITORS` when database contributors array is empty or database is unreachable, avoiding the blank/empty state on `/leaderboard`. Incremented Redis cache namespace to `v2` for immediate freshness.
+* `package.json` — Bumped version to `1.54.0`.
+* `CHANGELOG.md` — Documented all changes and verification steps.
+
+### Verification
+* `npm run typecheck` (`tsc --noEmit`) — 0 errors.
+* `npm test` — 32 test suites, 989 tests passed, 0 failed.
+* Verified in browser subagent: `/leaderboard` displays Top 3 podium cards and 7 active student rankings with open-source metrics and no department info.
+* Feature branch preserved permanently locally and on origin.
+
+
 
 
 
