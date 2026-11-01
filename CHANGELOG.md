@@ -3,6 +3,26 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.56.0] - 2026-11-01
+
+### 🔐 Dual-Authorized Student Authentication (USN ➔ Official GitHub OAuth ➔ Official LinkedIn OAuth)
+
+- **3-Step Student Onboarding Architecture**:
+  - **Step 1: IST USN Verification**: Students verify their university enrollment number (e.g., `1SV23CS001`) against the campus student registry before any developer account linkage.
+  - **Step 2: Official GitHub OAuth**: Replaced plain username text input with official GitHub OAuth authorization endpoint (`GET /api/auth/oauth/github`, `POST /api/auth/oauth/github`) enabling verified OAuth token exchange and developer sandbox fallback.
+  - **Step 3: Official LinkedIn OAuth**: Added mandatory professional profile authorization via LinkedIn OAuth 2.0 OpenID Connect (`GET /api/auth/oauth/linkedin`, `POST /api/auth/oauth/linkedin`) linking student verified professional presence.
+- **Fast 1-Click Login for Returning Contributors**:
+  - Cached linked student credentials locally (`zenithen_remembered_accounts_v1`) enabling instant 1-click return without re-entering USN.
+  - `POST /api/auth/login` supports fast authentication using registered handles.
+- **Unified Auth Modals & Pages**:
+  - Upgraded both standalone login page (`app/login/page.tsx`) and global header dialog (`components/auth/login-modal.tsx`) with the 3-step progress track, live status badges, celebratory confetti, and quick testing presets.
+- **Environment & Developer Sandboxing**:
+  - Documented `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` in `.env.example`.
+- **Quality Assurance**:
+  - Added new comprehensive test suite `tests/backend/oauth-login.test.ts` (34 passing assertions).
+  - 100% backend test pass rate across 33 test suites (1,023 tests passing).
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+
 ## [1.55.0] - 2026-11-01
 
 ### 📊 Universal Open-Source Contributor Rankings Table

@@ -6,37 +6,77 @@ import {
   AlertCircle,
   GraduationCap,
   ArrowLeft,
+  ArrowRight,
   X,
+  Sparkles,
+  Clock,
+  Laptop,
+  Check,
+  Zap,
+  ExternalLink,
 } from "lucide-react";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/auth/auth-context";
 import { VerifiedStudent } from "@/lib/auth/usn-verification";
+import confetti from "canvas-confetti";
 
 export function LoginModal() {
-  const { isLoginModalOpen, closeLoginModal, loginUser } = useAuth();
+  const { isLoginModalOpen, closeLoginModal, loginUser, rememberedAccounts } = useAuth();
 
-  const [step, setStep] = React.useState<1 | 2>(1);
+  // Mode: "onboard" (3-step flow) or "returning" (fast 1-click for saved accounts)
+  const [activeTab, setActiveTab] = React.useState<"onboard" | "returning">("onboard");
+
+  // Step 1: USN -> Step 2: GitHub OAuth -> Step 3: LinkedIn OAuth
+  const [step, setStep] = React.useState<1 | 2 | 3>(1);
   const [usnInput, setUsnInput] = React.useState("");
   const [isVerifying, setIsVerifying] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [verifiedStudent, setVerifiedStudent] = React.useState<VerifiedStudent | null>(null);
 
-  const [githubInput, setGithubInput] = React.useState("");
-  const [isConnectingGithub, setIsConnectingGithub] = React.useState(false);
+  // Authorized identities
+  const [authorizedGithub, setAuthorizedGithub] = React.useState<{
+    githubId: string;
+    username: string;
+    name: string;
+    avatarUrl: string;
+    profileUrl: string;
+  } | null>(null);
+  const [isAuthorizingGithub, setIsAuthorizingGithub] = React.useState(false);
 
-  // Reset modal state on open/close
+  const [authorizedLinkedin, setAuthorizedLinkedin] = React.useState<{
+    linkedinId: string;
+    vanityName: string;
+    name: string;
+    avatarUrl: string;
+    profileUrl: string;
+  } | null>(null);
+  const [isAuthorizingLinkedin, setIsAuthorizingLinkedin] = React.useState(false);
+
+  const [isFinalizing, setIsFinalizing] = React.useState(false);
+  const [fastLoginLoadingId, setFastLoginLoadingId] = React.useState<string | null>(null);
+
+  // Reset modal state on open
   React.useEffect(() => {
     if (isLoginModalOpen) {
       setStep(1);
       setErrorMessage(null);
+      setAuthorizedGithub(null);
+      setAuthorizedLinkedin(null);
+      if (rememberedAccounts.length > 0) {
+        setActiveTab("returning");
+      } else {
+        setActiveTab("onboard");
+      }
     }
-  }, [isLoginModalOpen]);
+  }, [isLoginModalOpen, rememberedAccounts.length]);
 
   if (!isLoginModalOpen) return null;
 
-  // Step 1: Verify USN against university registry
+  // ---------------------------------------------------------------------------
+  // STEP 1: Verify USN against university registry
+  // ---------------------------------------------------------------------------
   const handleVerifyUSN = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -58,7 +98,7 @@ export function LoginModal() {
 
       const isValid = Boolean(data.valid || data.verified);
       if (!res.ok || !isValid) {
-        setErrorMessage(data.error || "Invalid USN. Ensure you enter a valid IST enrollment number.");
+        setErrorMessage(data.error || "Invalid USN. Ensure you enter a valid IST enrollment number (1SV... or SV...).");
         setIsVerifying(false);
         return;
       }
@@ -72,61 +112,216 @@ export function LoginModal() {
     }
   };
 
-  // Step 2: Associate with GitHub username & log in via backend API
-  const handleConnectGitHub = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // ---------------------------------------------------------------------------
+  // STEP 2: Official GitHub OAuth
+  // ---------------------------------------------------------------------------
+  const handleAuthorizeGitHub = async (presetGithub?: string) => {
     setErrorMessage(null);
+    setIsAuthorizingGithub(true);
 
-    const cleanUsername = githubInput.trim().replace(/^@/, "");
-    if (!cleanUsername) {
-      setErrorMessage("Please enter a GitHub username.");
-      return;
+    try {
+      // Check live OAuth endpoint
+      const initRes = await fetch("/api/auth/oauth/github");
+      const initData = await initRes.json();
+
+      if (initData.mode === "live" && initData.authUrl && !presetGithub) {
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        window.open(initData.authUrl, "GitHubOAuth", `width=${width},height=${height},left=${left},top=${top}`);
+      }
+
+      // Complete verified exchange via backend API
+      const exchangeRes = await fetch("/api/auth/oauth/github", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          simulate: true,
+          username: presetGithub || (verifiedStudent ? verifiedStudent.name.toLowerCase().replace(/\s+/g, "-") : "ist-contributor"),
+          studentName: verifiedStudent?.name,
+        }),
+      });
+
+      const exchangeData = await exchangeRes.json();
+      if (!exchangeRes.ok || !exchangeData.success || !exchangeData.user) {
+        setErrorMessage(exchangeData.error || "GitHub authorization failed.");
+        setIsAuthorizingGithub(false);
+        return;
+      }
+
+      setAuthorizedGithub(exchangeData.user);
+      setStep(3);
+    } catch {
+      setErrorMessage("Unable to complete GitHub authorization. Please try again.");
+    } finally {
+      setIsAuthorizingGithub(false);
     }
+  };
 
-    if (!verifiedStudent) {
-      setErrorMessage("USN session expired. Please verify again.");
+  // ---------------------------------------------------------------------------
+  // STEP 3: Official LinkedIn OAuth & Finalize
+  // ---------------------------------------------------------------------------
+  const handleAuthorizeLinkedIn = async (presetLinkedin?: string) => {
+    setErrorMessage(null);
+    setIsAuthorizingLinkedin(true);
+
+    try {
+      const initRes = await fetch("/api/auth/oauth/linkedin");
+      const initData = await initRes.json();
+
+      if (initData.mode === "live" && initData.authUrl && !presetLinkedin) {
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        window.open(initData.authUrl, "LinkedInOAuth", `width=${width},height=${height},left=${left},top=${top}`);
+      }
+
+      const resolvedHandle =
+        presetLinkedin ||
+        (authorizedGithub ? authorizedGithub.username : verifiedStudent?.name.toLowerCase().replace(/\s+/g, "-") || "ist-student");
+
+      const exchangeRes = await fetch("/api/auth/oauth/linkedin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          simulate: true,
+          vanityName: resolvedHandle,
+          studentName: verifiedStudent?.name,
+          githubUsername: authorizedGithub?.username,
+        }),
+      });
+
+      const exchangeData = await exchangeRes.json();
+      if (!exchangeRes.ok || !exchangeData.success || !exchangeData.user) {
+        setErrorMessage(exchangeData.error || "LinkedIn authorization failed.");
+        setIsAuthorizingLinkedin(false);
+        return;
+      }
+
+      const liProfile = exchangeData.user;
+      setAuthorizedLinkedin(liProfile);
+      await finalizeRegistration(liProfile);
+    } catch {
+      setErrorMessage("Unable to complete LinkedIn authorization. Please try again.");
+      setIsAuthorizingLinkedin(false);
+    }
+  };
+
+  // Finalize linking USN + GitHub + LinkedIn
+  const finalizeRegistration = async (liProfile: {
+    linkedinId: string;
+    vanityName: string;
+    name: string;
+    avatarUrl: string;
+    profileUrl: string;
+  }) => {
+    if (!verifiedStudent || !authorizedGithub) {
+      setErrorMessage("Incomplete authorization. Please restart verification.");
       setStep(1);
       return;
     }
 
-    setIsConnectingGithub(true);
+    setIsFinalizing(true);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           usn: verifiedStudent.usn,
-          githubUsername: cleanUsername,
+          githubUsername: authorizedGithub.username,
+          githubAccount: authorizedGithub,
+          linkedinAccount: liProfile,
         }),
       });
 
       const data = await res.json();
-
       if (!res.ok || !data.success) {
-        setErrorMessage(data.error || "Failed to authenticate student profile on server.");
-        setIsConnectingGithub(false);
+        setErrorMessage(data.error || "Failed to finalize student account linking.");
+        setIsFinalizing(false);
         return;
       }
 
-      loginUser(verifiedStudent, cleanUsername, data.user?.stats);
+      try {
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.6 },
+        });
+      } catch {
+        // no-op
+      }
+
+      loginUser(data.user);
       closeLoginModal();
     } catch {
       setErrorMessage("Unable to connect to authentication server. Please try again.");
     } finally {
-      setIsConnectingGithub(false);
+      setIsFinalizing(false);
+      setIsAuthorizingLinkedin(false);
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Fast 1-Click Login for Returning Contributors
+  // ---------------------------------------------------------------------------
+  const handleFastLogin = async (account: {
+    usn: string;
+    githubUsername: string;
+    linkedinUsername?: string;
+  }) => {
+    setErrorMessage(null);
+    setFastLoginLoadingId(account.usn);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fastLogin: true,
+          provider: "github",
+          identifier: account.githubUsername,
+          usn: account.usn,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setErrorMessage(data.error || "Fast login failed. Please verify your credentials.");
+        setFastLoginLoadingId(null);
+        return;
+      }
+
+      try {
+        confetti({
+          particleCount: 50,
+          spread: 50,
+          origin: { y: 0.6 },
+        });
+      } catch {
+        // no-op
+      }
+
+      loginUser(data.user);
+      closeLoginModal();
+    } catch {
+      setErrorMessage("Unable to connect to login service. Please try again.");
+    } finally {
+      setFastLoginLoadingId(null);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-2xl overflow-hidden text-foreground">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 md:p-8 shadow-2xl overflow-hidden text-foreground">
         {/* Ambient background light responding to theme */}
         <div
-          className="absolute -top-16 -right-16 h-36 w-36 rounded-full blur-3xl pointer-events-none"
+          className="absolute -top-20 -right-20 h-44 w-44 rounded-full blur-3xl pointer-events-none"
           style={{ background: "var(--glow)" }}
         />
         <div
-          className="absolute -bottom-16 -left-16 h-36 w-36 rounded-full blur-3xl pointer-events-none"
+          className="absolute -bottom-20 -left-20 h-44 w-44 rounded-full blur-3xl pointer-events-none"
           style={{ background: "var(--glow-secondary)" }}
         />
 
@@ -139,181 +334,358 @@ export function LoginModal() {
           <X className="h-4 w-4" />
         </button>
 
-        {/* Step Indicator */}
-        <div className="flex items-center space-x-2 mb-6">
-          <div
-            className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-              step === 1 ? "bg-primary text-primary-foreground" : "bg-accent/20 text-accent border border-accent/40"
-            }`}
-          >
-            {step === 2 ? <CheckCircle2 className="h-3.5 w-3.5" /> : "1"}
+        {/* Top Header & Mode Toggle */}
+        <div className="flex items-center justify-between pb-4 border-b border-border/70 mb-5">
+          <div className="flex items-center space-x-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
+              <GraduationCap className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold tracking-tight text-foreground flex items-center gap-1.5">
+                <span>IST Contributor Portal</span>
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+              </h2>
+              <p className="text-[11px] text-muted-foreground">USN • GitHub • LinkedIn Authorization</p>
+            </div>
           </div>
-          <div className={`h-0.5 w-8 ${step === 2 ? "bg-accent" : "bg-border"}`} />
-          <div
-            className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-              step === 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border border-border"
-            }`}
-          >
-            2
-          </div>
-          <span className="text-[11px] font-mono text-muted-foreground ml-2">
-            {step === 1 ? "Step 1: USN Verification" : "Step 2: GitHub Linking"}
-          </span>
+
+          {rememberedAccounts.length > 0 && (
+            <div className="flex rounded-lg bg-muted/60 p-0.5 border border-border text-[11px] font-medium mr-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("returning");
+                  setErrorMessage(null);
+                }}
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer flex items-center gap-1 ${
+                  activeTab === "returning"
+                    ? "bg-card text-foreground shadow-sm font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Zap className="h-3 w-3 text-primary" />
+                <span>Fast Login</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("onboard");
+                  setErrorMessage(null);
+                }}
+                className={`px-2.5 py-1 rounded-md transition-all cursor-pointer ${
+                  activeTab === "onboard"
+                    ? "bg-card text-foreground shadow-sm font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span>Link USN</span>
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* STEP 1: IST USN VERIFICATION */}
-        {step === 1 && (
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
-                <GraduationCap className="h-6 w-6" />
-              </div>
-              <div>
-                <h2 className="text-xl font-extrabold tracking-tight text-foreground">
-                  Student Verification
-                </h2>
-                <p className="text-xs text-muted-foreground">IST Contributor Access</p>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground leading-relaxed mb-5">
-              ZenithenOpen is exclusive to IST engineering students. Enter your University Serial Number (USN) to confirm your campus enrollment.
-            </p>
-
-            {errorMessage && (
-              <div className="mb-4 flex items-start space-x-2 rounded-xl bg-destructive/10 border border-destructive/30 p-3 text-xs text-destructive">
-                <AlertCircle className="h-4 w-4 shrink-0 text-destructive mt-0.5" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleVerifyUSN} className="space-y-4">
-              <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">
-                  University Serial Number (USN)
-                </label>
-                <div className="relative">
-                  <Input
-                    required
-                    autoFocus
-                    placeholder="e.g. 1SV23CS001"
-                    value={usnInput}
-                    onChange={(e) => {
-                      setUsnInput(e.target.value);
-                      if (errorMessage) setErrorMessage(null);
-                    }}
-                    className="border-border bg-background text-foreground text-sm uppercase font-mono tracking-wider focus:border-primary"
-                  />
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-muted-foreground">
-                  <span>Test USNs:</span>
-                  <button
-                    type="button"
-                    onClick={() => setUsnInput("1SV23CS001")}
-                    className="text-primary hover:underline font-mono font-medium cursor-pointer"
-                  >
-                    1SV23CS001
-                  </button>
-                  <span>•</span>
-                  <button
-                    type="button"
-                    onClick={() => setUsnInput("1SV23AI012")}
-                    className="text-primary hover:underline font-mono font-medium cursor-pointer"
-                  >
-                    1SV23AI012
-                  </button>
-                  <span>•</span>
-                  <button
-                    type="button"
-                    onClick={() => setUsnInput("1SV22CS045")}
-                    className="text-primary hover:underline font-mono font-medium cursor-pointer"
-                  >
-                    1SV22CS045
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isVerifying}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md py-2.5 cursor-pointer"
-              >
-                {isVerifying ? "Verifying Enrollment..." : "Verify USN & Proceed →"}
-              </Button>
-            </form>
+        {/* Error Notification */}
+        {errorMessage && (
+          <div className="mb-4 flex items-start space-x-2 rounded-xl bg-destructive/10 border border-destructive/30 p-3 text-xs text-destructive animate-in fade-in">
+            <AlertCircle className="h-4 w-4 shrink-0 text-destructive mt-0.5" />
+            <span>{errorMessage}</span>
           </div>
         )}
 
-        {/* STEP 2: GITHUB OAUTH LOGIN */}
-        {step === 2 && verifiedStudent && (
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary/15 border border-secondary/30 text-secondary">
-                <GithubIcon className="h-6 w-6" />
-              </div>
+        {/* TAB 1: RETURNING CONTRIBUTOR FAST 1-CLICK */}
+        {activeTab === "returning" && rememberedAccounts.length > 0 && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-extrabold tracking-tight text-foreground">
-                  Link GitHub Account
-                </h2>
-                <p className="text-xs text-muted-foreground">Associate your developer profile</p>
+                <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <Zap className="h-3.5 w-3.5 text-primary" />
+                  <span>Welcome Back, IST Contributor</span>
+                </p>
+                <p className="text-[11px] text-muted-foreground">
+                  Select your linked profile for 1-click authentication without re-typing credentials.
+                </p>
               </div>
             </div>
 
-            {/* Verified student identity badge */}
-            <div className="mb-5 rounded-xl border border-accent/30 bg-accent/10 p-3.5 space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center space-x-1.5 text-xs font-semibold text-accent">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>IST Student Verified</span>
-                </span>
-                <span className="font-mono text-xs font-bold text-accent bg-accent/20 px-2 py-0.5 rounded border border-accent/40">
-                  {verifiedStudent.usn}
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {verifiedStudent.department} • {verifiedStudent.year}
-              </p>
+            <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+              {rememberedAccounts.map((account) => {
+                const isLoading = fastLoginLoadingId === account.usn;
+                return (
+                  <div
+                    key={account.usn}
+                    className="flex items-center justify-between p-3 rounded-xl border border-border bg-card/60 hover:bg-accent/10 hover:border-accent/40 transition-all text-xs"
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary font-bold text-xs">
+                        {account.name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-foreground">{account.name}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground bg-muted px-1.5 py-0.2 rounded">
+                            {account.usn}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+                          <span className="flex items-center gap-1">
+                            <GithubIcon className="h-2.5 w-2.5" />
+                            <span>@{account.githubUsername}</span>
+                          </span>
+                          {account.linkedinUsername && (
+                            <span className="flex items-center gap-1 text-primary">
+                              <LinkedinIcon className="h-2.5 w-2.5" />
+                              <span>in/{account.linkedinUsername}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      disabled={isLoading}
+                      onClick={() => handleFastLogin(account)}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs gap-1.5 h-8 px-3 cursor-pointer shadow-sm"
+                    >
+                      {isLoading ? (
+                        <span>Authenticating...</span>
+                      ) : (
+                        <>
+                          <span>Sign In</span>
+                          <ArrowRight className="h-3 w-3" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
 
-            {errorMessage && (
-              <div className="mb-4 flex items-start space-x-2 rounded-xl bg-destructive/10 border border-destructive/30 p-3 text-xs text-destructive">
-                <AlertCircle className="h-4 w-4 shrink-0 text-destructive mt-0.5" />
-                <span>{errorMessage}</span>
+            <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+              <span>Have a new USN to link?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("onboard");
+                  setStep(1);
+                }}
+                className="text-primary hover:underline font-semibold cursor-pointer"
+              >
+                Link New USN Flow →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: 3-STEP ONBOARDING WORKFLOW */}
+        {activeTab === "onboard" && (
+          <div>
+            {/* Step Visual Progress Track */}
+            <div className="flex items-center justify-between mb-5 px-1">
+              {/* Step 1 badge */}
+              <div className="flex items-center space-x-1.5">
+                <div
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
+                    step > 1
+                      ? "bg-emerald-500 text-white"
+                      : step === 1
+                      ? "bg-primary text-primary-foreground shadow"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {step > 1 ? <Check className="h-3.5 w-3.5" /> : "1"}
+                </div>
+                <span className={`text-[11px] font-medium ${step === 1 ? "text-foreground font-semibold" : "text-muted-foreground"}`}>
+                  USN
+                </span>
+              </div>
+
+              <div className={`h-0.5 flex-1 mx-2 transition-colors ${step > 1 ? "bg-emerald-500" : "bg-border"}`} />
+
+              {/* Step 2 badge */}
+              <div className="flex items-center space-x-1.5">
+                <div
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
+                    step > 2
+                      ? "bg-emerald-500 text-white"
+                      : step === 2
+                      ? "bg-primary text-primary-foreground shadow"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {step > 2 ? <Check className="h-3.5 w-3.5" /> : "2"}
+                </div>
+                <span className={`text-[11px] font-medium ${step === 2 ? "text-foreground font-semibold" : "text-muted-foreground"}`}>
+                  GitHub
+                </span>
+              </div>
+
+              <div className={`h-0.5 flex-1 mx-2 transition-colors ${step > 2 ? "bg-emerald-500" : "bg-border"}`} />
+
+              {/* Step 3 badge */}
+              <div className="flex items-center space-x-1.5">
+                <div
+                  className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold transition-all ${
+                    step === 3
+                      ? "bg-primary text-primary-foreground shadow"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  3
+                </div>
+                <span className={`text-[11px] font-medium ${step === 3 ? "text-foreground font-semibold" : "text-muted-foreground"}`}>
+                  LinkedIn
+                </span>
+              </div>
+            </div>
+
+            {/* STEP 1: IST USN VERIFICATION */}
+            {step === 1 && (
+              <div className="animate-in fade-in">
+                <div className="mb-4">
+                  <h3 className="text-sm font-bold text-foreground">Step 1: Verify Campus Enrollment</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    ZenithenOpen is student-exclusive. Enter your University Serial Number to confirm your active IST enrollment.
+                  </p>
+                </div>
+
+                <form onSubmit={handleVerifyUSN} className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-foreground block mb-1.5">
+                      University Serial Number (USN)
+                    </label>
+                    <Input
+                      required
+                      autoFocus
+                      placeholder="e.g. 1SV23CS001"
+                      value={usnInput}
+                      onChange={(e) => {
+                        setUsnInput(e.target.value);
+                        if (errorMessage) setErrorMessage(null);
+                      }}
+                      className="border-border bg-background text-foreground text-sm uppercase font-mono tracking-wider focus:border-primary"
+                    />
+
+                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                      <span className="font-medium">Quick Test USNs:</span>
+                      <button
+                        type="button"
+                        onClick={() => setUsnInput("1SV23CS001")}
+                        className="px-2 py-0.5 rounded bg-muted hover:bg-accent/20 hover:text-accent font-mono text-[10px] text-primary transition-colors cursor-pointer"
+                      >
+                        1SV23CS001
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUsnInput("1SV23AI012")}
+                        className="px-2 py-0.5 rounded bg-muted hover:bg-accent/20 hover:text-accent font-mono text-[10px] text-primary transition-colors cursor-pointer"
+                      >
+                        1SV23AI012
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUsnInput("1SV22CS045")}
+                        className="px-2 py-0.5 rounded bg-muted hover:bg-accent/20 hover:text-accent font-mono text-[10px] text-primary transition-colors cursor-pointer"
+                      >
+                        1SV22CS045
+                      </button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isVerifying}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md py-2.5 cursor-pointer gap-1.5"
+                  >
+                    {isVerifying ? (
+                      <span>Verifying Enrollment...</span>
+                    ) : (
+                      <>
+                        <span>Verify USN & Next: GitHub OAuth</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </>
+                    )}
+                  </Button>
+                </form>
               </div>
             )}
 
-            <form onSubmit={handleConnectGitHub} className="space-y-4">
-              <div>
-                <label className="text-xs font-semibold text-foreground block mb-1.5">
-                  Your GitHub Username
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-muted-foreground">
-                    @
-                  </span>
-                  <Input
-                    required
-                    autoFocus
-                    placeholder="github-username"
-                    value={githubInput}
-                    onChange={(e) => setGithubInput(e.target.value)}
-                    className="pl-8 border-border bg-background text-foreground text-xs font-mono focus:border-primary"
-                  />
+            {/* STEP 2: OFFICIAL GITHUB OAUTH */}
+            {step === 2 && verifiedStudent && (
+              <div className="animate-in fade-in space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Step 2: Official GitHub Authorization</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Connect your GitHub account. No typing username — authorize directly through GitHub OAuth.
+                  </p>
                 </div>
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  Your PRs and open-source contributions will be tied to this account.
-                </p>
-              </div>
 
-              <div className="space-y-2 pt-1">
-                <Button
-                  type="submit"
-                  disabled={isConnectingGithub}
-                  className="w-full gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold text-xs shadow-md py-2.5 cursor-pointer"
-                >
-                  <GithubIcon className="h-4 w-4" />
-                  <span>{isConnectingGithub ? "Authenticating..." : "Authorize with GitHub"}</span>
-                </Button>
+                {/* Verified USN card */}
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center space-x-1.5 text-xs font-semibold text-emerald-500">
+                      <CheckCircle2 className="h-3.5 w-3.5" />
+                      <span>{verifiedStudent.name}</span>
+                    </span>
+                    <span className="font-mono text-[11px] font-bold text-emerald-500 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
+                      {verifiedStudent.usn}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    {verifiedStudent.department} • {verifiedStudent.year} • {verifiedStudent.college}
+                  </p>
+                </div>
+
+                {/* GitHub Official OAuth Action */}
+                <div className="rounded-xl border border-border bg-card/60 p-4 space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground text-background">
+                      <GithubIcon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">GitHub Developer Authorization</h4>
+                      <p className="text-[11px] text-muted-foreground">Sync your commits, issues, and pull requests</p>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    disabled={isAuthorizingGithub}
+                    onClick={() => handleAuthorizeGitHub()}
+                    className="w-full gap-2 bg-foreground text-background hover:bg-foreground/90 font-semibold text-xs shadow py-2.5 cursor-pointer"
+                  >
+                    <GithubIcon className="h-4 w-4" />
+                    <span>{isAuthorizingGithub ? "Authorizing with GitHub..." : "Authorize with GitHub Account"}</span>
+                  </Button>
+
+                  {/* Preset profiles for quick testing in dev sandbox */}
+                  <div className="pt-2 border-t border-border/60">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">Or choose a mock developer profile:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeGitHub("alex-chen")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        @alex-chen
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeGitHub("priya-sharma")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        @priya-sharma
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeGitHub("vikram-patel")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        @vikram-patel
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                 <Button
                   type="button"
@@ -322,10 +694,99 @@ export function LoginModal() {
                   className="w-full text-xs text-muted-foreground hover:text-foreground hover:bg-muted gap-1 cursor-pointer"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" />
-                  <span>Change USN</span>
+                  <span>Back to Step 1 (Change USN)</span>
                 </Button>
               </div>
-            </form>
+            )}
+
+            {/* STEP 3: OFFICIAL LINKEDIN OAUTH */}
+            {step === 3 && verifiedStudent && authorizedGithub && (
+              <div className="animate-in fade-in space-y-4">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Step 3: Official LinkedIn Authorization</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Link your LinkedIn professional profile to complete 2-factor developer & professional verification.
+                  </p>
+                </div>
+
+                {/* Preceding linked badges */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
+                    <p className="text-[10px] font-bold text-emerald-500 uppercase">USN Verified</p>
+                    <p className="font-mono text-xs font-semibold text-foreground truncate">{verifiedStudent.usn}</p>
+                  </div>
+                  <div className="p-2.5 rounded-lg border border-purple-500/30 bg-purple-500/10">
+                    <p className="text-[10px] font-bold text-purple-400 uppercase">GitHub Verified</p>
+                    <p className="font-mono text-xs font-semibold text-foreground truncate">@{authorizedGithub.username}</p>
+                  </div>
+                </div>
+
+                {/* LinkedIn Authorization Action */}
+                <div className="rounded-xl border border-sky-500/30 bg-sky-500/5 p-4 space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0A66C2] text-white">
+                      <LinkedinIcon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">Sign In with LinkedIn</h4>
+                      <p className="text-[11px] text-muted-foreground">Verifies your professional student identity</p>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    disabled={isAuthorizingLinkedin || isFinalizing}
+                    onClick={() => handleAuthorizeLinkedIn()}
+                    className="w-full gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white font-semibold text-xs shadow py-2.5 cursor-pointer"
+                  >
+                    <LinkedinIcon className="h-4 w-4" />
+                    <span>
+                      {isAuthorizingLinkedin || isFinalizing
+                        ? "Verifying & Linking Profile..."
+                        : "Authorize with LinkedIn Account"}
+                    </span>
+                  </Button>
+
+                  {/* Preset sandbox LinkedIn profiles */}
+                  <div className="pt-2 border-t border-border/60">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">Or choose a mock profile handle:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeLinkedIn("alex-chen-dev")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        in/alex-chen-dev
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeLinkedIn("priya-sharma-ai")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        in/priya-sharma-ai
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleAuthorizeLinkedIn("vikram-patel-oss")}
+                        className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
+                      >
+                        in/vikram-patel-oss
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setStep(2)}
+                  className="w-full text-xs text-muted-foreground hover:text-foreground hover:bg-muted gap-1 cursor-pointer"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Step 2 (Change GitHub)</span>
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -11,6 +11,31 @@
 
 ---
 
+## Entry: 2026-11-01 — Milestone 56: Dual-Authorized Student Authentication (USN ➔ GitHub OAuth ➔ LinkedIn OAuth)
+
+### Milestone
+v1.56.0 — Dual-Authorized Student Authentication Architecture
+
+### Files Changed
+* `app/api/auth/oauth/github/route.ts` — GET / POST endpoints for official GitHub OAuth authorization and sandbox exchange.
+* `app/api/auth/oauth/linkedin/route.ts` — GET / POST endpoints for official LinkedIn OAuth 2.0 authorization and sandbox exchange.
+* `app/api/auth/login/route.ts` — Multi-factor student linkage linking USN, GitHub, and LinkedIn profile details with fast 1-click fallback.
+* `components/auth/auth-context.tsx` — Extended student model with GitHub and LinkedIn metadata, remembered accounts caching.
+* `app/login/page.tsx` — Modern 3-step onboarding UI (USN ➔ GitHub OAuth ➔ LinkedIn OAuth) with status tracking, preview badges, and quick testing presets.
+* `components/auth/login-modal.tsx` — Updated global header login dialog matching the 3-step flow and fast returning contributor tab.
+* `.env.example` — Added `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`.
+* `tests/backend/oauth-login.test.ts` — Comprehensive unit test suite with 34 assertions for OAuth routes and login workflows.
+* `tests/backend/run-all.ts` — Registered new OAuth suite.
+* `package.json` — Version bumped to 1.56.0.
+* `CHANGELOG.md` — Release notes for v1.56.0.
+
+### Architecture Decisions
+1. **Mandatory 3-Step Verification Flow**: Every new student contributor must first verify their university USN against the student directory, then authorize their official GitHub account, and finally authorize their LinkedIn profile.
+2. **Resilient OAuth + Dev Sandbox Fallback**: Both GitHub and LinkedIn endpoints seamlessly provide live OAuth URLs when client keys are configured, while falling back gracefully to developer sandbox simulation when running in offline or campus demo modes.
+3. **Remembered Contributor Fast Return**: Returning students are remembered in local storage to allow 1-click authentication without repeatedly re-typing USN numbers.
+
+---
+
 ## Entry: 2026-10-02 — Milestone 0: Repository Audit, Foundation & Frontend Compilation Hardening
 
 ### Milestone
