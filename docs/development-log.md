@@ -460,6 +460,33 @@ Removal of Algorithm Criteria Banner & Live Mock Data Isolation
 * Verified `http://localhost:3000/leaderboard` returns 200 without banner or criteria text.
 * Preserved feature branch locally and remotely.
 
+---
+
+## Entry: 2026-11-01 — Milestone 20: Open Source Contributions Leaderboard & Department Removal (v1.53.0)
+
+### Feature Name
+Open Source Contributions Leaderboard & Complete Department Removal
+
+### Branch
+`feature/open-source-contributions-leaderboard`
+
+### Files Changed
+* `lib/data/student-competition.ts` — Added `issuesOpened` count to `ContributorTimeframeStats` interface and updated all mock student competitor fixtures across week, month, and overall timeframes.
+* `app/api/students/leaderboard/route.ts` — Updated `computeTimeframeStats` to calculate `issuesOpened` from `ContributionType.ISSUE` and re-ordered rank sorting hierarchy strictly by open-source contributions: Merged PRs $\to$ Issues Opened $\to$ Open PRs $\to$ Closed PRs.
+* `app/programs/page.tsx` — Updated `StudentLeaderboardSection` podium cards and contender rankings (ranks 4-6) to replace 5-stat metrics with 4 open-source metrics: Merged (Emerald), Issues (Amber), PR Open (Blue), and Closed PR (Rose). Completely removed all department subtitles from profile cards and contender rows.
+* `app/leaderboard/page.tsx` — Updated sort filter buttons to: Merged (default), Issues Opened, PR Open, Closed PR. Updated podium cards to display 4 open-source metrics and removed department subtitles. In the All Contributor Rankings table, removed `<th>Department</th>` column header and `<td>{student.department}</td>` cells, and streamlined table columns to: Rank, Contributor, Merged, Issues Opened, PR Open, Closed PR.
+* `tests/backend/leaderboard-route.test.ts` & `tests/backend/data-contracts.test.ts` — Updated test assertions to validate open-source contribution metrics (merged, issues, open, closed) and strict ranking sorting compliance.
+* `package.json` — Bumped version to `1.53.0`.
+* `CHANGELOG.md` — Documented all features and refinements.
+
+### Verification
+* `npm run typecheck` (`tsc --noEmit`) — 0 errors.
+* `npm test` — 32 test suites, 989 tests passed, 0 failed.
+* Verified `http://localhost:3000/api/students/leaderboard?mock=true` returns structured open source metrics (`mergedPrs`, `issuesOpened`, `openPrs`, `closedPrs`).
+* Verified `http://localhost:3000/leaderboard` and `http://localhost:3000/programs` return HTTP 200 OK.
+* Feature branch preserved permanently locally and on origin.
+
+
 
 
 

@@ -17,7 +17,7 @@ import {
   STUDENT_COMPETITORS,
 } from "../../../../lib/data/student-competition";
 import { syncStudentGitHubData } from "../../../../lib/github/sync";
-import { ContributionStatus } from "@prisma/client";
+import { ContributionStatus, ContributionType } from "@prisma/client";
 
 function getBadgeForRank(rank: number): { badge: string; badgeColor: string } {
   if (rank === 1) {
@@ -49,6 +49,7 @@ function computeTimeframeStats(
     title: string;
     url: string;
     status: ContributionStatus;
+    type?: ContributionType;
     isQualityPr: boolean;
     mergedAt: Date | null;
     createdAt: Date;
@@ -59,18 +60,20 @@ function computeTimeframeStats(
     ? contributions.filter((c) => new Date(c.createdAt) >= startDate)
     : contributions;
 
-  const prs = filtered.length;
-  const mergedPrs = filtered.filter((c) => c.status === ContributionStatus.MERGED).length;
-  const qualityPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.MERGED).length;
-  const qualityOpenPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.OPEN).length;
-  const qualityClosedPrs = filtered.filter((c) => c.isQualityPr && c.status === ContributionStatus.CLOSED).length;
-  const openPrs = filtered.filter((c) => c.status === ContributionStatus.OPEN).length;
-  const closedPrs = filtered.filter((c) => c.status === ContributionStatus.CLOSED).length;
+  const issuesOpened = filtered.filter((c) => c.type === ContributionType.ISSUE).length;
+  const prsContributions = filtered.filter((c) => !c.type || c.type === ContributionType.PULL_REQUEST);
+  const prs = prsContributions.length;
+  const mergedPrs = prsContributions.filter((c) => c.status === ContributionStatus.MERGED).length;
+  const openPrs = prsContributions.filter((c) => c.status === ContributionStatus.OPEN).length;
+  const closedPrs = prsContributions.filter((c) => c.status === ContributionStatus.CLOSED).length;
+  const qualityPrs = prsContributions.filter((c) => c.isQualityPr && c.status === ContributionStatus.MERGED).length;
+  const qualityOpenPrs = prsContributions.filter((c) => c.isQualityPr && c.status === ContributionStatus.OPEN).length;
+  const qualityClosedPrs = prsContributions.filter((c) => c.isQualityPr && c.status === ContributionStatus.CLOSED).length;
 
   // Determine top contribution
-  const qualityOrMerged = filtered.find(
+  const qualityOrMerged = prsContributions.find(
     (c) => (c.isQualityPr && c.status === ContributionStatus.MERGED) || c.status === ContributionStatus.MERGED
-  ) || filtered[0];
+  ) || prsContributions[0] || filtered[0];
 
   const topContribution: TopContributionInfo = qualityOrMerged
     ? {
@@ -89,13 +92,14 @@ function computeTimeframeStats(
       };
 
   return {
+    mergedPrs,
+    issuesOpened,
+    openPrs,
+    closedPrs,
     qualityPrs,
     qualityOpenPrs,
     qualityClosedPrs,
     prs,
-    openPrs,
-    closedPrs,
-    mergedPrs,
     reviews: Math.floor(prs * 0.5),
     commits: prs * 3,
     topContribution,
@@ -176,32 +180,31 @@ export async function GET(request: NextRequest) {
       dbContributors = [...STUDENT_COMPETITORS];
     }
 
-    // 3. Sort strictly by 4-tier hierarchy:
-    // Tier 1: Quality Merged PRs (>=100 stars && >=100 forks, merged)
-    // Tier 2: Quality Open PRs (>=100 stars && >=100 forks, open)
-    // Tier 3: Quality Closed PRs (>=100 stars && >=100 forks, closed unmerged)
-    // Tier 4: Total Merges (all merged PRs on user's account)
+    // 3. Sort by open source contributions:
+    // Tier 1: Merged PRs
+    // Tier 2: Issues Opened
+    // Tier 3: Open PRs
+    // Tier 4: Closed PRs
     interface ExtendedStats {
-      qualityPrs?: number;
-      qualityOpenPrs?: number;
-      qualityClosedPrs?: number;
-      prs?: number;
+      mergedPrs?: number;
+      issuesOpened?: number;
       openPrs?: number;
       closedPrs?: number;
-      mergedPrs?: number;
+      qualityPrs?: number;
+      prs?: number;
     }
 
     dbContributors.sort((a, b) => {
       const statsA = a[timeframe] as unknown as ExtendedStats;
       const statsB = b[timeframe] as unknown as ExtendedStats;
 
-      // Tier 1: Quality Merged PRs
-      const qualityDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
-      if (qualityDiff !== 0) return qualityDiff;
+      // Tier 1: Merged PRs
+      const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+      if (mergeDiff !== 0) return mergeDiff;
 
-      // Tier 2: Total PRs
-      const totalDiff = (statsB.prs ?? 0) - (statsA.prs ?? 0);
-      if (totalDiff !== 0) return totalDiff;
+      // Tier 2: Issues Opened
+      const issueDiff = (statsB.issuesOpened ?? 0) - (statsA.issuesOpened ?? 0);
+      if (issueDiff !== 0) return issueDiff;
 
       // Tier 3: Open PRs
       const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
@@ -210,10 +213,6 @@ export async function GET(request: NextRequest) {
       // Tier 4: Closed PRs
       const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
       if (closedDiff !== 0) return closedDiff;
-
-      // Tier 5: Total Merges
-      const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
-      if (mergeDiff !== 0) return mergeDiff;
 
       // Deterministic alphabetical fallback
       return a.username.localeCompare(b.username);

@@ -7,13 +7,14 @@ export interface TopContributionInfo {
 
 export interface ContributorTimeframeStats {
   rank: number;
-  qualityPrs: number;        // Tier 1: Quality Merges (>=100 stars && >=100 forks, merged)
-  qualityOpenPrs?: number;   // Tier 2: Quality Open PRs (>=100 stars && >=100 forks, open)
-  qualityClosedPrs?: number; // Tier 3: Quality Closed PRs (>=100 stars && >=100 forks, closed)
-  mergedPrs: number;         // Tier 4: Total Merges (all merged PRs on user's account)
-  prs: number;               // Total PRs (informational)
-  openPrs: number;           // Total Open PRs (informational)
-  closedPrs: number;         // Total Closed PRs (informational)
+  mergedPrs: number;         // Open source merged PRs
+  issuesOpened: number;      // Open source issues opened
+  openPrs: number;           // Open PRs
+  closedPrs: number;         // Closed PRs
+  qualityPrs: number;        // Backward compatibility
+  qualityOpenPrs?: number;   // Backward compatibility
+  qualityClosedPrs?: number; // Backward compatibility
+  prs: number;               // Backward compatibility
   reviews?: number;
   commits?: number;
   points?: number;           // Deprecated, kept optional for backwards compat
@@ -80,11 +81,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 1,
-      qualityPrs: 3,
-      prs: 4,
+      mergedPrs: 4,
+      issuesOpened: 2,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 4,
+      qualityPrs: 3,
+      prs: 4,
       reviews: 7,
       commits: 18,
       topContribution: {
@@ -96,11 +98,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 1,
-      qualityPrs: 14,
-      prs: 16,
+      mergedPrs: 14,
+      issuesOpened: 6,
       openPrs: 1,
       closedPrs: 1,
-      mergedPrs: 14,
+      qualityPrs: 14,
+      prs: 16,
       reviews: 28,
       commits: 64,
       topContribution: {
@@ -112,11 +115,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 1,
-      qualityPrs: 48,
-      prs: 54,
+      mergedPrs: 48,
+      issuesOpened: 18,
       openPrs: 3,
       closedPrs: 3,
-      mergedPrs: 48,
+      qualityPrs: 48,
+      prs: 54,
       reviews: 92,
       commits: 210,
       topContribution: {
@@ -157,11 +161,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 2,
-      qualityPrs: 3,
-      prs: 3,
+      mergedPrs: 3,
+      issuesOpened: 1,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 3,
+      qualityPrs: 3,
+      prs: 3,
       reviews: 5,
       commits: 14,
       topContribution: {
@@ -173,11 +178,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 2,
-      qualityPrs: 12,
-      prs: 14,
+      mergedPrs: 12,
+      issuesOpened: 5,
       openPrs: 1,
       closedPrs: 1,
-      mergedPrs: 12,
+      qualityPrs: 12,
+      prs: 14,
       reviews: 22,
       commits: 58,
       topContribution: {
@@ -189,11 +195,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 2,
-      qualityPrs: 42,
-      prs: 48,
+      mergedPrs: 42,
+      issuesOpened: 14,
       openPrs: 3,
       closedPrs: 3,
-      mergedPrs: 42,
+      qualityPrs: 42,
+      prs: 48,
       reviews: 76,
       commits: 185,
       topContribution: {
@@ -232,11 +239,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 3,
-      qualityPrs: 2,
-      prs: 3,
+      mergedPrs: 2,
+      issuesOpened: 2,
       openPrs: 1,
       closedPrs: 0,
-      mergedPrs: 2,
+      qualityPrs: 2,
+      prs: 3,
       reviews: 4,
       commits: 12,
       topContribution: {
@@ -248,11 +256,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 3,
-      qualityPrs: 10,
-      prs: 12,
+      mergedPrs: 10,
+      issuesOpened: 4,
       openPrs: 1,
       closedPrs: 1,
-      mergedPrs: 10,
+      qualityPrs: 10,
+      prs: 12,
       reviews: 17,
       commits: 45,
       topContribution: {
@@ -264,11 +273,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 3,
-      qualityPrs: 34,
-      prs: 39,
+      mergedPrs: 34,
+      issuesOpened: 12,
       openPrs: 2,
       closedPrs: 3,
-      mergedPrs: 34,
+      qualityPrs: 34,
+      prs: 39,
       reviews: 52,
       commits: 140,
       topContribution: {
@@ -307,11 +317,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 4,
-      qualityPrs: 2,
-      prs: 2,
+      mergedPrs: 2,
+      issuesOpened: 1,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 2,
+      qualityPrs: 2,
+      prs: 2,
       reviews: 8,
       commits: 9,
       topContribution: {
@@ -323,11 +334,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 4,
-      qualityPrs: 8,
-      prs: 9,
+      mergedPrs: 8,
+      issuesOpened: 3,
       openPrs: 1,
       closedPrs: 0,
-      mergedPrs: 8,
+      qualityPrs: 8,
+      prs: 9,
       reviews: 31,
       commits: 34,
       topContribution: {
@@ -339,11 +351,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 4,
-      qualityPrs: 32,
-      prs: 36,
+      mergedPrs: 32,
+      issuesOpened: 10,
       openPrs: 2,
       closedPrs: 2,
-      mergedPrs: 32,
+      qualityPrs: 32,
+      prs: 36,
       reviews: 98,
       commits: 115,
       topContribution: {
@@ -382,11 +395,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 5,
-      qualityPrs: 2,
-      prs: 2,
+      mergedPrs: 2,
+      issuesOpened: 0,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 2,
+      qualityPrs: 2,
+      prs: 2,
       reviews: 3,
       commits: 8,
       topContribution: {
@@ -398,11 +412,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 5,
-      qualityPrs: 7,
-      prs: 8,
+      mergedPrs: 7,
+      issuesOpened: 2,
       openPrs: 1,
       closedPrs: 0,
-      mergedPrs: 7,
+      qualityPrs: 7,
+      prs: 8,
       reviews: 14,
       commits: 29,
       topContribution: {
@@ -414,11 +429,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 5,
-      qualityPrs: 24,
-      prs: 28,
+      mergedPrs: 24,
+      issuesOpened: 8,
       openPrs: 2,
       closedPrs: 2,
-      mergedPrs: 24,
+      qualityPrs: 24,
+      prs: 28,
       reviews: 41,
       commits: 95,
       topContribution: {
@@ -457,11 +473,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 6,
-      qualityPrs: 1,
-      prs: 2,
+      mergedPrs: 1,
+      issuesOpened: 1,
       openPrs: 1,
       closedPrs: 0,
-      mergedPrs: 1,
+      qualityPrs: 1,
+      prs: 2,
       reviews: 2,
       commits: 6,
       topContribution: {
@@ -473,11 +490,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 6,
-      qualityPrs: 5,
-      prs: 7,
+      mergedPrs: 5,
+      issuesOpened: 2,
       openPrs: 1,
       closedPrs: 1,
-      mergedPrs: 5,
+      qualityPrs: 5,
+      prs: 7,
       reviews: 9,
       commits: 22,
       topContribution: {
@@ -489,11 +507,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 6,
-      qualityPrs: 17,
-      prs: 21,
+      mergedPrs: 17,
+      issuesOpened: 6,
       openPrs: 2,
       closedPrs: 2,
-      mergedPrs: 17,
+      qualityPrs: 17,
+      prs: 21,
       reviews: 27,
       commits: 72,
       topContribution: {
@@ -536,11 +555,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     week: {
       rank: 7,
-      qualityPrs: 0,
-      prs: 0,
+      mergedPrs: 0,
+      issuesOpened: 0,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 0,
+      qualityPrs: 0,
+      prs: 0,
       reviews: 0,
       commits: 0,
       topContribution: {
@@ -552,11 +572,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     month: {
       rank: 7,
-      qualityPrs: 0,
-      prs: 0,
+      mergedPrs: 0,
+      issuesOpened: 0,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 0,
+      qualityPrs: 0,
+      prs: 0,
       reviews: 0,
       commits: 0,
       topContribution: {
@@ -568,11 +589,12 @@ export const STUDENT_COMPETITORS: StudentContributor[] = [
     },
     overall: {
       rank: 7,
-      qualityPrs: 0,
-      prs: 0,
+      mergedPrs: 0,
+      issuesOpened: 0,
       openPrs: 0,
       closedPrs: 0,
-      mergedPrs: 0,
+      qualityPrs: 0,
+      prs: 0,
       reviews: 0,
       commits: 0,
       topContribution: {

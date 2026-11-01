@@ -18,7 +18,7 @@ import { StudentContributor } from "@/lib/data/student-competition";
 
 export default function LeaderboardPage() {
   const [timeframe, setTimeframe] = React.useState<"week" | "month" | "overall">("month");
-  const [sortBy, setSortBy] = React.useState<"quality" | "prs" | "open" | "closed" | "merged">("quality");
+  const [sortBy, setSortBy] = React.useState<"merged" | "issues" | "open" | "closed">("merged");
   const [competitors, setCompetitors] = React.useState<StudentContributor[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSyncing, setIsSyncing] = React.useState(false);
@@ -33,7 +33,6 @@ export default function LeaderboardPage() {
         username: student.username,
         name: student.name,
         avatarUrl: student.avatarUrl,
-        department: student.department,
         year: student.year,
         badge: student.badge,
         badgeColor: student.badgeColor,
@@ -85,38 +84,31 @@ export default function LeaderboardPage() {
     }
   };
 
-  // Sort competitors: Tier 1: Quality Merge -> Tier 2: Quality Open PR -> Tier 3: Quality Closed PR -> Tier 4: Total Merges
+  // Sort competitors: Tier 1: Merged PRs -> Tier 2: Issues Opened -> Tier 3: Open PRs -> Tier 4: Closed PRs
   const sortedCompetitors = React.useMemo(() => {
     return [...competitors].sort((a, b) => {
-      const statsA = a[timeframe] as unknown as { qualityPrs?: number; qualityOpenPrs?: number; qualityClosedPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
-      const statsB = b[timeframe] as unknown as { qualityPrs?: number; qualityOpenPrs?: number; qualityClosedPrs?: number; prs?: number; openPrs?: number; closedPrs?: number; mergedPrs?: number };
-      if (sortBy === "quality") {
-        // Tier 1: Quality Merge (>=100 stars && >=100 forks, merged)
-        const qDiff = (statsB.qualityPrs ?? 0) - (statsA.qualityPrs ?? 0);
-        if (qDiff !== 0) return qDiff;
-
-        // Tier 2: Quality Open PR (>=100 stars && >=100 forks, open)
-        const qOpenB = statsB.qualityOpenPrs ?? statsB.openPrs ?? 0;
-        const qOpenA = statsA.qualityOpenPrs ?? statsA.openPrs ?? 0;
-        const openDiff = qOpenB - qOpenA;
+      const statsA = a[timeframe];
+      const statsB = b[timeframe];
+      if (sortBy === "merged") {
+        const mDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+        if (mDiff !== 0) return mDiff;
+        const iDiff = (statsB.issuesOpened ?? 0) - (statsA.issuesOpened ?? 0);
+        if (iDiff !== 0) return iDiff;
+        const openDiff = (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
         if (openDiff !== 0) return openDiff;
-
-        // Tier 3: Quality Closed PR (>=100 stars && >=100 forks, closed unmerged)
-        const qClosedB = statsB.qualityClosedPrs ?? statsB.closedPrs ?? 0;
-        const qClosedA = statsA.qualityClosedPrs ?? statsA.closedPrs ?? 0;
-        const closedDiff = qClosedB - qClosedA;
+        const closedDiff = (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
         if (closedDiff !== 0) return closedDiff;
-
-        // Tier 4: Total Merges (all merged PRs on user's account)
-        const mergeDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
-        if (mergeDiff !== 0) return mergeDiff;
-
         return a.username.localeCompare(b.username);
       }
-      if (sortBy === "prs") return (statsB.prs ?? 0) - (statsA.prs ?? 0);
+      if (sortBy === "issues") {
+        const iDiff = (statsB.issuesOpened ?? 0) - (statsA.issuesOpened ?? 0);
+        if (iDiff !== 0) return iDiff;
+        const mDiff = (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
+        if (mDiff !== 0) return mDiff;
+        return (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
+      }
       if (sortBy === "open") return (statsB.openPrs ?? 0) - (statsA.openPrs ?? 0);
       if (sortBy === "closed") return (statsB.closedPrs ?? 0) - (statsA.closedPrs ?? 0);
-      if (sortBy === "merged") return (statsB.mergedPrs ?? 0) - (statsA.mergedPrs ?? 0);
       return 0;
     });
   }, [competitors, timeframe, sortBy]);
@@ -138,7 +130,7 @@ export default function LeaderboardPage() {
                 Contributor Leaderboard
               </h1>
               <p className="mt-1 text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                Celebrating authentic IST student developers ranked by merged and quality pull requests across ZenithenOpen and global open-source repositories.
+                Celebrating authentic student developers ranked by open-source contributions across merged PRs, opened issues, active PRs, and closed PRs.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -198,28 +190,28 @@ export default function LeaderboardPage() {
               </button>
             </div>
 
-            {/* Sort Filter */}
+            {/* Sort Filter: Merged, Issues Opened, PR Open, Closed PR */}
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground self-start sm:self-auto">
               <span>Sort by:</span>
               <button
-                onClick={() => setSortBy("quality")}
+                onClick={() => setSortBy("merged")}
                 className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                  sortBy === "quality"
+                  sortBy === "merged"
+                    ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500 font-semibold"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Merged
+              </button>
+              <button
+                onClick={() => setSortBy("issues")}
+                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                  sortBy === "issues"
                     ? "border-amber-500/40 bg-amber-500/15 text-amber-500 font-semibold"
                     : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Quality Merge
-              </button>
-              <button
-                onClick={() => setSortBy("prs")}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                  sortBy === "prs"
-                    ? "border-primary/40 bg-primary/15 text-primary font-semibold"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Total PR
+                Issues Opened
               </button>
               <button
                 onClick={() => setSortBy("open")}
@@ -229,7 +221,7 @@ export default function LeaderboardPage() {
                     : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Open PR
+                PR Open
               </button>
               <button
                 onClick={() => setSortBy("closed")}
@@ -240,16 +232,6 @@ export default function LeaderboardPage() {
                 }`}
               >
                 Closed PR
-              </button>
-              <button
-                onClick={() => setSortBy("merged")}
-                className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                  sortBy === "merged"
-                    ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-500 font-semibold"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Total Merges
               </button>
             </div>
           </div>
@@ -286,7 +268,7 @@ export default function LeaderboardPage() {
             {topThree.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {topThree.map((student, idx) => {
-                  const stats = (student[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; openPrs?: number; closedPrs?: number; prs?: number; topContribution?: { title: string; prUrl: string } }) || {};
+                  const stats = student[timeframe];
                   const rankNum = idx + 1;
                   const medalEmoji = rankNum === 1 ? "🥇" : rankNum === 2 ? "🥈" : "🥉";
                   const borderAccent =
@@ -337,40 +319,34 @@ export default function LeaderboardPage() {
                           >
                             <span>@{student.username}</span>
                           </Link>
-                          <p className="text-[11px] text-muted-foreground mt-0.5">{student.department}</p>
+                          <p className="text-[11px] text-muted-foreground mt-0.5">{student.year}</p>
                         </div>
                       </div>
 
-                      {/* Stats */}
-                      <div className="mt-6 pt-4 border-t border-border grid grid-cols-5 gap-1 text-center">
-                        <div className="rounded-lg bg-amber-500/10 p-1.5 border border-amber-500/20">
-                          <p className="text-sm font-extrabold text-amber-500">{stats.qualityPrs ?? 0}</p>
-                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Quality Merge">
-                            Quality
+                      {/* Stats: Merged, Issues Opened, PR Open, Closed PR */}
+                      <div className="mt-6 pt-4 border-t border-border grid grid-cols-4 gap-1.5 text-center">
+                        <div className="rounded-lg bg-emerald-500/10 p-1.5 border border-emerald-500/20">
+                          <p className="text-sm font-extrabold text-emerald-500">{stats.mergedPrs ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Merged PRs">
+                            Merged
                           </p>
                         </div>
-                        <div className="rounded-lg bg-muted/40 p-1.5">
-                          <p className="text-sm font-extrabold text-foreground">{stats.prs ?? 0}</p>
-                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Total PR">
-                            Total PR
+                        <div className="rounded-lg bg-amber-500/10 p-1.5 border border-amber-500/20">
+                          <p className="text-sm font-extrabold text-amber-500">{stats.issuesOpened ?? 0}</p>
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Issues Opened">
+                            Issues
                           </p>
                         </div>
                         <div className="rounded-lg bg-blue-500/10 p-1.5 border border-blue-500/20">
                           <p className="text-sm font-extrabold text-blue-500">{stats.openPrs ?? 0}</p>
-                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Open PR">
-                            Open
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Open PRs">
+                            PR Open
                           </p>
                         </div>
                         <div className="rounded-lg bg-rose-500/10 p-1.5 border border-rose-500/20">
                           <p className="text-sm font-extrabold text-rose-500">{stats.closedPrs ?? 0}</p>
-                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Closed PR">
-                            Closed
-                          </p>
-                        </div>
-                        <div className="rounded-lg bg-emerald-500/10 p-1.5 border border-emerald-500/20">
-                          <p className="text-sm font-extrabold text-emerald-500">{stats.mergedPrs ?? stats.prs ?? 0}</p>
-                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Total Merges">
-                            Merges
+                          <p className="text-[8px] text-muted-foreground uppercase tracking-wider font-semibold truncate" title="Closed PRs">
+                            Closed PR
                           </p>
                         </div>
                       </div>
@@ -418,17 +394,15 @@ export default function LeaderboardPage() {
                     <tr>
                       <th className="py-3 px-4 w-16">Rank</th>
                       <th className="py-3 px-4">Contributor</th>
-                      <th className="py-3 px-4">Department</th>
-                      <th className="py-3 px-4 text-center">Quality Merge</th>
-                      <th className="py-3 px-4 text-center">Total PR</th>
-                      <th className="py-3 px-4 text-center">Open PR</th>
+                      <th className="py-3 px-4 text-center">Merged</th>
+                      <th className="py-3 px-4 text-center">Issues Opened</th>
+                      <th className="py-3 px-4 text-center">PR Open</th>
                       <th className="py-3 px-4 text-center">Closed PR</th>
-                      <th className="py-3 px-4 text-center">Total Merges</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {sortedCompetitors.map((student, idx) => {
-                      const stats = (student[timeframe] as unknown as { mergedPrs?: number; qualityPrs?: number; openPrs?: number; closedPrs?: number; prs?: number }) || {};
+                      const stats = student[timeframe];
                       return (
                         <tr
                           key={student.id}
@@ -464,23 +438,17 @@ export default function LeaderboardPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="py-3.5 px-4 text-muted-foreground max-w-xs truncate">
-                            {student.department}
+                          <td className="py-3.5 px-4 text-center font-bold text-emerald-600 text-sm">
+                            {stats.mergedPrs ?? 0}
                           </td>
                           <td className="py-3.5 px-4 text-center font-bold text-amber-500 text-sm">
-                            {stats.qualityPrs ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-foreground">
-                            {stats.prs ?? 0}
+                            {stats.issuesOpened ?? 0}
                           </td>
                           <td className="py-3.5 px-4 text-center text-blue-500 font-semibold">
                             {stats.openPrs ?? 0}
                           </td>
                           <td className="py-3.5 px-4 text-center text-rose-500 font-semibold">
                             {stats.closedPrs ?? 0}
-                          </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-emerald-600 text-sm">
-                            {stats.mergedPrs ?? stats.prs ?? 0}
                           </td>
                         </tr>
                       );

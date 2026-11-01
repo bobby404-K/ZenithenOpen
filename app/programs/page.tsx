@@ -877,7 +877,7 @@ function StudentLeaderboardSection({
                       @{student.username}
                     </p>
                     <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                      {student.department} • {student.year}
+                      {student.year}
                     </p>
                   </div>
                 </Link>
@@ -891,46 +891,38 @@ function StudentLeaderboardSection({
                   </span>
                 </div>
 
-                {/* Competition Stats Metrics */}
-                <div className="grid grid-cols-5 gap-1 p-2 rounded-xl bg-muted/50 border border-border/60 text-center">
+                {/* Competition Stats Metrics: Merged, Issues Opened, PR Open, Closed PR */}
+                <div className="grid grid-cols-4 gap-1.5 p-2 rounded-xl bg-muted/50 border border-border/60 text-center">
                   <div>
-                    <div className="text-sm font-extrabold text-amber-500">
-                      {stats.qualityPrs ?? 0}
+                    <div className="text-sm font-extrabold text-emerald-500">
+                      {stats.mergedPrs ?? 0}
                     </div>
-                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Quality Merge">
-                      Quality
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Merged PRs">
+                      Merged
                     </div>
                   </div>
                   <div>
-                    <div className="text-sm font-extrabold text-foreground">
-                      {stats.prs ?? 0}
+                    <div className="text-sm font-extrabold text-amber-500">
+                      {stats.issuesOpened ?? 0}
                     </div>
-                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Total PR">
-                      Total PR
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Issues Opened">
+                      Issues
                     </div>
                   </div>
                   <div>
                     <div className="text-sm font-extrabold text-blue-500">
                       {stats.openPrs ?? 0}
                     </div>
-                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Open PR">
-                      Open PR
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Open PRs">
+                      PR Open
                     </div>
                   </div>
                   <div>
                     <div className="text-sm font-extrabold text-rose-500">
                       {stats.closedPrs ?? 0}
                     </div>
-                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Closed PR">
+                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Closed PRs">
                       Closed PR
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-extrabold text-emerald-500">
-                      {stats.mergedPrs ?? stats.prs ?? 0}
-                    </div>
-                    <div className="text-[9px] uppercase font-mono text-muted-foreground font-semibold truncate" title="Total Merges">
-                      Merges
                     </div>
                   </div>
                 </div>
@@ -1040,31 +1032,27 @@ function StudentLeaderboardSection({
                         {student.name}
                       </h4>
                       <p className="text-[11px] text-muted-foreground font-mono truncate">
-                        @{student.username} • {student.department}
+                        @{student.username}
                       </p>
                     </div>
                   </Link>
 
-                  <div className="grid grid-cols-5 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
+                  <div className="grid grid-cols-4 gap-1 p-2 rounded-lg bg-muted/40 text-center text-xs">
                     <div>
-                      <div className="font-bold text-amber-500">{stats.qualityPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Quality Merge">Q-PR</div>
+                      <div className="font-bold text-emerald-500">{stats.mergedPrs ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Merged PRs">MERGED</div>
                     </div>
                     <div>
-                      <div className="font-bold text-foreground">{stats.prs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Total PR">PRS</div>
+                      <div className="font-bold text-amber-500">{stats.issuesOpened ?? 0}</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Issues Opened">ISSUES</div>
                     </div>
                     <div>
                       <div className="font-bold text-blue-500">{stats.openPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Open PR">OPEN</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Open PRs">PR OPEN</div>
                     </div>
                     <div>
                       <div className="font-bold text-rose-500">{stats.closedPrs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Closed PR">CLOSED</div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-emerald-500">{stats.mergedPrs ?? stats.prs ?? 0}</div>
-                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Total Merges">MERGED</div>
+                      <div className="text-[9px] text-muted-foreground font-mono truncate" title="Closed PRs">CLOSED</div>
                     </div>
                   </div>
 

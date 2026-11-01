@@ -130,8 +130,8 @@ export async function runDataContractsTests(): Promise<SuiteResult> {
         `Competitor '${student.username}' ${tf} qualityPrs (${stats.qualityPrs}) <= totalPrs (${stats.prs})`
       );
       suite.assert(
-        stats.mergedPrs >= 0 && stats.openPrs >= 0 && stats.closedPrs >= 0,
-        `Competitor '${student.username}' ${tf} has valid merged/open/closed PR breakdown`
+        stats.mergedPrs >= 0 && stats.issuesOpened >= 0 && stats.openPrs >= 0 && stats.closedPrs >= 0,
+        `Competitor '${student.username}' ${tf} has valid open-source contribution breakdown (merged, issues, open, closed)`
       );
       suite.assert(
         Boolean(stats.topContribution.title && stats.topContribution.prUrl),
