@@ -111,8 +111,9 @@ export async function GET(request: NextRequest) {
         ? timeframeParam
         : "week";
     const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!, 10) : undefined;
+    const includeMock = searchParams.get("mock") === "true";
 
-    const cacheKey = `leaderboard:${timeframe}`;
+    const cacheKey = `leaderboard:${timeframe}${includeMock ? ":mock" : ""}`;
 
     // 1. Check Redis cache
     const cachedLeaderboard = await getCached<StudentContributor[]>(cacheKey);
@@ -171,7 +172,7 @@ export async function GET(request: NextRequest) {
       console.warn("[Leaderboard] Database query notice:", dbErr);
     }
 
-    if (dbContributors.length === 0) {
+    if (dbContributors.length === 0 && includeMock) {
       dbContributors = [...STUDENT_COMPETITORS];
     }
 

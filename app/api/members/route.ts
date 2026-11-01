@@ -38,8 +38,9 @@ export async function GET(req: NextRequest) {
     const roleParam = searchParams.get("role")?.trim() || "All";
     const searchParam = searchParams.get("search")?.trim().toLowerCase() || "";
     const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "50", 10), 1), 100);
+    const includeMock = searchParams.get("mock") === "true";
 
-    const cacheKey = `members:list:${roleParam.toLowerCase()}:${searchParam || "all"}:${limit}`;
+    const cacheKey = `members:list:${roleParam.toLowerCase()}:${searchParam || "all"}:${limit}${includeMock ? ":mock" : ""}`;
 
     // 1. Check Redis Cache
     const cachedData = await getCached<Member[]>(cacheKey);
@@ -179,9 +180,11 @@ export async function GET(req: NextRequest) {
       badge: sc.badge as any,
     }));
 
-    for (const cm of competitorMembers) {
-      if (!members.some((m) => m.username.toLowerCase() === cm.username.toLowerCase())) {
-        members.push(cm);
+    if (includeMock) {
+      for (const cm of competitorMembers) {
+        if (!members.some((m) => m.username.toLowerCase() === cm.username.toLowerCase())) {
+          members.push(cm);
+        }
       }
     }
 

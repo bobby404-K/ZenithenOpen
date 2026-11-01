@@ -3,6 +3,22 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.0] - 2026-11-01
+
+### 🛡️ Removal of Algorithm Criteria Banner & Live Mock Data Isolation
+
+- **Leaderboard UI Purification (`app/leaderboard/page.tsx`)**:
+  - Removed the Philosophy Banner displaying internal algorithm evaluation criteria (`Quality Merge Standard: A pull request is recognized as a Quality Merge only if the repository has at least 100 stars AND 100 forks (≥100 stars and ≥100 forks)`).
+  - Kept backend 5-tier ranking evaluation algorithm intact while hiding confidential qualification heuristics from public UI.
+- **Member Profile Simplification (`app/members/[username]/page.tsx`)**:
+  - Simplified `Quality Merges (≥100 Stars & ≥100 Forks):` to `Quality Merges:` to prevent public exposure of internal algorithm metrics.
+- **Live Mock Data Guard (`app/api/students/leaderboard/route.ts`, `app/api/members/route.ts`)**:
+  - Guarded mock student competitor profiles (`STUDENT_COMPETITORS`) behind explicit `?mock=true` query parameters.
+  - By default, the live Contributor Leaderboard and Members Directory render purely authentic campus contributors or the clean empty states ("Leaderboard Awaiting First Pull Request", "No Members Connected Yet").
+- **Quality Assurance**:
+  - Updated backend test suites (`leaderboard-route.test.ts`, `student-preview-modal.test.ts`) to validate both live empty baseline and mock sorting tiers.
+  - All 32 backend test suites passing (986 tests, 0 failures), 0 TypeScript compilation errors.
+
 ## [1.51.0] - 2026-10-26
 
 ### 🧹 Comprehensive Cleansing of Mentorship & Admin References Across Entire Website
