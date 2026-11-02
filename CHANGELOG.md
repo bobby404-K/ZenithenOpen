@@ -3,6 +3,21 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.60.0] - 2026-11-02
+
+### 🚀 GitHub Deployments Integration & CI Lint Hygiene
+
+- **Repository Deployments & Homepage Metadata**:
+  - Connected official GitHub `Production` deployment environment directly linking to `https://zenithen-open.vercel.app`.
+  - Added repository description and homepage URL to the GitHub repository metadata.
+  - Added automated GitHub Actions deployment status tracking job to `.github/workflows/ci.yml`.
+- **CI Lint Hygiene (`app/api/community/swag/route.ts`)**:
+  - Fixed `prefer-const` rule on `finalSize` in the community swag distribution handler.
+  - Achieved 0 ESLint errors across the entire codebase (`npm run lint -- --quiet`).
+- **Quality Assurance**:
+  - Zero TypeScript compilation errors (`tsc --noEmit`).
+  - 100% backend test pass rate across 33 test suites (1,026 tests passing).
+
 ## [1.59.0] - 2026-11-02
 
 ### 🧹 Removed Live Campus Contribution Pulse Stream from Homepage

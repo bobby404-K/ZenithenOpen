@@ -11,6 +11,24 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 60: GitHub Deployments Integration & CI Lint Hygiene
+
+### Milestone
+v1.60.0 — GitHub Deployments Integration & CI Lint Hygiene
+
+### Files Changed
+* `app/api/community/swag/route.ts` — Fixed `prefer-const` rule on `finalSize`.
+* `.github/workflows/ci.yml` — Added `deployments: write` permission and `deploy-status` job for automatic production deployment tracking.
+* `package.json` — Version bumped to 1.60.0.
+* `proxy.ts` — Updated `x-zenithen-version` correlation header to 1.60.0.
+* `CHANGELOG.md` — Release notes for v1.60.0.
+
+### Architecture Decisions
+1. **GitHub Deployments Linkage**: Configured the official GitHub `Production` deployment environment pointing directly to `https://zenithen-open.vercel.app`, surfacing the active deployment widget in the GitHub repository sidebar.
+2. **ESLint Hygiene**: Eliminated the last remaining ESLint error in the codebase, ensuring flawless CI passes on every push to `main`.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 59: Removed Live Campus Contribution Pulse Stream from Homepage
 
 ### Milestone

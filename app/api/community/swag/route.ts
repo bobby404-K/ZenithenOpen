@@ -306,7 +306,7 @@ export async function POST(req: NextRequest) {
 
     // Validate apparel size if tier has physical apparel (Tier 3 T-Shirt & Tier 4 Hoodie)
     const validSizes = ["S", "M", "L", "XL", "2XL"];
-    let finalSize = size ? String(size).toUpperCase().trim() : undefined;
+    const finalSize = size ? String(size).toUpperCase().trim() : undefined;
     if (targetTier.hasPhysicalSwag && (targetTier.id === "tier-3" || targetTier.id === "tier-4")) {
       if (!finalSize || !validSizes.includes(finalSize)) {
         return NextResponse.json(
