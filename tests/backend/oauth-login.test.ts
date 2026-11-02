@@ -14,7 +14,9 @@
 
 import { NextRequest } from "next/server";
 import { GET as githubOauthGet, POST as githubOauthPost } from "../../app/api/auth/oauth/github/route";
+import { GET as githubCallbackGet } from "../../app/api/auth/oauth/github/callback/route";
 import { GET as linkedinOauthGet, POST as linkedinOauthPost } from "../../app/api/auth/oauth/linkedin/route";
+import { GET as linkedinCallbackGet } from "../../app/api/auth/oauth/linkedin/callback/route";
 import { POST as loginHandler } from "../../app/api/auth/login/route";
 import { TestSuite, SuiteResult } from "./test-utils";
 
@@ -163,6 +165,53 @@ export async function runOAuthLoginTests(): Promise<SuiteResult> {
   suite.assertEqual(fastLoginNotFoundRes.status, 404, "Fast login for unlinked student prompts for onboarding (404)");
   const fastLoginNotFoundData = await fastLoginNotFoundRes.json();
   suite.assertEqual(fastLoginNotFoundData.needsEnrollment, true, "Reports needsEnrollment: true");
+
+  // =========================================================================
+  // 5. Normalization of Synthetic Handles with Parentheses
+  // =========================================================================
+  const syntheticLoginReq = new NextRequest("http://localhost:3000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      usn: "1SV23CS001",
+      githubUsername: "student-(1sv23cs001)",
+      githubAccount: {
+        githubId: "gh_sim_student-1sv23cs001",
+        username: "student-(1sv23cs001)",
+        name: "Student (1SV23CS001)",
+        avatarUrl: "https://github.com/student-1sv23cs001.png",
+        profileUrl: "https://github.com/student-1sv23cs001",
+      },
+      linkedinAccount: {
+        linkedinId: "li_sim_student-1sv23cs001",
+        vanityName: "in/student-(1sv23cs001)",
+        name: "Student 1SV23CS001",
+        avatarUrl: "https://api.dicebear.com/7.x/identicon/svg?seed=student-1sv23cs001",
+        profileUrl: "https://www.linkedin.com/in/student-1sv23cs001",
+      },
+    }),
+  });
+  const syntheticLoginRes = await loginHandler(syntheticLoginReq);
+  suite.assertEqual(syntheticLoginRes.status, 200, "Synthetic handle with parentheses auto-normalizes and returns 200 OK");
+  const syntheticLoginData = await syntheticLoginRes.json();
+  suite.assertEqual(syntheticLoginData.success, true, "Synthetic login reports success: true");
+  suite.assertEqual(syntheticLoginData.user?.githubUsername, "student-1sv23cs001", "GitHub username sanitized without parentheses");
+  suite.assert(!syntheticLoginData.user?.linkedinUsername.includes("("), "LinkedIn vanity name sanitized without parentheses");
+
+  // =========================================================================
+  // 6. OAuth Callback Routes Introspection
+  // =========================================================================
+  const ghCallbackReq = new NextRequest("http://localhost:3000/api/auth/oauth/github/callback?code=mock_gh_code_123&state=abc");
+  const ghCallbackRes = await githubCallbackGet(ghCallbackReq);
+  suite.assertEqual(ghCallbackRes.status, 200, "GET /api/auth/oauth/github/callback returns 200 OK");
+  const ghCallbackHtml = await ghCallbackRes.text();
+  suite.assert(ghCallbackHtml.includes("ZENITHEN_GITHUB_OAUTH_SUCCESS"), "Callback HTML contains postMessage payload for parent window");
+
+  const liCallbackReq = new NextRequest("http://localhost:3000/api/auth/oauth/linkedin/callback?code=mock_li_code_123&state=xyz");
+  const liCallbackRes = await linkedinCallbackGet(liCallbackReq);
+  suite.assertEqual(liCallbackRes.status, 200, "GET /api/auth/oauth/linkedin/callback returns 200 OK");
+  const liCallbackHtml = await liCallbackRes.text();
+  suite.assert(liCallbackHtml.includes("ZENITHEN_LINKEDIN_OAUTH_SUCCESS"), "Callback HTML contains postMessage payload for parent window");
 
   return suite.summary();
 }

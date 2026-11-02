@@ -29,8 +29,17 @@ export async function GET(req: NextRequest) {
   if (clientId && clientId !== "your_github_oauth_client_id") {
     const encodedScope = encodeURIComponent("read:user user:email");
     const state = encodeURIComponent(Buffer.from(JSON.stringify({ callbackUrl, timestamp: Date.now() })).toString("base64"));
-    const redirectUri = encodeURIComponent(`${req.nextUrl.origin}/api/auth/oauth/github/callback`);
-    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodedScope}&state=${state}`;
+    
+    // Check if redirect URI is explicitly configured or if running in local dev
+    const configuredRedirect = process.env.GITHUB_REDIRECT_URI;
+    const isLocal = req.nextUrl.origin.includes("localhost") || req.nextUrl.origin.includes("127.0.0.1");
+    let redirectParam = "";
+    if (configuredRedirect) {
+      redirectParam = `&redirect_uri=${encodeURIComponent(configuredRedirect)}`;
+    } else if (!isLocal) {
+      redirectParam = `&redirect_uri=${encodeURIComponent(`${req.nextUrl.origin}/api/auth/oauth/github/callback`)}`;
+    }
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}${redirectParam}&scope=${encodedScope}&state=${state}`;
 
     return NextResponse.json({
       success: true,
@@ -117,7 +126,12 @@ export async function POST(req: NextRequest) {
 
     // 2. Developer Sandbox / Simulated Authorization for Testing & Campus Demos
     if (simulate || !clientId || clientId === "your_github_oauth_client_id" || !code) {
-      const cleanUsername = (username || "ist-student-dev").trim().replace(/^@/, "");
+      const rawUser = (username || "ist-student-dev").trim().replace(/^@/, "");
+      const cleanUsername = rawUser
+        .replace(/[^a-zA-Z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "") || "ist-student-dev";
+
       return NextResponse.json({
         success: true,
         mode: "sandbox",
@@ -127,7 +141,7 @@ export async function POST(req: NextRequest) {
           name: studentName || cleanUsername,
           avatarUrl: `https://github.com/${cleanUsername}.png`,
           profileUrl: `https://github.com/${cleanUsername}`,
-          email: `${cleanUsername}@users.noreply.github.com`,
+          email: `${cleanUsername.toLowerCase()}@users.noreply.github.com`,
         },
       });
     }

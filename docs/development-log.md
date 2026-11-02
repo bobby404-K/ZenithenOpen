@@ -11,6 +11,31 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 62: OAuth Redirect URI Resilience & LinkedIn Verification Flow
+
+### Milestone
+v1.62.0 — OAuth Redirect URI Resilience & LinkedIn Verification Flow
+
+### Files Changed
+* `app/api/auth/oauth/github/callback/route.ts` — Created dedicated OAuth popup callback handler with parent postMessage communication.
+* `app/api/auth/oauth/linkedin/callback/route.ts` — Created dedicated OAuth popup callback handler with parent postMessage communication.
+* `app/api/auth/oauth/github/route.ts` — Added localhost redirect_uri auto-detection and environment overrides.
+* `app/api/auth/oauth/linkedin/route.ts` — Added localhost redirect_uri auto-detection and vanity url parser.
+* `lib/auth/usn-verification.ts` — Added `sanitizeUsernameHandle` and clean suggested GitHub/LinkedIn handles without parentheses.
+* `app/api/auth/login/route.ts` — Added auto-normalization of synthetic USN parentheses and sanitized LinkedIn handles.
+* `components/auth/login-modal.tsx` — Added editable handle inputs, popup message listener, and quick-link verification actions.
+* `app/login/page.tsx` — Synchronized full-page onboarding with editable handles, popup callbacks, and presets.
+* `tests/backend/oauth-login.test.ts` — Added tests for synthetic handle normalization and OAuth callback handlers.
+* `package.json` — Bumped version to 1.62.0.
+* `proxy.ts` — Updated `x-zenithen-version` correlation header to 1.62.0.
+* `CHANGELOG.md` — Release notes for v1.62.0.
+
+### Architecture Decisions
+1. **OAuth Popup Messaging Decoupling**: Handled OAuth completion via dedicated callback pages that emit `postMessage` events back to the parent window and close themselves, providing a seamless user experience without requiring full page reloads or losing in-progress verification wizard state.
+2. **Defensive Handle Normalization**: Sanitized raw student handles across both the client input wizard and the server API endpoint to guarantee that generated handles always conform to GitHub username restrictions `/^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/`.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 61: Resilient Auth Navigation & Top-Level Dialog Stacking
 
 ### Milestone

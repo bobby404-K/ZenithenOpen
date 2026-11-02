@@ -19,7 +19,7 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/components/auth/auth-context";
-import { VerifiedStudent } from "@/lib/auth/usn-verification";
+import { VerifiedStudent, sanitizeUsernameHandle } from "@/lib/auth/usn-verification";
 import confetti from "canvas-confetti";
 
 export function LoginModal() {
@@ -31,6 +31,8 @@ export function LoginModal() {
   // Step 1: USN -> Step 2: GitHub OAuth -> Step 3: LinkedIn OAuth
   const [step, setStep] = React.useState<1 | 2 | 3>(1);
   const [usnInput, setUsnInput] = React.useState("");
+  const [githubUsernameInput, setGithubUsernameInput] = React.useState("");
+  const [linkedinUsernameInput, setLinkedinUsernameInput] = React.useState("");
   const [isVerifying, setIsVerifying] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [verifiedStudent, setVerifiedStudent] = React.useState<VerifiedStudent | null>(null);
@@ -64,6 +66,8 @@ export function LoginModal() {
       setErrorMessage(null);
       setAuthorizedGithub(null);
       setAuthorizedLinkedin(null);
+      setGithubUsernameInput("");
+      setLinkedinUsernameInput("");
       if (rememberedAccounts.length > 0) {
         setActiveTab("returning");
       } else {
@@ -71,6 +75,125 @@ export function LoginModal() {
       }
     }
   }, [isLoginModalOpen, rememberedAccounts.length]);
+
+  // Finalize linking USN + GitHub + LinkedIn
+  const finalizeRegistration = React.useCallback(
+    async (liProfile: {
+      linkedinId: string;
+      vanityName: string;
+      name: string;
+      avatarUrl: string;
+      profileUrl: string;
+    }) => {
+      if (!verifiedStudent || !authorizedGithub) {
+        setErrorMessage("Incomplete authorization. Please restart verification.");
+        setStep(1);
+        return;
+      }
+
+      setIsFinalizing(true);
+      try {
+        const cleanGhUsername = sanitizeUsernameHandle(authorizedGithub.username);
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            usn: verifiedStudent.usn,
+            githubUsername: cleanGhUsername,
+            githubAccount: {
+              ...authorizedGithub,
+              username: cleanGhUsername,
+            },
+            linkedinAccount: liProfile,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          setErrorMessage(data.error || "Failed to finalize student account linking.");
+          setIsFinalizing(false);
+          return;
+        }
+
+        try {
+          confetti({
+            particleCount: 70,
+            spread: 60,
+            origin: { y: 0.6 },
+          });
+        } catch {
+          // no-op
+        }
+
+        loginUser(data.user);
+        closeLoginModal();
+      } catch {
+        setErrorMessage("Unable to connect to authentication server. Please try again.");
+      } finally {
+        setIsFinalizing(false);
+        setIsAuthorizingLinkedin(false);
+      }
+    },
+    [verifiedStudent, authorizedGithub, loginUser, closeLoginModal]
+  );
+
+  // Listen for OAuth callback messages from popup windows
+  React.useEffect(() => {
+    const handleOAuthMessage = async (event: MessageEvent) => {
+      if (!event.data || typeof event.data !== "object") return;
+
+      if (event.data.type === "ZENITHEN_GITHUB_OAUTH_SUCCESS" && event.data.code) {
+        setIsAuthorizingGithub(true);
+        setErrorMessage(null);
+        try {
+          const exchangeRes = await fetch("/api/auth/oauth/github", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: event.data.code }),
+          });
+          const exchangeData = await exchangeRes.json();
+          if (exchangeData.success && exchangeData.user) {
+            setAuthorizedGithub(exchangeData.user);
+            setGithubUsernameInput(exchangeData.user.username);
+            setLinkedinUsernameInput(`${exchangeData.user.username}-dev`);
+            setStep(3);
+          } else {
+            setErrorMessage(exchangeData.error || "GitHub authorization failed.");
+          }
+        } catch {
+          setErrorMessage("Failed to exchange GitHub authorization code.");
+        } finally {
+          setIsAuthorizingGithub(false);
+        }
+      }
+
+      if (event.data.type === "ZENITHEN_LINKEDIN_OAUTH_SUCCESS" && event.data.code) {
+        setIsAuthorizingLinkedin(true);
+        setErrorMessage(null);
+        try {
+          const exchangeRes = await fetch("/api/auth/oauth/linkedin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: event.data.code }),
+          });
+          const exchangeData = await exchangeRes.json();
+          if (exchangeData.success && exchangeData.user) {
+            setAuthorizedLinkedin(exchangeData.user);
+            await finalizeRegistration(exchangeData.user);
+          } else {
+            setErrorMessage(exchangeData.error || "LinkedIn authorization failed.");
+          }
+        } catch {
+          setErrorMessage("Failed to exchange LinkedIn authorization code.");
+        } finally {
+          setIsAuthorizingLinkedin(false);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleOAuthMessage);
+    return () => window.removeEventListener("message", handleOAuthMessage);
+  }, [finalizeRegistration]);
 
   if (!isLoginModalOpen) return null;
 
@@ -103,7 +226,11 @@ export function LoginModal() {
         return;
       }
 
-      setVerifiedStudent(data.student);
+      const student = data.student;
+      setVerifiedStudent(student);
+      const cleanSuggested = sanitizeUsernameHandle(student.suggestedGithub || student.usn || "student");
+      setGithubUsernameInput(cleanSuggested);
+      setLinkedinUsernameInput(`${cleanSuggested}-dev`);
       setStep(2);
     } catch {
       setErrorMessage("Unable to connect to verification service. Please try again.");
@@ -113,81 +240,90 @@ export function LoginModal() {
   };
 
   // ---------------------------------------------------------------------------
-  // STEP 2: Official GitHub OAuth
+  // STEP 2: Verify & Connect GitHub Account (Direct or OAuth Popup)
   // ---------------------------------------------------------------------------
-  const handleAuthorizeGitHub = async (presetGithub?: string) => {
+  const handleVerifyAndConnectGitHub = async (targetUsername?: string) => {
     setErrorMessage(null);
     setIsAuthorizingGithub(true);
 
+    const chosenUsername = sanitizeUsernameHandle(
+      targetUsername || githubUsernameInput || (verifiedStudent ? verifiedStudent.usn : "ist-contributor")
+    );
+
     try {
-      // Check live OAuth endpoint
-      const initRes = await fetch("/api/auth/oauth/github");
-      const initData = await initRes.json();
-
-      if (initData.mode === "live" && initData.authUrl && !presetGithub) {
-        const width = 600;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-        window.open(initData.authUrl, "GitHubOAuth", `width=${width},height=${height},left=${left},top=${top}`);
-      }
-
-      // Complete verified exchange via backend API
       const exchangeRes = await fetch("/api/auth/oauth/github", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           simulate: true,
-          username: presetGithub || (verifiedStudent ? verifiedStudent.name.toLowerCase().replace(/\s+/g, "-") : "ist-contributor"),
+          username: chosenUsername,
           studentName: verifiedStudent?.name,
         }),
       });
 
       const exchangeData = await exchangeRes.json();
       if (!exchangeRes.ok || !exchangeData.success || !exchangeData.user) {
-        setErrorMessage(exchangeData.error || "GitHub authorization failed.");
+        setErrorMessage(exchangeData.error || "GitHub account verification failed.");
         setIsAuthorizingGithub(false);
         return;
       }
 
       setAuthorizedGithub(exchangeData.user);
+      setGithubUsernameInput(exchangeData.user.username);
+      if (!linkedinUsernameInput || linkedinUsernameInput.startsWith("student-")) {
+        setLinkedinUsernameInput(`${exchangeData.user.username}-dev`);
+      }
       setStep(3);
     } catch {
-      setErrorMessage("Unable to complete GitHub authorization. Please try again.");
+      setErrorMessage("Unable to connect to GitHub service. Please try again.");
+    } finally {
+      setIsAuthorizingGithub(false);
+    }
+  };
+
+  const handleLaunchGitHubOAuth = async () => {
+    setErrorMessage(null);
+    setIsAuthorizingGithub(true);
+
+    try {
+      const initRes = await fetch("/api/auth/oauth/github");
+      const initData = await initRes.json();
+
+      if (initData.authUrl) {
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        window.open(initData.authUrl, "GitHubOAuth", `width=${width},height=${height},left=${left},top=${top}`);
+      } else {
+        await handleVerifyAndConnectGitHub();
+      }
+    } catch {
+      // Graceful fallback to direct username verification
+      await handleVerifyAndConnectGitHub();
     } finally {
       setIsAuthorizingGithub(false);
     }
   };
 
   // ---------------------------------------------------------------------------
-  // STEP 3: Official LinkedIn OAuth & Finalize
+  // STEP 3: Official LinkedIn Authorization & Finalize Registration
   // ---------------------------------------------------------------------------
   const handleAuthorizeLinkedIn = async (presetLinkedin?: string) => {
     setErrorMessage(null);
     setIsAuthorizingLinkedin(true);
 
+    const chosenHandle = sanitizeUsernameHandle(
+      presetLinkedin || linkedinUsernameInput || (authorizedGithub ? authorizedGithub.username : "student-engineer")
+    );
+
     try {
-      const initRes = await fetch("/api/auth/oauth/linkedin");
-      const initData = await initRes.json();
-
-      if (initData.mode === "live" && initData.authUrl && !presetLinkedin) {
-        const width = 600;
-        const height = 700;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-        window.open(initData.authUrl, "LinkedInOAuth", `width=${width},height=${height},left=${left},top=${top}`);
-      }
-
-      const resolvedHandle =
-        presetLinkedin ||
-        (authorizedGithub ? authorizedGithub.username : verifiedStudent?.name.toLowerCase().replace(/\s+/g, "-") || "ist-student");
-
       const exchangeRes = await fetch("/api/auth/oauth/linkedin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           simulate: true,
-          vanityName: resolvedHandle,
+          vanityName: chosenHandle,
           studentName: verifiedStudent?.name,
           githubUsername: authorizedGithub?.username,
         }),
@@ -195,7 +331,7 @@ export function LoginModal() {
 
       const exchangeData = await exchangeRes.json();
       if (!exchangeRes.ok || !exchangeData.success || !exchangeData.user) {
-        setErrorMessage(exchangeData.error || "LinkedIn authorization failed.");
+        setErrorMessage(exchangeData.error || "LinkedIn verification failed.");
         setIsAuthorizingLinkedin(false);
         return;
       }
@@ -204,64 +340,11 @@ export function LoginModal() {
       setAuthorizedLinkedin(liProfile);
       await finalizeRegistration(liProfile);
     } catch {
-      setErrorMessage("Unable to complete LinkedIn authorization. Please try again.");
+      setErrorMessage("Unable to complete LinkedIn verification. Please try again.");
       setIsAuthorizingLinkedin(false);
     }
   };
 
-  // Finalize linking USN + GitHub + LinkedIn
-  const finalizeRegistration = async (liProfile: {
-    linkedinId: string;
-    vanityName: string;
-    name: string;
-    avatarUrl: string;
-    profileUrl: string;
-  }) => {
-    if (!verifiedStudent || !authorizedGithub) {
-      setErrorMessage("Incomplete authorization. Please restart verification.");
-      setStep(1);
-      return;
-    }
-
-    setIsFinalizing(true);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          usn: verifiedStudent.usn,
-          githubUsername: authorizedGithub.username,
-          githubAccount: authorizedGithub,
-          linkedinAccount: liProfile,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setErrorMessage(data.error || "Failed to finalize student account linking.");
-        setIsFinalizing(false);
-        return;
-      }
-
-      try {
-        confetti({
-          particleCount: 70,
-          spread: 60,
-          origin: { y: 0.6 },
-        });
-      } catch {
-        // no-op
-      }
-
-      loginUser(data.user);
-      closeLoginModal();
-    } catch {
-      setErrorMessage("Unable to connect to authentication server. Please try again.");
-    } finally {
-      setIsFinalizing(false);
-      setIsAuthorizingLinkedin(false);
-    }
-  };
 
   // ---------------------------------------------------------------------------
   // Fast 1-Click Login for Returning Contributors
@@ -614,9 +697,9 @@ export function LoginModal() {
             {step === 2 && verifiedStudent && (
               <div className="animate-in fade-in space-y-4">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">Step 2: Official GitHub Authorization</h3>
+                  <h3 className="text-sm font-bold text-foreground">Step 2: Connect GitHub Developer Identity</h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Connect your GitHub account. No typing username — authorize directly through GitHub OAuth.
+                    Link your authentic GitHub developer account to automatically sync your pull requests, code achievements, and community rank.
                   </p>
                 </div>
 
@@ -636,27 +719,59 @@ export function LoginModal() {
                   </p>
                 </div>
 
-                {/* GitHub Official OAuth Action */}
+                {/* GitHub Username Input & OAuth Action */}
                 <div className="rounded-xl border border-border bg-card/60 p-4 space-y-3">
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground text-background">
                       <GithubIcon className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground">GitHub Developer Authorization</h4>
-                      <p className="text-[11px] text-muted-foreground">Sync your commits, issues, and pull requests</p>
+                      <h4 className="text-xs font-bold text-foreground">GitHub Developer Profile</h4>
+                      <p className="text-[11px] text-muted-foreground">Confirm your GitHub username or authorize via OAuth</p>
                     </div>
                   </div>
 
-                  <Button
-                    type="button"
-                    disabled={isAuthorizingGithub}
-                    onClick={() => handleAuthorizeGitHub()}
-                    className="w-full gap-2 bg-foreground text-background hover:bg-foreground/90 font-semibold text-xs shadow py-2.5 cursor-pointer"
-                  >
-                    <GithubIcon className="h-4 w-4" />
-                    <span>{isAuthorizingGithub ? "Authorizing with GitHub..." : "Authorize with GitHub Account"}</span>
-                  </Button>
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                      <span>GitHub Username</span>
+                      <span className="text-[10px] text-muted-foreground">e.g. your-github-handle</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-xs font-mono text-muted-foreground">@</span>
+                      <Input
+                        value={githubUsernameInput}
+                        onChange={(e) => {
+                          setGithubUsernameInput(e.target.value);
+                          if (errorMessage) setErrorMessage(null);
+                        }}
+                        placeholder="your-github-username"
+                        className="pl-7 font-mono text-xs border-border bg-background focus:border-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <Button
+                      type="button"
+                      disabled={isAuthorizingGithub || !githubUsernameInput.trim()}
+                      onClick={() => handleVerifyAndConnectGitHub(githubUsernameInput)}
+                      className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow py-2.5 cursor-pointer"
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>{isAuthorizingGithub ? "Connecting..." : `Continue with @${githubUsernameInput.replace(/^@/, '') || 'handle'}`}</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isAuthorizingGithub}
+                      onClick={() => handleLaunchGitHubOAuth()}
+                      className="w-full gap-2 border-border text-foreground hover:bg-muted font-semibold text-xs py-2.5 cursor-pointer"
+                    >
+                      <GithubIcon className="h-4 w-4" />
+                      <span>Authorize via Popup</span>
+                    </Button>
+                  </div>
 
                   {/* Preset profiles for quick testing in dev sandbox */}
                   <div className="pt-2 border-t border-border/60">
@@ -664,21 +779,30 @@ export function LoginModal() {
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeGitHub("alex-chen")}
+                        onClick={() => {
+                          setGithubUsernameInput("alex-chen");
+                          handleVerifyAndConnectGitHub("alex-chen");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         @alex-chen
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeGitHub("priya-sharma")}
+                        onClick={() => {
+                          setGithubUsernameInput("priya-sharma");
+                          handleVerifyAndConnectGitHub("priya-sharma");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         @priya-sharma
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeGitHub("vikram-patel")}
+                        onClick={() => {
+                          setGithubUsernameInput("vikram-patel");
+                          handleVerifyAndConnectGitHub("vikram-patel");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-accent/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         @vikram-patel
@@ -703,9 +827,9 @@ export function LoginModal() {
             {step === 3 && verifiedStudent && authorizedGithub && (
               <div className="animate-in fade-in space-y-4">
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">Step 3: Official LinkedIn Authorization</h3>
+                  <h3 className="text-sm font-bold text-foreground">Step 3: Professional LinkedIn Verification</h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Link your LinkedIn professional profile to complete 2-factor developer & professional verification.
+                    Link your LinkedIn professional profile to complete 2-factor student & developer verification.
                   </p>
                 </div>
 
@@ -728,22 +852,41 @@ export function LoginModal() {
                       <LinkedinIcon className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground">Sign In with LinkedIn</h4>
+                      <h4 className="text-xs font-bold text-foreground">Link LinkedIn Profile</h4>
                       <p className="text-[11px] text-muted-foreground">Verifies your professional student identity</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                      <span>LinkedIn Handle / Vanity URL</span>
+                      <span className="text-[10px] text-muted-foreground">e.g. in/alex-chen or vanity handle</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-xs font-mono text-muted-foreground">in/</span>
+                      <Input
+                        value={linkedinUsernameInput}
+                        onChange={(e) => {
+                          setLinkedinUsernameInput(e.target.value);
+                          if (errorMessage) setErrorMessage(null);
+                        }}
+                        placeholder="your-vanity-handle"
+                        className="pl-8 font-mono text-xs border-border bg-background focus:border-sky-500"
+                      />
                     </div>
                   </div>
 
                   <Button
                     type="button"
-                    disabled={isAuthorizingLinkedin || isFinalizing}
-                    onClick={() => handleAuthorizeLinkedIn()}
+                    disabled={isAuthorizingLinkedin || isFinalizing || !linkedinUsernameInput.trim()}
+                    onClick={() => handleAuthorizeLinkedIn(linkedinUsernameInput)}
                     className="w-full gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white font-semibold text-xs shadow py-2.5 cursor-pointer"
                   >
                     <LinkedinIcon className="h-4 w-4" />
                     <span>
                       {isAuthorizingLinkedin || isFinalizing
                         ? "Verifying & Linking Profile..."
-                        : "Authorize with LinkedIn Account"}
+                        : `Authorize & Link LinkedIn Profile`}
                     </span>
                   </Button>
 
@@ -753,21 +896,30 @@ export function LoginModal() {
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeLinkedIn("alex-chen-dev")}
+                        onClick={() => {
+                          setLinkedinUsernameInput("alex-chen-dev");
+                          handleAuthorizeLinkedIn("alex-chen-dev");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         in/alex-chen-dev
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeLinkedIn("priya-sharma-ai")}
+                        onClick={() => {
+                          setLinkedinUsernameInput("priya-sharma-ai");
+                          handleAuthorizeLinkedIn("priya-sharma-ai");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         in/priya-sharma-ai
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleAuthorizeLinkedIn("vikram-patel-oss")}
+                        onClick={() => {
+                          setLinkedinUsernameInput("vikram-patel-oss");
+                          handleAuthorizeLinkedIn("vikram-patel-oss");
+                        }}
                         className="px-2 py-1 rounded-md bg-muted hover:bg-sky-500/20 text-foreground text-[10px] font-mono transition-colors cursor-pointer"
                       >
                         in/vikram-patel-oss

@@ -18,6 +18,23 @@ export interface VerifiedStudent {
   year: string;
   college: string;
   verifiedAt: string;
+  suggestedGithub?: string;
+  suggestedLinkedin?: string;
+}
+
+/**
+ * Normalizes and sanitizes user-provided or synthetic handles for GitHub and LinkedIn.
+ * Strips parentheses, symbols, spaces, URL prefixes, and trailing hyphens.
+ */
+export function sanitizeUsernameHandle(raw: string): string {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/^@+/, "")
+    .replace(/^https?:\/\/(www\.)?(github|linkedin)\.com\/(in\/)?/i, "")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export interface VerificationResult {
@@ -83,6 +100,7 @@ export function parseIstUsn(rawUsn: string): VerifiedStudent | null {
   if (!match) {
     // Also accept generic SV prefix with roll number for legacy or alternative schemes
     if (normalized.startsWith("1SV") || normalized.startsWith("SV")) {
+      const cleanUsnHandle = `student-${normalized.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
       return {
         usn: normalized,
         name: `Student (${normalized})`,
@@ -90,6 +108,8 @@ export function parseIstUsn(rawUsn: string): VerifiedStudent | null {
         year: "Enrolled Student",
         college: "IST Bengaluru",
         verifiedAt: new Date().toISOString(),
+        suggestedGithub: cleanUsnHandle,
+        suggestedLinkedin: `${cleanUsnHandle}-dev`,
       };
     }
     return null;
@@ -104,6 +124,7 @@ export function parseIstUsn(rawUsn: string): VerifiedStudent | null {
   const yearDiff = currentYear - admissionYear + 1;
   const yearOfStudy = Math.min(Math.max(yearDiff, 1), 4);
   const yearLabel = ["1st Year", "2nd Year", "3rd Year", "4th Year"][yearOfStudy - 1] || "Student";
+  const cleanHandle = `student-${normalized.toLowerCase().replace(/[^a-z0-9]/g, "")}`;
 
   return {
     usn: normalized,
@@ -112,6 +133,8 @@ export function parseIstUsn(rawUsn: string): VerifiedStudent | null {
     year: yearLabel,
     college: "IST Bengaluru",
     verifiedAt: new Date().toISOString(),
+    suggestedGithub: cleanHandle,
+    suggestedLinkedin: `${cleanHandle}-dev`,
   };
 }
 

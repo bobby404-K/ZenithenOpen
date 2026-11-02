@@ -29,8 +29,15 @@ export async function GET(req: NextRequest) {
   if (clientId && clientId !== "your_linkedin_client_id") {
     const encodedScope = encodeURIComponent(scope);
     const state = encodeURIComponent(Buffer.from(JSON.stringify({ callbackUrl, timestamp: Date.now() })).toString("base64"));
-    const redirectUri = encodeURIComponent(`${req.nextUrl.origin}/api/auth/oauth/linkedin/callback`);
-    const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${encodedScope}&state=${state}`;
+    const configuredRedirect = process.env.LINKEDIN_REDIRECT_URI;
+    const isLocal = req.nextUrl.origin.includes("localhost") || req.nextUrl.origin.includes("127.0.0.1");
+    let redirectParam = "";
+    if (configuredRedirect) {
+      redirectParam = `&redirect_uri=${encodeURIComponent(configuredRedirect)}`;
+    } else if (!isLocal) {
+      redirectParam = `&redirect_uri=${encodeURIComponent(`${req.nextUrl.origin}/api/auth/oauth/linkedin/callback`)}`;
+    }
+    const authUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}${redirectParam}&scope=${encodedScope}&state=${state}`;
 
     return NextResponse.json({
       success: true,
@@ -120,8 +127,16 @@ export async function POST(req: NextRequest) {
 
     // 2. Developer Sandbox / Simulated Authorization for Testing & Campus Demos
     if (simulate || !clientId || clientId === "your_linkedin_client_id" || !code) {
-      const resolvedHandle = (vanityName || githubUsername || "student-engineer").trim().toLowerCase().replace(/[^a-z0-9-]/g, "-");
-      const displayName = studentName || (vanityName ? vanityName.replace("-", " ") : "IST Engineer");
+      const rawHandle = (vanityName || githubUsername || "student-engineer").trim();
+      const resolvedHandle = rawHandle
+        .replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "")
+        .replace(/^in\//i, "")
+        .replace(/\/+$/, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "") || "student-engineer";
+      const displayName = studentName || (vanityName ? vanityName.replace(/-/g, " ") : "IST Engineer");
 
       return NextResponse.json({
         success: true,

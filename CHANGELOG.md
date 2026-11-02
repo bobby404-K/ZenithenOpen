@@ -3,6 +3,27 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.62.0] - 2026-11-02
+
+### 🔐 OAuth Redirect URI Resilience & LinkedIn Verification Flow
+
+- **OAuth Callback Endpoints (`app/api/auth/oauth/github/callback/route.ts`, `app/api/auth/oauth/linkedin/callback/route.ts`)**:
+  - Implemented secure dedicated callback endpoints for GitHub and LinkedIn OAuth popup flows.
+  - Automatically emits authenticated credential messages via `window.opener.postMessage` and safely closes the popup window.
+- **GitHub Redirect URI Auto-Detection (`app/api/auth/oauth/github/route.ts`, `app/api/auth/oauth/linkedin/route.ts`)**:
+  - Dynamically detects localhost and development environments to prevent GitHub OAuth `Invalid Redirect URI` configuration mismatches.
+  - Honors `GITHUB_REDIRECT_URI` and `LINKEDIN_REDIRECT_URI` environment configurations when explicitly provided.
+- **Synthetic USN Handle Sanitization (`lib/auth/usn-verification.ts`, `app/api/auth/login/route.ts`)**:
+  - Fixed synthetic USN default name formatting bug where `Student (1SV23CS001)` generated parentheses (`student-(1sv23cs001)`), violating GitHub username validation.
+  - Added `sanitizeUsernameHandle` to produce clean RFC/GitHub-compliant handles (`student-1sv23cs001`, `student-1sv23cs001-dev`).
+  - Added server-side auto-normalization in `/api/auth/login` to prevent 400 Bad Request registration errors.
+- **Editable Student Handle Inputs & Presets (`components/auth/login-modal.tsx`, `app/login/page.tsx`)**:
+  - Added editable GitHub username input in Step 2 with 1-click authorization and popup fallback.
+  - Added editable LinkedIn handle/URL input in Step 3 with preset shortcuts and resilient verification.
+- **Quality Assurance**:
+  - 100% backend test pass rate across all 33 test suites (1,034 tests passing).
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+
 ## [1.61.0] - 2026-11-02
 
 ### 🛡️ Resilient Auth Navigation & Top-Level Dialog Stacking
