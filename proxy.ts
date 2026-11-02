@@ -37,7 +37,7 @@ export function proxy(request: NextRequest) {
   // Unique request correlation ID
   const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
   response.headers.set("x-request-id", requestId);
-  response.headers.set("x-zenithen-version", "1.33.0");
+  response.headers.set("x-zenithen-version", "1.58.0");
 
   // Base security headers
   response.headers.set("X-Content-Type-Options", "nosniff");
