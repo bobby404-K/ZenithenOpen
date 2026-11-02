@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const resolvedGhUsername = (githubAccount?.username || githubUsername || "").trim().replace(/^@/, "");
+    let resolvedGhUsername = (githubAccount?.username || githubUsername || "").trim().replace(/^@/, "");
     if (!resolvedGhUsername) {
       return NextResponse.json(
         { success: false, error: "GitHub username is required" },
@@ -134,6 +134,15 @@ export async function POST(req: NextRequest) {
 
     // GitHub username format validation: 1-39 alphanumeric characters or single hyphens
     const githubPattern = /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/;
+    
+    // Auto-normalize synthetic student USN pattern e.g. student-(1sv23cs001) -> student-1sv23cs001
+    if (resolvedGhUsername.includes("(") || resolvedGhUsername.includes(")")) {
+      const sanitized = resolvedGhUsername.replace(/[()]/g, "");
+      if (githubPattern.test(sanitized)) {
+        resolvedGhUsername = sanitized;
+      }
+    }
+
     if (!githubPattern.test(resolvedGhUsername)) {
       return NextResponse.json(
         { success: false, error: "Invalid GitHub username format" },
@@ -153,10 +162,19 @@ export async function POST(req: NextRequest) {
     }
 
     // Resolve LinkedIn details
+    const rawLinkedinHandle = (linkedinAccount?.vanityName || resolvedGhUsername)
+      .trim()
+      .replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "")
+      .replace(/^in\//i, "")
+      .replace(/\/+$/, "");
+    const resolvedLinkedinHandle = rawLinkedinHandle
+      .replace(/[^a-zA-Z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "") || resolvedGhUsername;
     const resolvedLinkedinUrl =
-      linkedinAccount?.profileUrl ||
-      `https://www.linkedin.com/in/${linkedinAccount?.vanityName || resolvedGhUsername}`;
-    const resolvedLinkedinHandle = linkedinAccount?.vanityName || resolvedGhUsername;
+      linkedinAccount?.profileUrl && !linkedinAccount.profileUrl.includes("undefined")
+        ? linkedinAccount.profileUrl
+        : `https://www.linkedin.com/in/${resolvedLinkedinHandle}`;
 
     // Database linkage & Real-Time GitHub Ingestion
     let syncedStats = {
