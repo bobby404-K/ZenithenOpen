@@ -18,7 +18,7 @@
     "test:themes": "tsx tests/theme-system.test.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
+    "@prisma/client": "^7.10.1",
     "@types/canvas-confetti": "^1.9.0",
     "@upstash/redis": "^1.39.0",
     "canvas-confetti": "^1.9.4",
