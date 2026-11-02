@@ -21,7 +21,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { ContributorRankingsTable } from "@/components/leaderboard/contributor-rankings-table";
 import { Project } from "@/types";
@@ -212,6 +212,8 @@ export default function ProjectsPage() {
       openPrs: entry.campusOpenPrs,
       closedPrs: entry.campusClosedPrs,
       rank: entry.rank ?? idx + 1,
+      githubUrl: `https://github.com/${entry.username}`,
+      linkedinUrl: entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`,
     }));
   }, [campusLeaderboard]);
 
@@ -420,10 +422,21 @@ export default function ProjectsPage() {
                               href={`https://github.com/${entry.username}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              title={`@${entry.username} on GitHub`}
-                              className="h-7 w-7 rounded-full bg-muted/80 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110"
+                              title={`Verified GitHub: @${entry.username}`}
+                              aria-label={`GitHub profile for ${entry.username}`}
+                              className="h-7 w-7 rounded-full bg-muted/80 hover:bg-muted border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all hover:scale-110 cursor-pointer"
                             >
                               <GithubIcon className="h-3.5 w-3.5" />
+                            </a>
+                            <a
+                              href={entry.linkedinUrl || `https://linkedin.com/in/${entry.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Verified LinkedIn: ${entry.name}`}
+                              aria-label={`LinkedIn profile for ${entry.name}`}
+                              className="h-7 w-7 rounded-full bg-[#0A66C2]/15 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/30 flex items-center justify-center text-[#0A66C2] transition-all hover:scale-110 cursor-pointer"
+                            >
+                              <LinkedinIcon className="h-3.5 w-3.5" />
                             </a>
                           </div>
                         </div>

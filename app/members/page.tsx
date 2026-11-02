@@ -12,7 +12,7 @@ import {
   AlertCircle,
   GraduationCap,
 } from "lucide-react";
-import { GithubIcon } from "@/components/ui/icons";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -242,7 +242,14 @@ export default function MembersPage() {
                             {member.name}
                           </h3>
                         </Link>
-                        <p className="text-xs text-muted-foreground font-mono">@{member.username}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <p className="text-xs text-muted-foreground font-mono">@{member.username}</p>
+                          <span className="text-border">•</span>
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                            <CheckCircle2 className="h-2.5 w-2.5" />
+                            <span>Verified</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -286,7 +293,7 @@ export default function MembersPage() {
                   )}
                 </div>
 
-                {/* Card Footer: Metrics & GitHub Link */}
+                {/* Card Footer: Metrics & Verified GitHub + LinkedIn Quick Links */}
                 <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs">
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <div className="flex items-center gap-1" title="Merged Pull Requests">
@@ -313,9 +320,20 @@ export default function MembersPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-muted-foreground hover:text-foreground p-1 transition-colors"
-                      title="GitHub Profile"
+                      title={`Verified GitHub: @${member.username}`}
+                      aria-label={`GitHub profile for ${member.username}`}
                     >
                       <GithubIcon className="h-3.5 w-3.5" />
+                    </a>
+                    <a
+                      href={member.linkedinUrl || `https://linkedin.com/in/${member.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#0A66C2] hover:text-[#004182] p-1 transition-colors"
+                      title={`Verified LinkedIn: ${member.name}`}
+                      aria-label={`LinkedIn profile for ${member.name}`}
+                    >
+                      <LinkedinIcon className="h-3.5 w-3.5" />
                     </a>
                   </div>
                 </div>

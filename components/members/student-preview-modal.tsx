@@ -103,36 +103,56 @@ export function StudentPreviewModal({
           {student.badge || `${student.department || "Engineering"} · ${student.year || "3rd Year"}`}
         </p>
 
-        {/* External Social Navigation Action Buttons */}
-        <div className="flex items-center justify-center space-x-3 mt-4">
+        {/* Verified Dual Developer Badges */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+          <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/25">
+            <CheckCircle2 className="h-3 w-3" />
+            <span>Verified IST Student</span>
+          </div>
+
           <a
             href={githubLink}
             target="_blank"
             rel="noopener noreferrer"
-            title={`@${student.username} on GitHub`}
-            className="h-10 w-10 rounded-full bg-slate-950/80 border border-slate-700/80 hover:border-cyan-400 text-slate-300 hover:text-white flex items-center justify-center transition-all hover:scale-110 shadow-lg cursor-pointer"
+            title={`Verified GitHub: @${student.username}`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-[11px] font-mono transition-all hover:scale-105"
           >
-            <GithubIcon className="h-5 w-5" />
+            <GithubIcon className="h-3 w-3" />
+            <span>@{student.username}</span>
+          </a>
+
+          <a
+            href={linkedinLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Verified LinkedIn Profile for ${student.name}`}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-[#0A66C2]/40 bg-[#0A66C2]/15 hover:bg-[#0A66C2]/25 text-sky-300 text-[11px] font-mono transition-all hover:scale-105"
+          >
+            <LinkedinIcon className="h-3 w-3 text-[#0A66C2]" />
+            <span className="font-semibold">Verified LinkedIn</span>
+          </a>
+        </div>
+
+        {/* External Social Quick Actions */}
+        <div className="flex items-center justify-center gap-2.5 mt-3">
+          <a
+            href={githubLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-medium inline-flex items-center gap-1.5 transition-all hover:scale-105 cursor-pointer shadow"
+          >
+            <GithubIcon className="h-3.5 w-3.5" />
+            <span>GitHub</span>
           </a>
           <a
             href={linkedinLink}
             target="_blank"
             rel="noopener noreferrer"
-            title={`@${student.username} on LinkedIn`}
-            className="h-10 w-10 rounded-full bg-slate-950/80 border border-slate-700/80 hover:border-blue-400 text-slate-300 hover:text-blue-400 flex items-center justify-center transition-all hover:scale-110 shadow-lg cursor-pointer"
+            className="px-3.5 py-1.5 rounded-full bg-[#0A66C2] hover:bg-[#004182] text-white text-xs font-semibold inline-flex items-center gap-1.5 transition-all hover:scale-105 cursor-pointer shadow-[0_0_15px_rgba(10,102,194,0.3)]"
           >
-            <LinkedinIcon className="h-5 w-5" />
+            <LinkedinIcon className="h-3.5 w-3.5 text-white" />
+            <span>LinkedIn</span>
           </a>
-        </div>
-
-        {/* Verified IST Badge */}
-        <div className="flex items-center justify-center gap-2 mt-3 text-xs text-muted-foreground">
-          <span className="font-mono text-slate-400">@{student.username}</span>
-          <span className="text-slate-700">•</span>
-          <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>Verified IST Student</span>
-          </div>
         </div>
 
         {/* Campus Merges Callout (if available) */}

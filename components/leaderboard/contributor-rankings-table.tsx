@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 
 export interface LeaderboardContributorItem {
   id?: string;
@@ -13,6 +14,9 @@ export interface LeaderboardContributorItem {
   openPrs: number;
   closedPrs: number;
   rank?: number;
+  linkedinUrl?: string;
+  linkedinUsername?: string;
+  githubUrl?: string;
 }
 
 export interface ContributorRankingsTableProps {
@@ -74,6 +78,12 @@ export function ContributorRankingsTable({
             ) : (
               displayed.map((contributor, idx) => {
                 const rank = contributor.rank ?? idx + 1;
+                const linkedinDestination =
+                  contributor.linkedinUrl ||
+                  `https://www.linkedin.com/in/${contributor.linkedinUsername || contributor.username}`;
+                const githubDestination =
+                  contributor.githubUrl || `https://github.com/${contributor.username}`;
+
                 return (
                   <tr
                     key={contributor.id || contributor.username || idx}
@@ -86,27 +96,58 @@ export function ContributorRankingsTable({
                       <div className="flex items-center space-x-3">
                         <Link
                           href={`/members/${encodeURIComponent(contributor.username)}`}
-                          className="shrink-0"
+                          className="shrink-0 relative group/avatar"
                         >
                           <img
                             src={contributor.avatarUrl || `https://github.com/${contributor.username}.png`}
                             alt={contributor.name}
-                            className="h-8 w-8 rounded-full border border-border object-cover hover:scale-105 transition-transform"
+                            className="h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-border object-cover group-hover/avatar:scale-105 transition-transform"
                           />
                         </Link>
                         <div className="min-w-0">
-                          <Link
-                            href={`/members/${encodeURIComponent(contributor.username)}`}
-                            className="font-bold text-foreground hover:text-primary transition-colors block truncate"
-                          >
-                            {contributor.name}
-                          </Link>
-                          <Link
-                            href={`/members/${encodeURIComponent(contributor.username)}`}
-                            className="text-[11px] text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-1 truncate"
-                          >
-                            @{contributor.username}
-                          </Link>
+                          <div className="flex items-center gap-1.5">
+                            <Link
+                              href={`/members/${encodeURIComponent(contributor.username)}`}
+                              className="font-bold text-foreground hover:text-primary transition-colors block truncate text-xs sm:text-sm"
+                            >
+                              {contributor.name}
+                            </Link>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Link
+                              href={`/members/${encodeURIComponent(contributor.username)}`}
+                              className="text-[11px] text-muted-foreground hover:text-primary font-mono inline-flex items-center gap-0.5 truncate"
+                            >
+                              @{contributor.username}
+                            </Link>
+
+                            {/* Verified GitHub Quick Badge */}
+                            <a
+                              href={githubDestination}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Verified GitHub: @${contributor.username}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded hover:bg-muted cursor-pointer"
+                              aria-label={`GitHub profile for ${contributor.username}`}
+                            >
+                              <GithubIcon className="h-3 w-3" />
+                            </a>
+
+                            {/* Verified LinkedIn Quick Badge */}
+                            <a
+                              href={linkedinDestination}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Verified LinkedIn: ${contributor.name}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[10px] font-mono font-medium text-[#0A66C2] bg-[#0A66C2]/10 hover:bg-[#0A66C2]/20 border border-[#0A66C2]/30 transition-all hover:scale-105 cursor-pointer"
+                              aria-label={`LinkedIn profile for ${contributor.name}`}
+                            >
+                              <LinkedinIcon className="h-2.5 w-2.5" />
+                              <span className="hidden sm:inline">in</span>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </td>

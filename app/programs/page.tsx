@@ -787,6 +787,8 @@ function StudentLeaderboardSection({
       openPrs: student[timeframe]?.openPrs ?? 0,
       closedPrs: student[timeframe]?.closedPrs ?? 0,
       rank: idx + 1,
+      githubUrl: student.githubUrl,
+      linkedinUrl: student.linkedinUrl,
     }));
   }, [displayPodium, displayRemaining, timeframe]);
 
