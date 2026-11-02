@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { COMMUNITY_METRICS } from "@/lib/data/mock-data";
-import { LiveActivityStream } from "@/components/dashboard/live-activity-stream";
 
 export function LiveMetricsDashboard() {
   const [metrics, setMetrics] = React.useState(COMMUNITY_METRICS);
@@ -191,9 +190,6 @@ export function LiveMetricsDashboard() {
             );
           })}
         </div>
-
-        {/* Real-Time Campus Contribution Stream */}
-        <LiveActivityStream />
       </div>
     </section>
   );

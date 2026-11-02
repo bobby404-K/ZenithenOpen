@@ -3,6 +3,17 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.59.0] - 2026-11-02
+
+### 🧹 Removed Live Campus Contribution Pulse Stream from Homepage
+
+- **Homepage Dashboard Simplification (`components/dashboard/live-metrics.tsx`)**:
+  - Removed the simulated Live Campus Contribution Pulse event stream from the metrics dashboard.
+  - Keeps the focus exclusively on live authentic aggregate numbers (Total Members, Active Repositories, Merged Pull Requests, and Open Issues).
+- **Quality Assurance**:
+  - Zero TypeScript compilation errors (`tsc --noEmit`).
+  - 100% backend test pass rate across 33 test suites (1,026 tests passing).
+
 ## [1.58.0] - 2026-11-02
 
 ### 🧹 Clean Slate Production Launch Architecture (Option B Zero-Mock)
