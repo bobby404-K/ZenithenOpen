@@ -11,6 +11,25 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 61: Resilient Auth Navigation & Top-Level Dialog Stacking
+
+### Milestone
+v1.61.0 — Resilient Auth Navigation & Top-Level Dialog Stacking
+
+### Files Changed
+* `components/navigation/navbar.tsx` — Upgraded Log in and Sign up buttons to Next.js `Link` elements targeting `/login` with modal click handlers, eliminating auth blockers.
+* `components/auth/login-modal.tsx` — Raised z-index to `z-[100]` for guaranteed stacking over `z-50` sticky navbar.
+* `components/members/student-preview-modal.tsx` — Raised z-index to `z-[100]`.
+* `package.json` — Bumped version to 1.61.0.
+* `proxy.ts` — Updated `x-zenithen-version` correlation header to 1.61.0.
+* `CHANGELOG.md` — Release notes for v1.61.0.
+
+### Architecture Decisions
+1. **Failsafe Authentication Navigation**: Made authentication action triggers resilient by pairing client-side modal popup execution with standard URL route navigation (`/login`), ensuring authentication works under all network, JS hydration, or popup states.
+2. **Deterministic Dialog Layering**: Elevated modal dialogues to `z-[100]` to avoid any z-index collision with `z-50` header navigation.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 60: GitHub Deployments Integration & CI Lint Hygiene
 
 ### Milestone

@@ -3,6 +3,19 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.61.0] - 2026-11-02
+
+### 🛡️ Resilient Auth Navigation & Top-Level Dialog Stacking
+
+- **Navbar Auth Buttons Resilience (`components/navigation/navbar.tsx`)**:
+  - Upgraded "Log in" and "Sign up" buttons to `Link` components with `href="/login"` and client-side modal trigger.
+  - Ensures users are never blocked from authenticating: clicks immediately open the interactive modal, while providing direct native fallback to the full `/login` onboarding portal.
+- **Top-Level Dialog Stacking (`components/auth/login-modal.tsx`, `components/members/student-preview-modal.tsx`)**:
+  - Elevated modal z-index from `z-50` to `z-[100]`, guaranteeing dialog overlays and action forms render above the sticky navbar (`z-50`) without clipping.
+- **Quality Assurance**:
+  - Zero TypeScript compilation errors (`tsc --noEmit`).
+  - 100% backend test pass rate across 33 test suites (1,026 tests passing).
+
 ## [1.60.0] - 2026-11-02
 
 ### 🚀 GitHub Deployments Integration & CI Lint Hygiene
