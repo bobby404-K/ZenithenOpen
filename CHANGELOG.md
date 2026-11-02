@@ -3,6 +3,25 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.58.0] - 2026-11-02
+
+### 🧹 Clean Slate Production Launch Architecture (Option B Zero-Mock)
+
+- **Student Leaderboard Clean Slate (`app/api/students/leaderboard/route.ts`)**:
+  - Live queries (`/api/students/leaderboard`) now return strictly authenticated student contributors from PostgreSQL.
+  - The fallback student competitors dataset is strictly restricted to sandbox/test mode (`?mock=true`), ensuring 0 artificial competitors appear on production surfaces.
+- **Campus Projects Merges Leaderboard Clean Slate (`app/api/projects/leaderboard/route.ts`)**:
+  - Requires `?mock=true` to load historical simulation allocations; default production queries return purely verified campus merges.
+- **Competition Arena Page (`app/programs/page.tsx`)**:
+  - Replaced hardcoded competitor state initialization with an empty array.
+  - Implemented high-contrast empty state card: *"Arena Standings Awaiting First Pull Request — Student contributors will be ranked automatically as pull requests are submitted and merged."*
+- **Members Directory Integrity (`app/api/members/route.ts`)**:
+  - Pure zero-mock directory in live production; only verified students who link accounts appear in the member list.
+- **Quality Assurance**:
+  - Zero TypeScript compilation errors (`tsc --noEmit`).
+  - 100% backend test pass rate across 33 test suites (1,026 tests passing).
+  - Production build successful across all 36 routes (`next build`).
+
 ## [1.57.0] - 2026-11-02
 
 ### 🏅 Verified GitHub & LinkedIn Badges Across Contributor Surfaces

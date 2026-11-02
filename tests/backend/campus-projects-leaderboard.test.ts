@@ -14,10 +14,18 @@ export async function runCampusProjectsLeaderboardTests(): Promise<SuiteResult> 
   const suite = new TestSuite("Campus Projects Merges Leaderboard Route");
   suite.start();
 
-  // --- 1. Basic Query ---
-  const req = new NextRequest("http://localhost:3000/api/projects/leaderboard");
+  // --- 0. Live Campus Leaderboard Query (Clean Slate by Default) ---
+  const liveReq = new NextRequest("http://localhost:3000/api/projects/leaderboard");
+  const liveRes = await GET(liveReq);
+  suite.assertEqual(liveRes.status, 200, "GET /api/projects/leaderboard (live) returns 200 OK");
+  const liveData = await liveRes.json();
+  suite.assertEqual(liveData.success, true, "Live query reports success: true");
+  suite.assert(Array.isArray(liveData.leaderboard), "Live leaderboard is an array");
+
+  // --- 1. Basic Query with Mock / Sandbox Data ---
+  const req = new NextRequest("http://localhost:3000/api/projects/leaderboard?mock=true");
   const res = await GET(req);
-  suite.assertEqual(res.status, 200, "GET /api/projects/leaderboard returns 200 OK");
+  suite.assertEqual(res.status, 200, "GET /api/projects/leaderboard?mock=true returns 200 OK");
 
   const data = await res.json();
   suite.assertEqual(data.success, true, "Response reports success: true");
@@ -69,7 +77,7 @@ export async function runCampusProjectsLeaderboardTests(): Promise<SuiteResult> 
   suite.assert(limitData.leaderboard.length <= 3, "Limit query returns <= 3 entries");
 
   // --- 5. Verify Timeframe Parameter (week, month, overall) ---
-  const weekReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=week");
+  const weekReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=week&mock=true");
   const weekRes = await GET(weekReq);
   suite.assertEqual(weekRes.status, 200, "GET with timeframe=week returns 200 OK");
   const weekData = await weekRes.json();
@@ -77,7 +85,7 @@ export async function runCampusProjectsLeaderboardTests(): Promise<SuiteResult> 
   suite.assert(Array.isArray(weekData.leaderboard), "week leaderboard is an array");
   suite.assert(weekData.leaderboard.length > 0, "week leaderboard has data");
 
-  const overallReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=overall");
+  const overallReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?timeframe=overall&mock=true");
   const overallRes = await GET(overallReq);
   suite.assertEqual(overallRes.status, 200, "GET with timeframe=overall returns 200 OK");
   const overallData = await overallRes.json();

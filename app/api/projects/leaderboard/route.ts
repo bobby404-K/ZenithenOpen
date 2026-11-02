@@ -41,8 +41,9 @@ export async function GET(request: NextRequest) {
 
   const rawTimeframe = (searchParams.get("timeframe") || "month").toLowerCase();
   const timeframe = ["week", "month", "overall"].includes(rawTimeframe) ? rawTimeframe : "month";
+  const includeMock = searchParams.get("mock") === "true";
 
-  const cacheKey = `projects:campus-leaderboard:timeframe:${timeframe}:limit:${limit}:v2`;
+  const cacheKey = `projects:campus-leaderboard:timeframe:${timeframe}:limit:${limit}:mock:${includeMock}:v3`;
   const cachedData = await getCached<CampusContributorStanding[]>(cacheKey);
 
   if (cachedData) {
@@ -194,8 +195,8 @@ export async function GET(request: NextRequest) {
       console.warn("[Campus Projects Leaderboard] Database query notice:", dbErr);
     }
 
-    // 2. Resilient baseline from verified campus competitors registry
-    if (rawContributors.length === 0) {
+    // 2. Resilient baseline from verified campus competitors registry (mock/sandbox mode)
+    if (includeMock && rawContributors.length === 0) {
       // Assign campus merges specific to IST-ZenithenLab repositories across timeframes
       const campusMergesAllocation: Record<
         string,
