@@ -36,6 +36,8 @@ export default function HomePage() {
         name: student.name,
         username: student.username,
         avatarUrl: student.avatarUrl,
+        githubUrl: student.githubUrl || `https://github.com/${student.username}`,
+        linkedinUrl: student.linkedinUrl,
         mergedPrs: stats.mergedPrs ?? stats.prs ?? 0,
         issuesOpened: stats.issuesOpened ?? 0,
         openPrs: stats.openPrs ?? 0,

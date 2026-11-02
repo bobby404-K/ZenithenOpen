@@ -268,17 +268,38 @@ export default function MemberProfilePage({
             />
           </div>
 
-          {/* Verified Contributor Badge Pill */}
-          <div className="flex justify-center mb-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-mono shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-              <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="font-semibold tracking-wider">VERIFIED CONTRIBUTOR</span>
-              <Sparkles className="w-3 h-3 text-cyan-300 opacity-80" />
+          {/* Verified Institutional & Dual Developer Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-semibold tracking-wide">VERIFIED IST STUDENT</span>
+              <span className="text-emerald-500/60">•</span>
+              <span className="text-[11px] text-neutral-300">{profile.department || "Engineering"}</span>
             </div>
+
+            <a
+              href={`https://github.com/${profile.username}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-neutral-700 bg-neutral-900/80 hover:bg-neutral-800 hover:border-neutral-500 text-neutral-200 text-xs font-mono transition-all hover:scale-105"
+            >
+              <GithubIcon className="w-3.5 h-3.5" />
+              <span>@{profile.username}</span>
+            </a>
+
+            <a
+              href={profile.linkedinUrl || `https://linkedin.com/in/${profile.username}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#0A66C2]/40 bg-[#0A66C2]/15 hover:bg-[#0A66C2]/25 hover:border-[#0A66C2] text-sky-300 text-xs font-mono transition-all hover:scale-105 shadow-[0_0_15px_rgba(10,102,194,0.15)]"
+            >
+              <LinkedinIcon className="w-3.5 h-3.5 text-[#0A66C2]" />
+              <span className="font-semibold">VERIFIED LINKEDIN</span>
+            </a>
           </div>
 
           {/* Big Typography Name */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-white">
+          <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight text-white">
             {profile.name}
           </h1>
 
@@ -287,26 +308,47 @@ export default function MemberProfilePage({
             {profile.roleSubtitle || profile.bio || "Frontend Builder · Early Open Source"}
           </p>
 
-          {/* Social Icons Navigation */}
-          <div className="flex justify-center items-center gap-4">
+          {/* Direct Verified Social Action Buttons */}
+          <div className="flex flex-wrap justify-center items-center gap-3">
             <a
-              href={profile.portfolioUrl || `https://github.com/${profile.username}`}
+              href={`https://github.com/${profile.username}`}
               target="_blank"
               rel="noreferrer"
-              className="p-3 bg-neutral-900 border border-neutral-800 rounded-full hover:bg-neutral-800 hover:border-cyan-400 transition-all text-neutral-400 hover:text-cyan-400 hover:scale-110 shadow-lg"
-              title="GitHub Profile"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-neutral-500 rounded-full text-xs font-semibold text-white transition-all hover:scale-105 shadow-md cursor-pointer"
             >
-              <GithubIcon className="w-6 h-6" />
+              <GithubIcon className="w-4 h-4" />
+              <span>GitHub Profile</span>
+              <ExternalLink className="w-3 h-3 text-neutral-400" />
             </a>
+
             <a
               href={profile.linkedinUrl || `https://linkedin.com/in/${profile.username}`}
               target="_blank"
               rel="noreferrer"
-              className="p-3 bg-neutral-900 border border-neutral-800 rounded-full hover:bg-neutral-800 hover:border-blue-500 transition-all text-neutral-400 hover:text-blue-500 hover:scale-110 shadow-lg"
-              title="LinkedIn Profile"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0A66C2] hover:bg-[#004182] text-white border border-[#0A66C2]/60 rounded-full text-xs font-semibold transition-all hover:scale-105 shadow-[0_0_20px_rgba(10,102,194,0.3)] cursor-pointer"
             >
-              <LinkedinIcon className="w-6 h-6" />
+              <LinkedinIcon className="w-4 h-4 text-white" />
+              <span>Connect on LinkedIn</span>
+              <ExternalLink className="w-3 h-3 text-white/80" />
             </a>
+
+            <Button
+              variant="outline"
+              onClick={handleCopyShare}
+              className="rounded-full border-neutral-800 bg-neutral-900/60 hover:bg-neutral-800 text-neutral-300 hover:text-white text-xs h-10 px-5 gap-1.5 transition-all cursor-pointer"
+            >
+              {copiedShare ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Link Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Share Profile</span>
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </section>

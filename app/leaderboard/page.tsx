@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { StudentPreviewModal, StudentPreviewData } from "@/components/members/student-preview-modal";
 import { StudentContributor } from "@/lib/data/student-competition";
 import { ContributorRankingsTable } from "@/components/leaderboard/contributor-rankings-table";
+import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 
 export default function LeaderboardPage() {
   const [timeframe, setTimeframe] = React.useState<"week" | "month" | "overall">("month");
@@ -127,6 +128,8 @@ export default function LeaderboardPage() {
       openPrs: student[timeframe]?.openPrs ?? 0,
       closedPrs: student[timeframe]?.closedPrs ?? 0,
       rank: idx + 1,
+      githubUrl: student.githubUrl,
+      linkedinUrl: student.linkedinUrl,
     }));
   }, [sortedCompetitors, timeframe]);
 
@@ -328,12 +331,34 @@ export default function LeaderboardPage() {
                               {student.name}
                             </h3>
                           </Link>
-                          <Link
-                            href={`/members/${student.username}`}
-                            className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 font-mono"
-                          >
-                            <span>@{student.username}</span>
-                          </Link>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <Link
+                              href={`/members/${student.username}`}
+                              className="text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1 font-mono"
+                            >
+                              <span>@{student.username}</span>
+                            </Link>
+                            <a
+                              href={student.githubUrl || `https://github.com/${student.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground hover:text-foreground p-0.5 transition-colors cursor-pointer"
+                              title={`Verified GitHub: @${student.username}`}
+                              aria-label={`GitHub profile for ${student.username}`}
+                            >
+                              <GithubIcon className="h-3.5 w-3.5" />
+                            </a>
+                            <a
+                              href={student.linkedinUrl || `https://linkedin.com/in/${student.username}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#0A66C2] hover:text-[#004182] p-0.5 transition-colors cursor-pointer"
+                              title={`Verified LinkedIn: ${student.name}`}
+                              aria-label={`LinkedIn profile for ${student.name}`}
+                            >
+                              <LinkedinIcon className="h-3.5 w-3.5" />
+                            </a>
+                          </div>
                           <p className="text-[11px] text-muted-foreground mt-0.5">{student.year}</p>
                         </div>
                       </div>

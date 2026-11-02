@@ -11,6 +11,30 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 57: Verified GitHub & LinkedIn Badges Across Contributor Surfaces
+
+### Milestone
+v1.57.0 — Verified GitHub & LinkedIn Badges Across Contributor Surfaces
+
+### Files Changed
+* `components/leaderboard/contributor-rankings-table.tsx` — Added optional `githubUrl` and `linkedinUrl` to `LeaderboardContributorItem` and verified identity badges directly beside contributor handles.
+* `app/members/[username]/page.tsx` — Upgraded profile hero with identity badge trio (Verified Student, GitHub, LinkedIn) and high-contrast social action buttons.
+* `components/members/student-preview-modal.tsx` — Added verified badge trio and direct external GitHub and LinkedIn connection actions.
+* `app/members/page.tsx` — Added verified badge to card title and LinkedIn profile link button in card actions.
+* `app/leaderboard/page.tsx` — Passed social links to table rankings and added verified badges to top 3 podium highlights.
+* `app/projects/page.tsx` — Passed social links to campus repository table rankings and added verified badges to project podium cards.
+* `app/programs/page.tsx` — Passed social links to competition arena contributor rankings table.
+* `app/page.tsx` — Forwarded student `githubUrl` and `linkedinUrl` to homepage leaderboard rankings table.
+* `package.json` — Version bumped to 1.57.0.
+* `CHANGELOG.md` — Release notes for v1.57.0.
+
+### Architecture Decisions
+1. **Pervasive Identity Verification**: Following the dual-OAuth student authentication in v1.56.0, all contributor surfaces now visually reflect verified GitHub developer status and verified LinkedIn professional status alongside campus USN enrollment.
+2. **Standardized Brand Aesthetics**: Brand colors (`#0A66C2` for LinkedIn and high-contrast dark GitHub styling) are strictly aligned across tables, podiums, modals, and showcase profile views.
+3. **Resilient Fallback**: Contributor surfaces handle optional social links gracefully, generating standard GitHub URLs where appropriate while highlighting verified badges when provided.
+
+---
+
 ## Entry: 2026-11-01 — Milestone 56: Dual-Authorized Student Authentication (USN ➔ GitHub OAuth ➔ LinkedIn OAuth)
 
 ### Milestone

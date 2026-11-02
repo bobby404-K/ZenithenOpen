@@ -3,6 +3,28 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.57.0] - 2026-11-02
+
+### 🏅 Verified GitHub & LinkedIn Badges Across Contributor Surfaces
+
+- **Universal Contributor Rankings Table (`components/leaderboard/contributor-rankings-table.tsx`)**:
+  - Embedded verified GitHub developer link badges (`@username`) and verified LinkedIn profile badges (`in` pill in `#0A66C2`) directly beside contributor names and handles.
+  - Linked directly to external authenticated developer profiles.
+- **Member Showcase Dynamic Profile (`app/members/[username]/page.tsx`)**:
+  - Upgraded profile hero with identity badges: `VERIFIED IST STUDENT • ${department}`, `GitHub: @username`, and `VERIFIED LINKEDIN`.
+  - Added dedicated high-contrast action buttons: "GitHub Profile", "Connect on LinkedIn" with brand-accurate `#0A66C2` styling, and "Share Profile".
+- **Student Quick-Preview Modal (`components/members/student-preview-modal.tsx`)**:
+  - Added verified identity badge trio (`Verified IST Student`, `Verified GitHub`, `Verified LinkedIn`).
+  - Added direct external profile links to allow instantaneous connection with contributors.
+- **Member Directory Cards (`app/members/page.tsx`)**:
+  - Added verified identity badge alongside contributor handle in card header.
+  - Added direct LinkedIn button alongside GitHub button in card actions.
+- **Top 3 Podium Contributor Cards (`app/leaderboard/page.tsx`, `app/projects/page.tsx`, `app/programs/page.tsx`, `app/page.tsx`)**:
+  - Integrated verified GitHub and LinkedIn quick links on podium highlight cards and table rankings.
+- **Quality Assurance**:
+  - Zero TypeScript compilation errors (`npm run typecheck`).
+  - 100% backend test pass rate across all 33 test suites (1,023 passing tests).
+
 ## [1.56.0] - 2026-11-01
 
 ### 🔐 Dual-Authorized Student Authentication (USN ➔ Official GitHub OAuth ➔ Official LinkedIn OAuth)
