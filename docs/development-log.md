@@ -11,6 +11,21 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 59: Removed Live Campus Contribution Pulse Stream from Homepage
+
+### Milestone
+v1.59.0 — Clean Metrics Dashboard
+
+### Files Changed
+* `components/dashboard/live-metrics.tsx` — Removed `<LiveActivityStream />` component and unused import to streamline the homepage metrics dashboard and eliminate synthetic activity cards.
+* `package.json` — Version bumped to 1.59.0.
+* `CHANGELOG.md` — Release notes for v1.59.0.
+
+### Architecture Decisions
+1. **Zero Distraction Metrics**: Streamlined the live metrics section on the homepage to focus exclusively on core ecosystem numbers (Members, Active Repos, Merges, Issues), eliminating mock activity items before real student commits take place.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 58: Clean Slate Production Launch Architecture (Option B Zero-Mock)
 
 ### Milestone
