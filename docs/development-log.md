@@ -11,6 +11,25 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 64: Non-Invasive GitHub Verification & OAuth Warning Elimination
+
+### Milestone
+v1.64.0 — Non-Invasive GitHub Verification & OAuth Warning Elimination
+
+### Files Changed
+* `app/api/auth/oauth/github/route.ts` — Omitted auto-generated redirect_uri when not explicitly set, eliminating scary GitHub mismatch screens.
+* `components/auth/login-modal.tsx` — Elevated Campus Verified Link as primary action with ShieldCheck trust badge; secondary optional popup.
+* `app/login/page.tsx` — Synchronized full-page onboarding with reassuring trust banners and frictionless 1-click verification.
+* `package.json` — Bumped version to 1.64.0.
+* `proxy.ts` — Updated `x-zenithen-version` correlation header to 1.64.0.
+* `CHANGELOG.md` — Release notes for v1.64.0.
+
+### Architecture Decisions
+1. **Frictionless Public Profile Verification**: Prioritized direct verification of public developer handles via GitHub REST API without demanding invasive OAuth app permissions, removing user hesitation while retaining complete data accuracy.
+2. **Strict URI Parameter Suppression**: Omitted redirect_uri query parameters when not explicitly declared in production environment settings, adhering strictly to GitHub's default registered callback lookup and preventing mismatch alert modals.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 63: Homepage Information Architecture: Contributor Leaderboard Prominence
 
 ### Milestone

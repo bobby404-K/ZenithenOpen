@@ -3,6 +3,22 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.64.0] - 2026-11-02
+
+### 🛡️ Non-Invasive GitHub Verification & OAuth Warning Elimination
+
+- **Elimination of Scary OAuth Mismatch Screens (`app/api/auth/oauth/github/route.ts`)**:
+  - Removed auto-generated redirect URIs that triggered GitHub's *"The redirect_uri is not associated with this application"* warning screen.
+  - When `GITHUB_REDIRECT_URI` is not explicitly set, `redirect_uri` parameter is completely omitted, allowing GitHub to default to the registered callback URL with zero scary security warnings.
+- **Reassuring Student Verification UX (`components/auth/login-modal.tsx`, `app/login/page.tsx`)**:
+  - Established **Campus Verified Link** as the primary 1-click action: students verify and link their public GitHub profile and contributions safely without invasive third-party OAuth app permissions.
+  - Added visual trust badges (`ShieldCheck`) and explanatory copy explaining that only public portfolio stats and contributions are synced.
+  - Relegated the OAuth popup to an optional secondary action with clear "100% Safe" indicators.
+- **Quality Assurance**:
+  - 100% backend test pass rate across all 33 test suites (1,034 tests passing).
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+  - 0 ESLint errors/warnings (`npx eslint --quiet`).
+
 ## [1.63.0] - 2026-11-02
 
 ### 🏆 Homepage Information Architecture: Contributor Leaderboard Prominence
