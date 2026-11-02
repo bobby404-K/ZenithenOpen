@@ -3,6 +3,19 @@
 All notable changes to **ZenithenOpen** are documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.63.0] - 2026-11-02
+
+### 🏆 Homepage Information Architecture: Contributor Leaderboard Prominence
+
+- **Homepage Section Flow Reordering (`app/page.tsx`)**:
+  - Moved the **Contributor Leaderboard & First PR Hall of Fame** section directly before the **Campus Project Catalog** section, surfacing active student contributors and real-time open-source merit front and center.
+  - Balanced alternating background styling (`bg-card/30` -> `bg-background` -> `bg-card/30`) across the Leaderboard, Project Catalog, and Good First Issues sections for optimal visual contrast.
+  - Preserved `#leaderboard` and `#campus-catalog` navigation anchor hooks.
+- **Quality Assurance**:
+  - 100% backend test pass rate across all 33 test suites (1,034 tests passing).
+  - 0 TypeScript compilation errors (`tsc --noEmit`).
+  - 0 ESLint errors/warnings (`npx eslint --quiet`).
+
 ## [1.62.0] - 2026-11-02
 
 ### 🔐 OAuth Redirect URI Resilience & LinkedIn Verification Flow

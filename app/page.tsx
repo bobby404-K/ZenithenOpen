@@ -117,8 +117,129 @@ export default function HomePage() {
       {/* 2.5. Campus Genesis & Evolution 3D Chronicle */}
       <CampusEvolutionSection />
 
-      {/* 3. Featured Open-Source Projects */}
-      <section id="campus-catalog" className="py-20 border-t border-border bg-card/30">
+      {/* 3. Contributor Leaderboard & Hall of Fame */}
+      <section id="leaderboard" className="py-20 border-t border-border bg-card/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            {/* Leaderboard Column */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-secondary font-mono">
+                    <Trophy className="h-4 w-4" />
+                    <span>Contributor Standings</span>
+                  </div>
+                  <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
+                    Monthly Leaderboard
+                  </h2>
+                </div>
+                <Link href="/leaderboard">
+                  <Button variant="ghost" size="sm" className="text-xs text-secondary hover:text-secondary hover:bg-secondary/10 cursor-pointer">
+                    Full Standings →
+                  </Button>
+                </Link>
+              </div>
+
+              {topContributors.length === 0 ? (
+                <div className="rounded-xl border border-border bg-card p-8 text-center shadow-xs">
+                  <Trophy className="mx-auto h-8 w-8 text-secondary mb-2" />
+                  <p className="text-sm font-semibold text-foreground">Leaderboard Awaiting First Pull Request</p>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                    Contributions will be ranked automatically by merged PRs and code reviews once students link their GitHub accounts.
+                  </p>
+                  <Link href="/programs#student-competition" className="inline-block mt-4">
+                    <Button size="sm" variant="outline" className="text-xs border-border cursor-pointer">
+                      Explore Open Source Arena
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <ContributorRankingsTable
+                    contributors={leaderboardTableItems}
+                    title="All Contributor Rankings"
+                    subtitle="Real-time verified pull requests for this month."
+                    developerCountLabel={`${topContributors.length} active developers`}
+                  />
+
+                  {/* Option at the bottom to view all students */}
+                  <div className="pt-2 text-center">
+                    <Link href="/leaderboard">
+                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer">
+                        <span>View Dedicated Open-Source Contributor Leaderboard</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Hall of Fame Column */}
+            <div className="lg:col-span-5 space-y-6">
+              <div>
+                <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-accent font-mono">
+                  <Sparkles className="h-4 w-4" />
+                  <span>Recognition</span>
+                </div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
+                  First PR Hall of Fame
+                </h2>
+              </div>
+
+              {topContributors.some((s) => ((s.overall as unknown as { mergedPrs?: number })?.mergedPrs ?? s.overall?.prs ?? 0) > 0) ? (
+                <div className="space-y-3">
+                  {topContributors
+                    .filter((s) => ((s.overall as unknown as { mergedPrs?: number })?.mergedPrs ?? s.overall?.prs ?? 0) > 0)
+                    .slice(0, 3)
+                    .map((student) => (
+                      <div
+                        key={`hof-${student.id}`}
+                        className="p-4 rounded-xl border border-accent/30 bg-card/60 flex items-center justify-between hover:border-accent/60 transition-all group"
+                      >
+                        <Link
+                          href={`/members/${encodeURIComponent(student.username)}`}
+                          className="flex items-center space-x-3 group"
+                        >
+                          <img
+                            src={student.avatarUrl}
+                            alt={student.name}
+                            className="h-10 w-10 rounded-full border border-border object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div>
+                            <p className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                              {student.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground font-mono">@{student.username}</p>
+                          </div>
+                        </Link>
+                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs font-semibold px-2.5 py-1">
+                          Shipped First PR 🚀
+                        </Badge>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-border bg-card p-8 text-center shadow-xs">
+                  <Sparkles className="mx-auto h-8 w-8 text-accent mb-2" />
+                  <p className="text-sm font-semibold text-foreground">Celebrate Your First Contribution</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Every student who merges their first pull request receives permanent recognition in the community Hall of Fame.
+                  </p>
+                  <Link href="/programs#student-competition" className="inline-block mt-4">
+                    <Button size="sm" variant="outline" className="text-xs border-border cursor-pointer">
+                      Join Sprint Arena
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Featured Open-Source Projects */}
+      <section id="campus-catalog" className="py-20 border-t border-border bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
@@ -248,8 +369,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Opportunity Board Highlight */}
-      <section className="py-20 border-t border-border bg-background">
+      {/* 5. Opportunity Board Highlight */}
+      <section className="py-20 border-t border-border bg-card/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
             <div>
@@ -404,127 +525,6 @@ export default function HomePage() {
                 </a>
               </div>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Contributor Leaderboard & Hall of Fame */}
-      <section className="py-20 border-t border-border bg-card/30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Leaderboard Column */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-secondary font-mono">
-                    <Trophy className="h-4 w-4" />
-                    <span>Contributor Standings</span>
-                  </div>
-                  <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
-                    Monthly Leaderboard
-                  </h2>
-                </div>
-                <Link href="/leaderboard">
-                  <Button variant="ghost" size="sm" className="text-xs text-secondary hover:text-secondary hover:bg-secondary/10 cursor-pointer">
-                    Full Standings →
-                  </Button>
-                </Link>
-              </div>
-
-              {topContributors.length === 0 ? (
-                <div className="rounded-xl border border-border bg-card p-8 text-center shadow-xs">
-                  <Trophy className="mx-auto h-8 w-8 text-secondary mb-2" />
-                  <p className="text-sm font-semibold text-foreground">Leaderboard Awaiting First Pull Request</p>
-                  <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-                    Contributions will be ranked automatically by merged PRs and code reviews once students link their GitHub accounts.
-                  </p>
-                  <Link href="/programs#student-competition" className="inline-block mt-4">
-                    <Button size="sm" variant="outline" className="text-xs border-border cursor-pointer">
-                      Explore Open Source Arena
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <ContributorRankingsTable
-                    contributors={leaderboardTableItems}
-                    title="All Contributor Rankings"
-                    subtitle="Real-time verified pull requests for this month."
-                    developerCountLabel={`${topContributors.length} active developers`}
-                  />
-
-                  {/* Option at the bottom to view all students */}
-                  <div className="pt-2 text-center">
-                    <Link href="/leaderboard">
-                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5 border-border text-foreground hover:bg-white hover:text-black hover:border-white transition-colors cursor-pointer">
-                        <span>View Dedicated Open-Source Contributor Leaderboard</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Hall of Fame Column */}
-            <div className="lg:col-span-5 space-y-6">
-              <div>
-                <div className="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-accent font-mono">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Recognition</span>
-                </div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground mt-1">
-                  First PR Hall of Fame
-                </h2>
-              </div>
-
-              {topContributors.some((s) => ((s.overall as unknown as { mergedPrs?: number })?.mergedPrs ?? s.overall?.prs ?? 0) > 0) ? (
-                <div className="space-y-3">
-                  {topContributors
-                    .filter((s) => ((s.overall as unknown as { mergedPrs?: number })?.mergedPrs ?? s.overall?.prs ?? 0) > 0)
-                    .slice(0, 3)
-                    .map((student) => (
-                      <div
-                        key={`hof-${student.id}`}
-                        className="p-4 rounded-xl border border-accent/30 bg-card/60 flex items-center justify-between hover:border-accent/60 transition-all group"
-                      >
-                        <Link
-                          href={`/members/${encodeURIComponent(student.username)}`}
-                          className="flex items-center space-x-3 group"
-                        >
-                          <img
-                            src={student.avatarUrl}
-                            alt={student.name}
-                            className="h-10 w-10 rounded-full border border-border object-cover group-hover:scale-105 transition-transform"
-                          />
-                          <div>
-                            <p className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                              {student.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground font-mono">@{student.username}</p>
-                          </div>
-                        </Link>
-                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/30 text-xs font-semibold px-2.5 py-1">
-                          Shipped First PR 🚀
-                        </Badge>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className="rounded-xl border border-border bg-card p-8 text-center shadow-xs">
-                  <Sparkles className="mx-auto h-8 w-8 text-accent mb-2" />
-                  <p className="text-sm font-semibold text-foreground">Celebrate Your First Contribution</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Every student who merges their first pull request receives permanent recognition in the community Hall of Fame.
-                  </p>
-                  <Link href="/programs#student-competition" className="inline-block mt-4">
-                    <Button size="sm" variant="outline" className="text-xs border-border cursor-pointer">
-                      Join Sprint Arena
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </section>

@@ -11,6 +11,23 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 63: Homepage Information Architecture: Contributor Leaderboard Prominence
+
+### Milestone
+v1.63.0 — Homepage Information Architecture: Contributor Leaderboard Prominence
+
+### Files Changed
+* `app/page.tsx` — Repositioned Contributor Leaderboard and Hall of Fame before Campus Project Catalog; adjusted rhythmic section background tokens for seamless contrast.
+* `package.json` — Bumped version to 1.63.0.
+* `proxy.ts` — Updated `x-zenithen-version` correlation header to 1.63.0.
+* `CHANGELOG.md` — Release notes for v1.63.0.
+
+### Architecture Decisions
+1. **Contributor-First Landing Hierarchy**: Surfaced student contributor rankings directly below the dynamic evolution chronicle and hero metrics, spotlighting engineering activity and motivating student participation prior to exploring repositories.
+2. **Balanced Container Contrast**: Adjusted section container backgrounds (`bg-card/30` -> `bg-background` -> `bg-card/30`) to retain clear visual demarcation between adjacent sections while preserving all navigational anchors.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 62: OAuth Redirect URI Resilience & LinkedIn Verification Flow
 
 ### Milestone
