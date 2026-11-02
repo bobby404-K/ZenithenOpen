@@ -167,7 +167,7 @@ export default function ProgramsPage() {
   const { activeSection } = useNavigation();
   const [isCompetitionOpen, setIsCompetitionOpen] = React.useState(true);
   const [competitionTimeframe, setCompetitionTimeframe] = React.useState<CompetitionTimeframe>("week");
-  const [competitors, setCompetitors] = React.useState<StudentContributor[]>(STUDENT_COMPETITORS);
+  const [competitors, setCompetitors] = React.useState<StudentContributor[]>([]);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -176,7 +176,7 @@ export default function ProgramsPage() {
         const res = await fetch(`/api/students/leaderboard?timeframe=${competitionTimeframe}`);
         if (res.ok) {
           const data = await res.json();
-          if (isMounted && data.success && Array.isArray(data.competitors) && data.competitors.length > 0) {
+          if (isMounted && data.success && Array.isArray(data.competitors)) {
             setCompetitors(data.competitors);
           }
         }
@@ -858,9 +858,29 @@ function StudentLeaderboardSection({
         </div>
       </div>
 
-      {/* Top 3 Podium Showcase */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
-        {displayPodium.map((student) => {
+      {displayPodium.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-xs mt-4">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 border border-primary/30 text-primary mb-3">
+            <Trophy className="h-7 w-7" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground">Arena Standings Awaiting First Pull Request</h3>
+          <p className="mt-1.5 text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+            Student contributors will be ranked automatically as pull requests are submitted and merged in campus repositories.
+          </p>
+          <div className="mt-5 flex justify-center">
+            <Link href="/projects#campus-catalog">
+              <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs cursor-pointer">
+                <span>Explore Campus Repositories & Good First Issues</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Top 3 Podium Showcase */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+            {displayPodium.map((student) => {
           const stats = student[timeframe];
           const isFirst = stats.rank === 1;
           const isSecond = stats.rank === 2;
@@ -1044,6 +1064,8 @@ function StudentLeaderboardSection({
           developerCountLabel={`${allContributorsTableItems.length} active developers`}
         />
       </div>
+        </>
+      )}
     </motion.div>
   );
 }

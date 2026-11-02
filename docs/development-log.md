@@ -11,6 +11,27 @@
 
 ---
 
+## Entry: 2026-11-02 — Milestone 58: Clean Slate Production Launch Architecture (Option B Zero-Mock)
+
+### Milestone
+v1.58.0 — Clean Slate Production Launch Architecture
+
+### Files Changed
+* `app/api/students/leaderboard/route.ts` — Restricted sample student competitors strictly to sandbox/test query param (`?mock=true`); default production calls return purely authenticated database contributors.
+* `app/api/projects/leaderboard/route.ts` — Required `?mock=true` for fallback campus repository allocations; live requests return empty array awaiting real student PR merges.
+* `app/programs/page.tsx` — Cleaned state initialization and implemented dedicated "Arena Standings Awaiting First Pull Request" empty state card with CTA.
+* `tests/backend/campus-projects-leaderboard.test.ts` — Added live query assertion (clean slate) and parameterized mock algorithm validation.
+* `tests/backend/student-preview-modal.test.ts` — Standardized mock param for fixture tests.
+* `package.json` — Version bumped to 1.58.0.
+* `CHANGELOG.md` — Release notes for v1.58.0.
+
+### Architecture Decisions
+1. **Option B Pure Clean Slate**: Instead of leaving artificial student competitor records visible upon production deployment, all leaderboard endpoints default to pure live data. The platform displays authentic "Awaiting First Pull Request" banners until real college contributors submit code.
+2. **Deterministic Developer Sandboxing**: Developers and automated test suites can seamlessly test ranking algorithms and UI contracts at any time by passing `?mock=true`.
+3. **100% Zero-Downtime Resilience**: If a cold database has 0 contributions, routes gracefully return valid empty arrays instead of throwing exceptions.
+
+---
+
 ## Entry: 2026-11-02 — Milestone 57: Verified GitHub & LinkedIn Badges Across Contributor Surfaces
 
 ### Milestone

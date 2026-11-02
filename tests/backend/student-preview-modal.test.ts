@@ -54,7 +54,7 @@ export async function runStudentPreviewModalTests(): Promise<SuiteResult> {
   suite.assert(typeof previewCard1.mergedPrs === "number" && previewCard1.mergedPrs >= 0, "mergedPrs is non-negative number");
 
   // --- 2. Verify Campus Repositories Leaderboard mapping into StudentPreviewData ---
-  const campReq = new NextRequest("http://localhost:3000/api/projects/leaderboard");
+  const campReq = new NextRequest("http://localhost:3000/api/projects/leaderboard?mock=true");
   const campRes = await getCampusLeaderboard(campReq);
   suite.assertEqual(campRes.status, 200, "GET /api/projects/leaderboard returns 200 OK");
 

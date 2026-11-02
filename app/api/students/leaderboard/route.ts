@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
       console.warn("[Leaderboard] Database query notice:", dbErr);
     }
 
-    if (dbContributors.length === 0) {
+    if (includeMock && dbContributors.length === 0) {
       dbContributors = [...STUDENT_COMPETITORS];
     }
 
