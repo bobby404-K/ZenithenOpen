@@ -802,26 +802,33 @@ export default function LoginPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                      {/* Trust Banner */}
+                      <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-2.5 text-xs text-muted-foreground flex items-center gap-2.5">
+                        <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <span><strong>Campus Verified:</strong> Connects your public GitHub portfolio without requiring invasive permissions or scary popups.</span>
+                      </div>
+
+                      <div className="space-y-2 pt-1">
                         <Button
                           onClick={() => handleVerifyAndConnectGitHub(githubUsernameInput)}
                           disabled={isAuthorizingGithub || !githubUsernameInput.trim()}
                           className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md py-2.5 cursor-pointer"
                         >
                           <CheckCircle2 className="h-4 w-4" />
-                          <span>{isAuthorizingGithub ? "Connecting..." : `Continue with @${githubUsernameInput.replace(/^@/, '') || 'handle'}`}</span>
+                          <span>{isAuthorizingGithub ? "Connecting..." : `Link GitHub Account (@${githubUsernameInput.replace(/^@/, '') || 'handle'})`}</span>
                         </Button>
 
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => handleLaunchGitHubOAuth()}
-                          disabled={isAuthorizingGithub}
-                          className="w-full gap-2 border-border text-foreground hover:bg-muted font-semibold text-xs py-2.5 cursor-pointer"
-                        >
-                          <GithubIcon className="h-4 w-4" />
-                          <span>Authorize via Popup</span>
-                        </Button>
+                        <div className="flex items-center justify-between px-1">
+                          <button
+                            type="button"
+                            onClick={() => handleLaunchGitHubOAuth()}
+                            className="text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors cursor-pointer flex items-center gap-1.5"
+                          >
+                            <GithubIcon className="h-3.5 w-3.5" />
+                            <span>Optional: Sign in via GitHub OAuth popup</span>
+                          </button>
+                          <span className="text-[11px] text-muted-foreground font-mono">100% Safe</span>
+                        </div>
                       </div>
 
                       {/* Quick Developer Testing Handles */}
@@ -916,6 +923,12 @@ export default function LoginPage() {
                             className="pl-8 font-mono text-xs border-border bg-background focus:border-sky-500 py-2.5"
                           />
                         </div>
+                      </div>
+
+                      {/* Trust Banner */}
+                      <div className="rounded-xl bg-sky-500/10 border border-sky-500/20 px-3.5 py-2.5 text-xs text-muted-foreground flex items-center gap-2.5">
+                        <ShieldCheck className="h-4 w-4 text-sky-500 shrink-0" />
+                        <span><strong>Campus Verified:</strong> Connects your public professional profile without requesting sensitive account credentials.</span>
                       </div>
 
                       {/* Official Authorize with LinkedIn Button */}

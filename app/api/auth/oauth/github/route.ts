@@ -30,15 +30,11 @@ export async function GET(req: NextRequest) {
     const encodedScope = encodeURIComponent("read:user user:email");
     const state = encodeURIComponent(Buffer.from(JSON.stringify({ callbackUrl, timestamp: Date.now() })).toString("base64"));
     
-    // Check if redirect URI is explicitly configured or if running in local dev
+    // Check if redirect URI is explicitly configured in environment variables.
+    // When omitted, GitHub automatically uses the application's registered callback URL,
+    // avoiding the scary "The redirect_uri is not associated with this application" screen.
     const configuredRedirect = process.env.GITHUB_REDIRECT_URI;
-    const isLocal = req.nextUrl.origin.includes("localhost") || req.nextUrl.origin.includes("127.0.0.1");
-    let redirectParam = "";
-    if (configuredRedirect) {
-      redirectParam = `&redirect_uri=${encodeURIComponent(configuredRedirect)}`;
-    } else if (!isLocal) {
-      redirectParam = `&redirect_uri=${encodeURIComponent(`${req.nextUrl.origin}/api/auth/oauth/github/callback`)}`;
-    }
+    const redirectParam = configuredRedirect ? `&redirect_uri=${encodeURIComponent(configuredRedirect)}` : "";
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}${redirectParam}&scope=${encodedScope}&state=${state}`;
 
     return NextResponse.json({

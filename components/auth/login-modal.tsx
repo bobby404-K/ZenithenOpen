@@ -14,6 +14,7 @@ import {
   Check,
   Zap,
   ExternalLink,
+  ShieldCheck,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
 import { Button } from "@/components/ui/button";
@@ -750,7 +751,13 @@ export function LoginModal() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  {/* Trust Banner */}
+                  <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-[11px] text-muted-foreground flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <span><strong>Campus Verified:</strong> Connects your public GitHub portfolio without requiring invasive permissions or scary popups.</span>
+                  </div>
+
+                  <div className="space-y-2 pt-1">
                     <Button
                       type="button"
                       disabled={isAuthorizingGithub || !githubUsernameInput.trim()}
@@ -758,19 +765,20 @@ export function LoginModal() {
                       className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow py-2.5 cursor-pointer"
                     >
                       <CheckCircle2 className="h-4 w-4" />
-                      <span>{isAuthorizingGithub ? "Connecting..." : `Continue with @${githubUsernameInput.replace(/^@/, '') || 'handle'}`}</span>
+                      <span>{isAuthorizingGithub ? "Connecting..." : `Link GitHub Account (@${githubUsernameInput.replace(/^@/, '') || 'handle'})`}</span>
                     </Button>
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={isAuthorizingGithub}
-                      onClick={() => handleLaunchGitHubOAuth()}
-                      className="w-full gap-2 border-border text-foreground hover:bg-muted font-semibold text-xs py-2.5 cursor-pointer"
-                    >
-                      <GithubIcon className="h-4 w-4" />
-                      <span>Authorize via Popup</span>
-                    </Button>
+                    <div className="flex items-center justify-between px-1">
+                      <button
+                        type="button"
+                        onClick={() => handleLaunchGitHubOAuth()}
+                        className="text-[11px] text-muted-foreground hover:text-foreground hover:underline transition-colors cursor-pointer flex items-center gap-1.5"
+                      >
+                        <GithubIcon className="h-3 w-3" />
+                        <span>Optional: Sign in via GitHub OAuth popup</span>
+                      </button>
+                      <span className="text-[10px] text-muted-foreground font-mono">100% Safe</span>
+                    </div>
                   </div>
 
                   {/* Preset profiles for quick testing in dev sandbox */}
@@ -874,6 +882,12 @@ export function LoginModal() {
                         className="pl-8 font-mono text-xs border-border bg-background focus:border-sky-500"
                       />
                     </div>
+                  </div>
+
+                  {/* Trust Banner */}
+                  <div className="rounded-lg bg-sky-500/10 border border-sky-500/20 px-3 py-2 text-[11px] text-muted-foreground flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-sky-500 shrink-0" />
+                    <span><strong>Campus Verified:</strong> Connects your public professional profile without requesting sensitive account credentials.</span>
                   </div>
 
                   <Button
