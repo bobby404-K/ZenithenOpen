@@ -111,11 +111,15 @@ export async function GET(req: NextRequest) {
     // 1. Check Redis Cache
     const cached = await getCached<RepoLookupMetadata>(cacheKey);
     if (cached) {
+      const normalizedCached: RepoLookupMetadata = {
+        ...cached,
+        owner: (cleanOwner === "ist-zenithenlab" || cleanOwner === "zenithen") ? owner : cached.owner,
+      };
       return NextResponse.json(
         {
           success: true,
           cached: true,
-          metadata: cached,
+          metadata: normalizedCached,
         },
         {
           status: 200,
@@ -128,7 +132,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 2. Fetch from GitHub REST API
-    const isCampusRepo = cleanOwner === "ist-zenithenlab" || cleanOwner === "zenithen";
+    const isCampusRepo = cleanOwner === "ist-zenithenlab" || cleanOwner === "zenithen" || cleanOwner === "bobby404-k";
     let metadata: RepoLookupMetadata | null = null;
 
     try {
@@ -142,7 +146,7 @@ export async function GET(req: NextRequest) {
         metadata = {
           name: data.name || repo,
           fullName: data.full_name || `${owner}/${repo}`,
-          owner: data.owner?.login || owner,
+          owner: (isCampusRepo && (cleanOwner === "ist-zenithenlab" || cleanOwner === "zenithen")) ? owner : (data.owner?.login || owner),
           description: data.description || "",
           tagline: data.description || `Open-source ${data.language || "software"} project by ${owner}`,
           starsCount: Number(data.stargazers_count || 0),

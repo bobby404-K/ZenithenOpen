@@ -239,23 +239,35 @@ export function Navbar() {
             </div>
           ) : (
             <div className="flex items-center space-x-2">
-              {/* Log in Button */}
-              <button
-                type="button"
-                onClick={openLoginModal}
+              {/* Log in Button with direct /login fallback */}
+              <Link
+                href="/login"
+                id="navbar-login-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLoginModal();
+                }}
                 className="flex items-center space-x-1.5 rounded-lg border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground hover:bg-muted shadow-xs transition-colors cursor-pointer"
               >
                 Log in
-              </button>
+              </Link>
 
-              {/* Sign up Button */}
-              <Button
-                size="sm"
-                onClick={openLoginModal}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-md shadow-primary/25 cursor-pointer"
+              {/* Sign up Button with direct /login fallback */}
+              <Link
+                href="/login"
+                id="navbar-signup-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openLoginModal();
+                }}
               >
-                Sign up
-              </Button>
+                <Button
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shadow-md shadow-primary/25 cursor-pointer"
+                >
+                  Sign up
+                </Button>
+              </Link>
             </div>
           )}
         </div>
