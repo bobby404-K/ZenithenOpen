@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  deployments: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -51,4 +52,16 @@ jobs:
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+
+  deploy-status:
+    name: Production Deployment Status
+    needs: validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: Production
+      url: https://zenithen-open.vercel.app
+    steps:
+      - name: Deployment Live
+        run: echo "Production environment active at https://zenithen-open.vercel.app"
 
