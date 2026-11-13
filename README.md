@@ -1,16 +1,3 @@
-# ZenithenOpen 🌐🚀
-
-[![Version](https://img.shields.io/badge/version-1.48.0-cyan.svg)](https://github.com/IST-ZenithenLab/ZenithenOpen)
-[![Next.js](https://img.shields.io/badge/Next.js-16_App_Router-black.svg?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.3.1-61dafb.svg?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-6-2D3748.svg?logo=prisma)](https://www.prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC.svg?logo=tailwind-css)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Tests-32_Suites_%7C_962+_Passed-emerald.svg)](tests/backend)
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-
-> **The premier open-source contribution and competition tracking platform for student software engineers at the Institute of Science & Technology (IST Bengaluru).**  
-> Maintained under [`IST-ZenithenLab`](https://github.com/IST-ZenithenLab).
 
 ---
 
